@@ -1,0 +1,86 @@
+========================================================================
+  LCOE REPORT — Levelized Cost of Energy (Phase 5)
+  Portugal (PRT)
+  2026-04-10 14:00:14
+========================================================================
+
+------------------------------------------------------------------------
+  SOLAR PV
+------------------------------------------------------------------------
+  CAPEX: 750 USD/kW  |  OPEX: 12 USD/kW/yr  |  r: 6%  |  n: 25 yr
+  CRF: 0.0782  |  Base CF: 0.190
+
+  Metric                                    Value     Unit
+  --------------------------------------------------------
+  Base LCOE (National mean CF)               42.5  USD/MWh
+  Spatial mean LCOE                          42.8  USD/MWh
+  P10 — Cheapest 10%                         38.7  USD/MWh
+  P90 — Most expensive 10%                   47.6  USD/MWh
+
+  Available capacity by cost threshold:
+  Threshold (USD/MWh)        Available GW
+  ----------------------------------------
+  <=  40 USD/MWh               8.84 GW  (28.8%)
+  <=  50 USD/MWh              29.29 GW  (95.3%)
+  <=  60 USD/MWh              30.73 GW  (100.0%)
+  <=  70 USD/MWh              30.73 GW  (100.0%)
+  <=  80 USD/MWh              30.73 GW  (100.0%)
+  <= 100 USD/MWh              30.73 GW  (100.0%)
+  <= 120 USD/MWh              30.73 GW  (100.0%)
+
+------------------------------------------------------------------------
+  WIND ONSHORE
+------------------------------------------------------------------------
+  CAPEX: 1400 USD/kW  |  OPEX: 43 USD/kW/yr  |  r: 6%  |  n: 25 yr
+  CRF: 0.0782  |  Base CF: 0.300
+
+  Metric                                    Value     Unit
+  --------------------------------------------------------
+  Base LCOE (National mean CF)               58.0  USD/MWh
+  Spatial mean LCOE                          58.5  USD/MWh
+  P10 — Cheapest 10%                         54.0  USD/MWh
+  P90 — Most expensive 10%                   67.0  USD/MWh
+
+  Available capacity by cost threshold:
+  Threshold (USD/MWh)        Available GW
+  ----------------------------------------
+  <=  40 USD/MWh               0.00 GW  (0.0%)
+  <=  50 USD/MWh               0.00 GW  (0.0%)
+  <=  60 USD/MWh               0.43 GW  (65.0%)
+  <=  70 USD/MWh               0.65 GW  (96.9%)
+  <=  80 USD/MWh               0.67 GW  (100.0%)
+  <= 100 USD/MWh               0.67 GW  (100.0%)
+  <= 120 USD/MWh               0.67 GW  (100.0%)
+
+------------------------------------------------------------------------
+  BIOMASS / BIOENERGY
+------------------------------------------------------------------------
+  CAPEX: 2800 USD/kW  |  OPEX: 105 USD/kW/yr  |  r: 6%  |  n: 20 yr
+  CRF: 0.0908  |  Base CF: 0.730
+
+  Metric                                    Value     Unit
+  --------------------------------------------------------
+  Base LCOE (National mean CF)               56.2  USD/MWh
+  Spatial mean LCOE                          56.2  USD/MWh
+  P10 — Cheapest 10%                         56.2  USD/MWh
+  P90 — Most expensive 10%                   56.2  USD/MWh
+
+  Available capacity by cost threshold:
+  Threshold (USD/MWh)        Available GW
+  ----------------------------------------
+  <=  40 USD/MWh               0.00 GW  (0.0%)
+  <=  50 USD/MWh               0.00 GW  (0.0%)
+  <=  60 USD/MWh               0.43 GW  (100.0%)
+  <=  70 USD/MWh               0.43 GW  (100.0%)
+  <=  80 USD/MWh               0.43 GW  (100.0%)
+  <= 100 USD/MWh               0.43 GW  (100.0%)
+  <= 120 USD/MWh               0.43 GW  (100.0%)
+
+========================================================================
+  TIMINGS BY STAGE
+------------------------------------------------------------------------
+    solar                     :    6.5s
+    wind                      :    4.9s
+    biomass                   :    4.9s
+    comparison_map            :   17.7s
+========================================================================

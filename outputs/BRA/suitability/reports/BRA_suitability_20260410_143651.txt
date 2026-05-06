@@ -1,0 +1,98 @@
+====================================================================
+  SUITABILITY REPORT — AHP (Saaty) + TOPSIS MCDA
+  Brazil (BRA)
+  2026-04-10 14:36:51
+====================================================================
+
+--------------------------------------------------------------------
+  SOLAR PV
+--------------------------------------------------------------------
+    Total territorial pixels            : 6,960,925
+    Hard exclusions (pixels)            : 4,501,982  (64.7%)
+    Valid pixels (TOPSIS)               : 2,458,943  (35.3%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.585 ± 0.147
+      P10 / P50 / P90                   : 0.398 / 0.568 / 0.792
+      Score >= 0.6 (high suitability)   : 42.4%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0432  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      solar_resource                     0.3068  ( 30.7%)
+      grid_suitability                   0.2249  ( 22.5%)
+      terrain_score                      0.1603  ( 16.0%)
+      road_suitability                   0.1102  ( 11.0%)
+      river_solar                        0.0779  (  7.8%)
+      seismic_suitability                0.0536  (  5.4%)
+      pop_suitability                    0.0382  (  3.8%)
+      proximity_plants                   0.0280  (  2.8%)
+
+    Weights JSON: BRA_solar_weights.json
+
+--------------------------------------------------------------------
+  WIND ONSHORE
+--------------------------------------------------------------------
+    Total territorial pixels            : 6,960,586
+    Hard exclusions (pixels)            : 4,501,201  (64.7%)
+    Valid pixels (TOPSIS)               : 2,459,385  (35.3%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.495 ± 0.172
+      P10 / P50 / P90                   : 0.283 / 0.470 / 0.750
+      Score >= 0.6 (high suitability)   : 26.3%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0942  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      wind_resource                      0.3539  ( 35.4%)
+      grid_suitability                   0.2379  ( 23.8%)
+      terrain_score                      0.1568  ( 15.7%)
+      road_suitability                   0.1006  ( 10.1%)
+      pop_suitability                    0.0643  (  6.4%)
+      proximity_plants                   0.0412  (  4.1%)
+      seismic_suitability                0.0272  (  2.7%)
+      river_wind                         0.0183  (  1.8%)
+
+    Weights JSON: BRA_wind_weights.json
+
+--------------------------------------------------------------------
+  BIOMASS / BIOENERGY
+--------------------------------------------------------------------
+    Total territorial pixels            : 6,960,925
+    Hard exclusions (pixels)            : 4,501,504  (64.7%)
+    Valid pixels (TOPSIS)               : 2,459,421  (35.3%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.587 ± 0.164
+      P10 / P50 / P90                   : 0.328 / 0.624 / 0.779
+      Score >= 0.6 (high suitability)   : 55.9%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0496  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      biomass_resource                   0.2841  ( 28.4%)
+      lc_biomass                         0.2156  ( 21.6%)
+      road_suitability                   0.1563  ( 15.6%)
+      river_biomass                      0.1121  ( 11.2%)
+      grid_suitability                   0.0803  (  8.0%)
+      pop_suitability                    0.0576  (  5.8%)
+      proximity_plants                   0.0413  (  4.1%)
+      terrain_score                      0.0299  (  3.0%)
+      seismic_suitability                0.0227  (  2.3%)
+
+    Weights JSON: BRA_biomass_weights.json
+
+====================================================================
+  TIMINGS BY STAGE
+--------------------------------------------------------------------
+    load_criteria           :    2.6s
+    solar                   :   13.8s
+    wind                    :   14.7s
+    biomass                 :   14.4s
+    comparison_map          :   35.0s
+    TOTAL                   : 81.7s
+====================================================================

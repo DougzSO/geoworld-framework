@@ -1,0 +1,59 @@
+{
+  "country_code": "EGY",
+  "country_name": "Egypt",
+  "generated_at": "2026-04-10T17:19:59.822566",
+  "scenarios": {
+    "reference": {
+      "ev_electricity_demand_2050_twh": 12.99,
+      "re_needed_total_gw_2050": 5.87,
+      "co2_total_2050_mtco2eq": 11.538,
+      "co2_avoided_cumulative_mtco2eq": 925.8,
+      "cumulative_capex_2050_bn_usd": 7.2,
+      "fleet_2050_total": 13682107,
+      "fleet_2050_bev_pct": 34.9,
+      "fleet_2050_hev_pct": 11.0,
+      "fleet_2050_phev_pct": 7.0,
+      "fleet_2050_ice_pct": 18.9,
+      "re_sufficiency_solar_2050_pct": 100.0,
+      "ev_demand_vs_re_potential": "COVERED"
+    },
+    "accelerated": {
+      "ev_electricity_demand_2050_twh": 18.17,
+      "re_needed_total_gw_2050": 8.2,
+      "co2_total_2050_mtco2eq": 6.858,
+      "co2_avoided_cumulative_mtco2eq": 1003.9,
+      "cumulative_capex_2050_bn_usd": 11.6,
+      "fleet_2050_total": 13682107,
+      "fleet_2050_bev_pct": 49.1,
+      "fleet_2050_hev_pct": 6.8,
+      "fleet_2050_phev_pct": 4.5,
+      "fleet_2050_ice_pct": 9.7,
+      "re_sufficiency_solar_2050_pct": 100.0,
+      "ev_demand_vs_re_potential": "COVERED"
+    },
+    "conservative": {
+      "ev_electricity_demand_2050_twh": 7.94,
+      "re_needed_total_gw_2050": 3.58,
+      "co2_total_2050_mtco2eq": 16.744,
+      "co2_avoided_cumulative_mtco2eq": 857.3,
+      "cumulative_capex_2050_bn_usd": 4.2,
+      "fleet_2050_total": 13682107,
+      "fleet_2050_bev_pct": 21.0,
+      "fleet_2050_hev_pct": 13.6,
+      "fleet_2050_phev_pct": 7.5,
+      "fleet_2050_ice_pct": 30.7,
+      "re_sufficiency_solar_2050_pct": 100.0,
+      "ev_demand_vs_re_potential": "COVERED"
+    }
+  },
+  "charging_hubs": {
+    "total": 21,
+    "total_peak_power_mw": 10.5,
+    "total_capex_bn_usd": 0.01785
+  },
+  "renewable_potential_available_gw": {
+    "solar": 71.482,
+    "wind": 6.199,
+    "biomass": 4.025
+  }
+}

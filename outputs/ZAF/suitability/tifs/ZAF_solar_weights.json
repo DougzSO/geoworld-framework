@@ -1,0 +1,19 @@
+{
+  "tech": "solar",
+  "country_code": "ZAF",
+  "intensity": "subtle",
+  "lambda_max": 7.303862,
+  "ci": 0.050644,
+  "cr": 0.038366,
+  "cr_ok": true,
+  "criteria_count": 7,
+  "weights": {
+    "solar_resource": 0.33142,
+    "grid_suitability": 0.238518,
+    "terrain_score": 0.161997,
+    "road_suitability": 0.109016,
+    "river_solar": 0.073362,
+    "seismic_suitability": 0.049827,
+    "pop_suitability": 0.035859
+  }
+}

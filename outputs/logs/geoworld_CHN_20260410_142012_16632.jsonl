@@ -1,0 +1,40 @@
+{"ts": "2026-04-10T14:20:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.io.DataManager", "message": "Raw data root: D:\\Douglas\\DOUTORADO\\database\\raw"}
+{"ts": "2026-04-10T14:20:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "Starting analysis: China (CHN)"}
+{"ts": "2026-04-10T14:20:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.core.ConfigLoader", "message": "----------------------------------------------------"}
+{"ts": "2026-04-10T14:20:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.core.ConfigLoader", "message": "  China (CHN)"}
+{"ts": "2026-04-10T14:20:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.core.ConfigLoader", "message": "  Solar  : LUF=0.05  thr=0.75  density=50.0 MW/km²"}
+{"ts": "2026-04-10T14:20:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.core.ConfigLoader", "message": "  Wind   : LUF=0.030  thr=0.75  density=7.0 MW/km²"}
+{"ts": "2026-04-10T14:20:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.core.ConfigLoader", "message": "  Biomass: col=0.30  thr=0.75  density=0.5 MW/km²"}
+{"ts": "2026-04-10T14:20:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.core.ConfigLoader", "message": "  OWA    : default=balanced  scenarios=['optimistic', 'balanced', 'conservative']"}
+{"ts": "2026-04-10T14:20:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.core.ConfigLoader", "message": "  Criteria: river=5.0 km  road=15.0 km  slope=12°"}
+{"ts": "2026-04-10T14:20:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.core.ConfigLoader", "message": "----------------------------------------------------"}
+{"ts": "2026-04-10T14:20:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "----------------------------------------------------"}
+{"ts": "2026-04-10T14:20:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  China (CHN)"}
+{"ts": "2026-04-10T14:20:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "----------------------------------------------------"}
+{"ts": "2026-04-10T14:20:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  Geometry : Mainland only"}
+{"ts": "2026-04-10T14:20:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  Resolution : Fixed 0.01 deg"}
+{"ts": "2026-04-10T14:20:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  Suitability optimistic offset : -0.10"}
+{"ts": "2026-04-10T14:20:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  Protected-area mode : Hard exclusion"}
+{"ts": "2026-04-10T14:20:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "----------------------------------------------------"}
+{"ts": "2026-04-10T14:20:52", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "Land Cover: 240 tile(s) found."}
+{"ts": "2026-04-10T14:20:52", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.io.DataManager", "message": "Power plants found: 3041"}
+{"ts": "2026-04-10T14:20:52", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "----------------------------------------------------"}
+{"ts": "2026-04-10T14:20:52", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  DATA AVAILABILITY"}
+{"ts": "2026-04-10T14:20:52", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "----------------------------------------------------"}
+{"ts": "2026-04-10T14:20:52", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Borders"}
+{"ts": "2026-04-10T14:20:52", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Land Cover"}
+{"ts": "2026-04-10T14:20:52", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Elevation"}
+{"ts": "2026-04-10T14:20:52", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Wind"}
+{"ts": "2026-04-10T14:20:52", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Solar"}
+{"ts": "2026-04-10T14:20:52", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Power Plants"}
+{"ts": "2026-04-10T14:20:52", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Population"}
+{"ts": "2026-04-10T14:20:52", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Roads"}
+{"ts": "2026-04-10T14:20:52", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Protected"}
+{"ts": "2026-04-10T14:20:52", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Lakes"}
+{"ts": "2026-04-10T14:20:52", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "----------------------------------------------------"}
+{"ts": "2026-04-10T14:20:53", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "Auditoria: China (CHN)"}
+{"ts": "2026-04-10T14:20:53", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [solar] iniciando..."}
+{"ts": "2026-04-10T14:20:58", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [solar] concluído em 5.2s"}
+{"ts": "2026-04-10T14:20:58", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [elevation] iniciando..."}
+{"ts": "2026-04-10T14:21:04", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [elevation] concluído em 6.3s"}
+{"ts": "2026-04-10T14:21:04", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [population] iniciando..."}

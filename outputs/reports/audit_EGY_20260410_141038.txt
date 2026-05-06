@@ -1,0 +1,166 @@
+================================================================
+  RELATÓRIO DE AUDITORIA DE DADOS
+  Egypt (EGY)
+  2026-04-10 14:10:38
+================================================================
+
+  RASTERS
+----------------------------------------------------------------
+  ✅ SOLAR  [0.5s]
+    Arquivo                          : PVOUT.tif
+    Tamanho                          : 351.7 MB
+    CRS                              : EPSG:4326
+    Resolução                        : 0.00833333°
+    Máscara usada                    : polígono do país (windowed)
+    Shape global                     : (15000, 43200)
+    Shape no país                    : (1193, 1331)
+    Área válida                      :    983,617 km²
+    Min / Máx                        : 3.538 / 6.006
+    Média                            : 5.3708
+    Pixels válidos                   : 80.9%
+
+  ✅ ELEVATION  [0.1s]
+    Arquivo                          : EGY_elevation.tif
+    Tamanho                          : 0.26 MB
+    CRS                              : EPSG:4326
+    Resolução                        : 0.04°
+    Máscara usada                    : polígono do país (windowed)
+    Shape                            : (248, 277)
+    Área válida                      :    983,406 km²
+    Min / Máx                        : -122.3043 / 2132.1509
+    Média                            : 297.7335
+    Pixels válidos                   : 81.1%
+
+  ✅ POPULATION  [6.2s]
+    Arquivo                          : egy_pop_2020.tif
+    Tamanho                          : 121.06 MB
+    CRS                              : EPSG:4326
+    Resolução                        : 0.00083333°
+    Máscara usada                    : polígono do país (windowed)
+    Shape global                     : (12288, 16346)
+    Shape no país                    : (11603, 13314)
+    Área válida                      :    973,860 km²
+    Min / Máx                        : 0.0 / 1315.4468
+    Média                            : 0.7551
+    Pixels válidos                   : 82.3%
+
+  ✅ SLOPE  [0.2s]
+    Arquivo                          : EGY_slope.tif
+    Tamanho                          : 0.29 MB
+    CRS                              : EPSG:4326
+    Resolução                        : 0.04°
+    Máscara usada                    : polígono do país (windowed)
+    Shape                            : (248, 277)
+    Área válida                      :    983,370 km²
+    Min / Máx                        : 0.0 / 6.6566
+    Média                            : 0.3449
+    Pixels válidos                   : 81.1%
+
+  ✅ WIND  [1.7s]
+    Arquivo                          : EGY_power-density_100m.tif
+    Tamanho                          : 60.53 MB
+    CRS                              : EPSG:4326
+    Resolução                        : 0.0025°
+    Máscara usada                    : polígono do país (windowed)
+    Shape global                     : (4745, 5041)
+    Shape no país                    : (3876, 4438)
+    Área válida                      :    981,732 km²
+    Min / Máx                        : 22.1632 / 6499.8887
+    Média                            : 304.7254
+    Pixels válidos                   : 82.8%
+
+  ✅ SEISMIC  [0.2s]
+    Arquivo                          : seismic_hazard_global.tif
+    Tamanho                          : 164.81 MB
+    CRS                              : EPSG:4326
+    Resolução                        : 0.05°
+    Máscara usada                    : polígono do país (windowed)
+    Shape global                     : (3000, 7200)
+    Shape no país                    : (199, 222)
+    Área válida                      :    982,594 km²
+    Min / Máx                        : 0.0 / 0.3438
+    Média                            : 0.0258
+    Pixels válidos                   : 80.7%
+
+----------------------------------------------------------------
+  HIDROLOGIA (VETORES)
+----------------------------------------------------------------
+  ✅ HydroLAKES
+    Arquivo                          : HydroLAKES_polys_v10.shp
+    Tamanho                          : 1112.0 MB  (global — crop no GridAligner)
+  ✅ HydroRIVERS
+    Arquivo                          : HydroRIVERS_v10.shp
+    Tamanho                          : 1247.4 MB  (global — crop no GridAligner)
+
+----------------------------------------------------------------
+  ✅ LAND COVER (ESA WorldCover)  [221.0s]
+    Tiles totais                     : 20
+    Tiles usados                     : 16  (4 sem sobreposição)
+    CRS                              : EPSG:4326
+    Resolução(ões)                   : 8.333e-05
+    Área total                       :    983,585 km²
+
+    Código | Classe                         |    km²     |    %
+    ----------------------------------------------------------
+        10 | Tree cover                     |    3,275.6 |   0.3%
+        20 | Shrubland                      |    2,049.4 |   0.2%
+        30 | Grassland                      |      800.4 |   0.1%
+        40 | Cropland                       |   32,718.9 |   3.3%
+        50 | Built-up                       |    7,667.6 |   0.8%
+        60 | Bare / Sparse vegetation       |  925,935.7 |  94.1%
+        80 | Permanent water bodies         |    9,495.4 |   1.0%
+        90 | Herbaceous wetland             |    1,640.8 |   0.2%
+        95 | Mangroves                      |        0.9 |   0.0%
+
+----------------------------------------------------------------
+  USINAS EXISTENTES  [0.0s]
+----------------------------------------------------------------
+    Total de usinas                  : 43
+    Capacidade total                 : 33,424 MW
+
+    Combustível                    |    MW
+    --------------------------------------
+    Gas                             |   29,077
+    Hydro                           |    2,800
+    Oil                             |    1,000
+    Wind                            |      547
+
+----------------------------------------------------------------
+  ALERTAS DE CONSISTÊNCIA
+----------------------------------------------------------------
+  ✅ Nenhum alerta — dados consistentes.
+
+================================================================
+  SUMÁRIO
+----------------------------------------------------------------
+    Camadas OK                       : solar, elevation, population, slope, wind, seismic
+    Camadas ausentes                 : nenhuma
+    Tiles LC (usados)                : 16 / 20
+    Área land cover                  : 983,585 km²
+    Classes LC                       : 9
+    Arquivos de vento                : 3
+    Solar PVOUT (kWh/m²/d)           : 3.538 – 6.006
+    Elevação (m)                     : -122 – 2132
+    Slope (°)                        : 0.0 – 6.7
+    População (hab/pixel)            : 0.0 – 1315.4
+    Sismicidade (hazard)             : 0.0000 – 0.3438
+    HydroLAKES                       : ✅ encontrado
+    HydroRIVERS                      : ✅ encontrado
+    Usinas                           : 43
+    Capacidade instalada             : 33,424 MW
+    Alertas                          : 0
+
+  TEMPO POR ETAPA
+----------------------------------------------------------------
+    solar                 :    0.5s
+    elevation             :    0.1s
+    population            :    6.2s
+    slope                 :    0.2s
+    wind                  :    1.7s
+    seismic               :    0.2s
+    lakes                 :    0.0s
+    rivers                :    0.0s
+    land_cover            :  221.0s
+    power_plants          :    0.0s
+    TOTAL                            : 229.8s
+================================================================

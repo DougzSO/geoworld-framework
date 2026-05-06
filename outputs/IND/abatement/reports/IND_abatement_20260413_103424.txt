@@ -1,0 +1,81 @@
+========================================================================
+GHG ABATEMENT SYNTHESIS REPORT — Phase 7
+India (IND)
+Generated: 2026-04-13 10:34:24
+========================================================================
+
+==============================================================================
+EXECUTIVE SUMMARY
+==============================================================================
+MAC (Marginal Abatement Cost)      : 28.9 USD/tCO₂e
+Breakeven Carbon Price (BCP)       : 28.9 USD/tCO₂e
+CO₂ Avoided (annual)               : 437.32 MtCO₂e/yr
+Total Economic Value               : 2.19 Billion USD/yr
+Grid Substitution Volume           : 533.3 TWh (50.0%)
+Carbon Intensity Reduction         : 789 → 403 gCO₂/kWh
+==============================================================================
+
+SECTION 1 — THERMAL FLEET (BEFORE TRANSITION)
+------------------------------------------------------------
+  Fuel     Cap MW    CF   Gen GWh/yr   EF tCO₂/GWh  SRMC $/MWh   CO₂ MtCO₂/yr
+  ------------------------------------------------------------
+  Coal    199,303   55%      960,243           820        30.0        787.399
+  Gas      24,899   45%       98,151           490        44.0         48.094
+  Oil       1,881   50%        8,238           750        70.0          6.179
+  TOTAL   226,083          1,066,632                                      841.672
+
+SECTION 2 — RENEWABLE POTENTIAL (Balanced scenario, Phase 4+5)
+------------------------------------------------------------
+  Tech           Gen GWh/yr     GW  Share %   LCOE $/MWh   MAC $/tCO₂
+  ------------------------------------------------------------
+  Solar PV            789,635  450.7     48.7         46.9         19.4
+  Biomass             587,724   95.8     36.2         57.6         32.9
+  Wind Onshore        244,043  116.1     15.1         71.3         50.3
+
+SECTION 3 — MAC / SUBSTITUTION RESULTS
+------------------------------------------------------------
+  Carbon proxy applied                   : 5 USD/tCO₂e
+  SRMC thermal (gen-weighted)            : 31.6 USD/MWh
+  LRMC thermal (with carbon)             : 35.5 USD/MWh
+  Avg renewable LCOE                     : 54.4 USD/MWh
+  ► MAC (global, gen-weighted)           : 28.95 USD/tCO₂e
+  ► BCP (breakeven carbon price)         : 28.95 USD/tCO₂e
+    → EU ETS proxy at 5 USD/tCO₂ below breakeven
+  Substitution (limit applied)           : 533,316 GWh/yr (50.0% of thermal)
+    N/A
+  CO₂ avoided                            : 437.319 MtCO₂e/yr
+  TOTAL economic value created           : 2.187 Billion USD/yr
+
+SECTION 4 — CARBON INTENSITY (gCO₂eq/kWh)
+------------------------------------------------------------
+  Before transition (thermal mix)        : 789.1 gCO₂/kWh
+  After transition (post-subst mix)      : 403.1 gCO₂/kWh
+  Reduction                              : 48.9%
+  Renewables avg lifecycle               : 48.0 gCO₂/kWh
+
+SECTION 5 — CARBON FOOTPRINT BY SCOPE (GHG Protocol)
+------------------------------------------------------------
+  Scope 1 (direct thermal, after subst.) : 404.353 MtCO₂e/yr
+  Scope 2 (indirect — new renew/grid)    : 214.976 MtCO₂e/yr
+  Scope 3 (renew lifecycle: upstreams)   : 25.599 MtCO₂e/yr
+  Total Scope 1+2+3 (post-transition)    : 644.928 MtCO₂e/yr
+
+SECTION 6 — NET ZERO ANALYSIS (Referencing WHOLE national economy)
+------------------------------------------------------------
+  Country net-zero target year           : 2070
+  Current total CO₂ (all sectors, API)   : 3193.5 MtCO₂e/yr
+
+  NDC 2030 commitment type               : intensity-based / unavailable absolute target
+  Reported intensity reduction target    : 45%
+  Net avoided by this transition         : 411.72 MtCO₂e/yr
+  Source: India Updated NDC (2022). MoEFCC. Net Zero 2070 (COP26).; OWID/GCP CO2 (2024)
+
+SECTION 7 — EMISSION BALANCE DECOMPOSITION
+------------------------------------------------------------
+  Current national footprint (all sectors): +3193.48 MtCO₂e/yr
+    of which modelled electricity sector  :  841.67 MtCO₂e/yr
+  − CO₂ avoided (thermal displacement)    : −437.319 MtCO₂e/yr
+  + Lifecycle CO₂ (new renewables built)  : +25.599 MtCO₂e/yr
+  + Residual thermal CO₂ kept for grid    : +404.353 MtCO₂e/yr
+  = Post-transition national proxy        :  2781.76 MtCO₂e/yr
+========================================================================

@@ -1,0 +1,50 @@
+{"ts": "2026-04-10T13:55:45", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.io.DataManager", "message": "Raw data root: D:\\Douglas\\DOUTORADO\\database\\raw"}
+{"ts": "2026-04-10T13:55:45", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "Starting analysis: Brazil (BRA)"}
+{"ts": "2026-04-10T13:55:45", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.core.ConfigLoader", "message": "----------------------------------------------------"}
+{"ts": "2026-04-10T13:55:45", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.core.ConfigLoader", "message": "  Brazil (BRA)"}
+{"ts": "2026-04-10T13:55:45", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.core.ConfigLoader", "message": "  Solar  : LUF=0.05  thr=0.75  density=45.0 MW/km²"}
+{"ts": "2026-04-10T13:55:45", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.core.ConfigLoader", "message": "  Wind   : LUF=0.030  thr=0.75  density=6.0 MW/km²"}
+{"ts": "2026-04-10T13:55:45", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.core.ConfigLoader", "message": "  Biomass: col=0.30  thr=0.75  density=0.5 MW/km²"}
+{"ts": "2026-04-10T13:55:45", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.core.ConfigLoader", "message": "  OWA    : default=balanced  scenarios=['optimistic', 'balanced', 'conservative']"}
+{"ts": "2026-04-10T13:55:45", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.core.ConfigLoader", "message": "  Criteria: river=5.0 km  road=15.0 km  slope=12°"}
+{"ts": "2026-04-10T13:55:45", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.core.ConfigLoader", "message": "----------------------------------------------------"}
+{"ts": "2026-04-10T13:55:45", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "----------------------------------------------------"}
+{"ts": "2026-04-10T13:55:45", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  Brazil (BRA)"}
+{"ts": "2026-04-10T13:55:45", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "----------------------------------------------------"}
+{"ts": "2026-04-10T13:55:45", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  Geometry : Mainland only"}
+{"ts": "2026-04-10T13:55:45", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  Resolution : Fixed 0.01 deg"}
+{"ts": "2026-04-10T13:55:45", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  Suitability optimistic offset : -0.10"}
+{"ts": "2026-04-10T13:55:45", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  Protected-area mode : Hard exclusion"}
+{"ts": "2026-04-10T13:55:45", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "----------------------------------------------------"}
+{"ts": "2026-04-10T13:55:53", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "Land Cover: 155 tile(s) found."}
+{"ts": "2026-04-10T13:55:53", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.io.DataManager", "message": "Power plants found: 2340"}
+{"ts": "2026-04-10T13:55:53", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "----------------------------------------------------"}
+{"ts": "2026-04-10T13:55:53", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  DATA AVAILABILITY"}
+{"ts": "2026-04-10T13:55:53", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "----------------------------------------------------"}
+{"ts": "2026-04-10T13:55:53", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Borders"}
+{"ts": "2026-04-10T13:55:53", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Land Cover"}
+{"ts": "2026-04-10T13:55:53", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Elevation"}
+{"ts": "2026-04-10T13:55:53", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Wind"}
+{"ts": "2026-04-10T13:55:53", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Solar"}
+{"ts": "2026-04-10T13:55:53", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Power Plants"}
+{"ts": "2026-04-10T13:55:53", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Population"}
+{"ts": "2026-04-10T13:55:53", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Roads"}
+{"ts": "2026-04-10T13:55:53", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Protected"}
+{"ts": "2026-04-10T13:55:53", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  [  OK   ] Lakes"}
+{"ts": "2026-04-10T13:55:53", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "----------------------------------------------------"}
+{"ts": "2026-04-10T13:55:54", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "Auditoria: Brazil (BRA)"}
+{"ts": "2026-04-10T13:55:54", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [solar] iniciando..."}
+{"ts": "2026-04-10T13:56:00", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [solar] concluído em 5.9s"}
+{"ts": "2026-04-10T13:56:00", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [elevation] iniciando..."}
+{"ts": "2026-04-10T13:56:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [elevation] concluído em 12.2s"}
+{"ts": "2026-04-10T13:56:12", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [population] iniciando..."}
+{"ts": "2026-04-10T14:00:30", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [population] concluído em 258.5s"}
+{"ts": "2026-04-10T14:00:30", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [slope] iniciando..."}
+{"ts": "2026-04-10T14:00:39", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [slope] concluído em 8.8s"}
+{"ts": "2026-04-10T14:00:39", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [wind] iniciando..."}
+{"ts": "2026-04-10T14:00:58", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [wind] concluído em 18.7s"}
+{"ts": "2026-04-10T14:00:58", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [seismic] iniciando..."}
+{"ts": "2026-04-10T14:00:59", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [seismic] concluído em 1.3s"}
+{"ts": "2026-04-10T14:00:59", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [land_cover] iniciando..."}
+{"ts": "2026-04-10T14:27:27", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld.processors.DataAuditor", "message": "  [land_cover] concluído em 1587.2s"}
+{"ts": "2026-04-10T14:27:27", "level": "INFO", "phase": "—", "country": "—", "logger": "geoworld", "message": "  Phase 1 (Audit) completed in 1893.1s"}

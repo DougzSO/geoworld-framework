@@ -1,0 +1,19 @@
+{
+  "tech": "wind",
+  "country_code": "EGY",
+  "intensity": "moderate",
+  "lambda_max": 7.771417,
+  "ci": 0.128569,
+  "cr": 0.097401,
+  "cr_ok": true,
+  "criteria_count": 7,
+  "weights": {
+    "wind_resource": 0.382042,
+    "grid_suitability": 0.248028,
+    "terrain_score": 0.158153,
+    "road_suitability": 0.098252,
+    "pop_suitability": 0.061356,
+    "seismic_suitability": 0.031395,
+    "river_wind": 0.020775
+  }
+}

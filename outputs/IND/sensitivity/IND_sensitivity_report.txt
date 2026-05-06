@@ -1,0 +1,97 @@
+========================================================================
+SENSITIVITY ANALYSIS REPORT — IND [India]
+Generated on: 2026-04-13
+========================================================================
+
+SOLAR [Solar PV]
+------------------------------------------------------------------------
+  SA-1 · OAT Weight Sensitivity
+      Robust criteria (ρ >= 0.95)   : 5
+      Sensitive criteria (ρ < 0.95) : 2
+      Global minimum ρ              : 0.9274
+      Most sensitive criterion      : solar_resource
+
+  SA-2 · Monte Carlo AHP (Weight Uncertainty)
+      Stable pixels (CI90 < 0.10)   : 2.2%
+      Mean CV Spatial Baseline      : 0.1711
+      Mean CI90 width globally      : 0.2480
+
+  SA-3 · Threshold Sweep (Area Elasticity)
+      Base threshold (balanced)     : 0.75
+
+  SA-4 · LCOE Uncertainty (Triangular Monte Carlo)
+      LCOE P50 (Median Proxy)       : 45.9 USD/MWh
+      Confidence Interval (90%)     : 10.0 USD/MWh Spread
+      Standard Deviation            : 3.0 USD/MWh
+
+  SA-6 · Potential Parameter Sensitivity (OAT)
+      Base potential evaluated      : 450.7 GW
+      Base generation estimated     : 789.6 TWh/yr
+
+
+WIND [Wind Onshore]
+------------------------------------------------------------------------
+  SA-1 · OAT Weight Sensitivity
+      Robust criteria (ρ >= 0.95)   : 6
+      Sensitive criteria (ρ < 0.95) : 0
+      Global minimum ρ              : 0.9811
+      Most sensitive criterion      : grid_suitability
+
+  SA-2 · Monte Carlo AHP (Weight Uncertainty)
+      Stable pixels (CI90 < 0.10)   : 15.9%
+      Mean CV Spatial Baseline      : 0.1893
+      Mean CI90 width globally      : 0.2274
+
+  SA-3 · Threshold Sweep (Area Elasticity)
+      Base threshold (balanced)     : 0.75
+
+  SA-4 · LCOE Uncertainty (Triangular Monte Carlo)
+      LCOE P50 (Median Proxy)       : 61.2 USD/MWh
+      Confidence Interval (90%)     : 12.6 USD/MWh Spread
+      Standard Deviation            : 3.8 USD/MWh
+
+  SA-6 · Potential Parameter Sensitivity (OAT)
+      Base potential evaluated      : 116.1 GW
+      Base generation estimated     : 244.0 TWh/yr
+
+
+BIOMASS [Biomass / Bioenergy]
+------------------------------------------------------------------------
+  SA-1 · OAT Weight Sensitivity
+      Robust criteria (ρ >= 0.95)   : 6
+      Sensitive criteria (ρ < 0.95) : 2
+      Global minimum ρ              : 0.9346
+      Most sensitive criterion      : lc_biomass
+
+  SA-2 · Monte Carlo AHP (Weight Uncertainty)
+      Stable pixels (CI90 < 0.10)   : 6.9%
+      Mean CV Spatial Baseline      : 0.1649
+      Mean CI90 width globally      : 0.2793
+
+  SA-3 · Threshold Sweep (Area Elasticity)
+      Base threshold (balanced)     : 0.75
+
+  SA-4 · LCOE Uncertainty (Triangular Monte Carlo)
+      LCOE P50 (Median Proxy)       : 55.6 USD/MWh
+      Confidence Interval (90%)     : 11.4 USD/MWh Spread
+      Standard Deviation            : 3.5 USD/MWh
+
+  SA-6 · Potential Parameter Sensitivity (OAT)
+      Base potential evaluated      : 95.8 GW
+      Base generation estimated     : 587.7 TWh/yr
+
+------------------------------------------------------------------------
+SA-5 · Sobol Global Sensitivity (GHG Abatement Function)
+------------------------------------------------------------------------
+Dominant parameter (ST proxy) : penetration_factor
+
+  Parameter                                 S1       ±S1        ST       ±ST
+  ─────────────────────────────────────────────────────────────────
+  penetration_factor                    0.5957    0.0591    0.6009    0.0511
+  ef_thermal_gco2_kwh                   0.3820    0.0481    0.3870    0.0333
+  ef_lifecycle_gco2_kwh                 0.0170    0.0113    0.0173    0.0017
+  cf_renewable                          0.0000    0.0000    0.0000    0.0000
+
+========================================================================
+Total analysis time: 186.9s
+========================================================================

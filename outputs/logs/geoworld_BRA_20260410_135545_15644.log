@@ -1,0 +1,50 @@
+2026-04-10T13:55:45 | INFO     | geoworld.io.DataManager | Raw data root: D:\Douglas\DOUTORADO\database\raw
+2026-04-10T13:55:45 | INFO     | geoworld | Starting analysis: Brazil (BRA)
+2026-04-10T13:55:45 | INFO     | geoworld.core.ConfigLoader | ----------------------------------------------------
+2026-04-10T13:55:45 | INFO     | geoworld.core.ConfigLoader |   Brazil (BRA)
+2026-04-10T13:55:45 | INFO     | geoworld.core.ConfigLoader |   Solar  : LUF=0.05  thr=0.75  density=45.0 MW/km²
+2026-04-10T13:55:45 | INFO     | geoworld.core.ConfigLoader |   Wind   : LUF=0.030  thr=0.75  density=6.0 MW/km²
+2026-04-10T13:55:45 | INFO     | geoworld.core.ConfigLoader |   Biomass: col=0.30  thr=0.75  density=0.5 MW/km²
+2026-04-10T13:55:45 | INFO     | geoworld.core.ConfigLoader |   OWA    : default=balanced  scenarios=['optimistic', 'balanced', 'conservative']
+2026-04-10T13:55:45 | INFO     | geoworld.core.ConfigLoader |   Criteria: river=5.0 km  road=15.0 km  slope=12°
+2026-04-10T13:55:45 | INFO     | geoworld.core.ConfigLoader | ----------------------------------------------------
+2026-04-10T13:55:45 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T13:55:45 | INFO     | geoworld |   Brazil (BRA)
+2026-04-10T13:55:45 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T13:55:45 | INFO     | geoworld |   Geometry : Mainland only
+2026-04-10T13:55:45 | INFO     | geoworld |   Resolution : Fixed 0.01 deg
+2026-04-10T13:55:45 | INFO     | geoworld |   Suitability optimistic offset : -0.10
+2026-04-10T13:55:45 | INFO     | geoworld |   Protected-area mode : Hard exclusion
+2026-04-10T13:55:45 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T13:55:53 | INFO     | geoworld | Land Cover: 155 tile(s) found.
+2026-04-10T13:55:53 | INFO     | geoworld.io.DataManager | Power plants found: 2340
+2026-04-10T13:55:53 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T13:55:53 | INFO     | geoworld |   DATA AVAILABILITY
+2026-04-10T13:55:53 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T13:55:53 | INFO     | geoworld |   [  OK   ] Borders
+2026-04-10T13:55:53 | INFO     | geoworld |   [  OK   ] Land Cover
+2026-04-10T13:55:53 | INFO     | geoworld |   [  OK   ] Elevation
+2026-04-10T13:55:53 | INFO     | geoworld |   [  OK   ] Wind
+2026-04-10T13:55:53 | INFO     | geoworld |   [  OK   ] Solar
+2026-04-10T13:55:53 | INFO     | geoworld |   [  OK   ] Power Plants
+2026-04-10T13:55:53 | INFO     | geoworld |   [  OK   ] Population
+2026-04-10T13:55:53 | INFO     | geoworld |   [  OK   ] Roads
+2026-04-10T13:55:53 | INFO     | geoworld |   [  OK   ] Protected
+2026-04-10T13:55:53 | INFO     | geoworld |   [  OK   ] Lakes
+2026-04-10T13:55:53 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T13:55:54 | INFO     | geoworld.processors.DataAuditor | Auditoria: Brazil (BRA)
+2026-04-10T13:55:54 | INFO     | geoworld.processors.DataAuditor |   [solar] iniciando...
+2026-04-10T13:56:00 | INFO     | geoworld.processors.DataAuditor |   [solar] concluído em 5.9s
+2026-04-10T13:56:00 | INFO     | geoworld.processors.DataAuditor |   [elevation] iniciando...
+2026-04-10T13:56:12 | INFO     | geoworld.processors.DataAuditor |   [elevation] concluído em 12.2s
+2026-04-10T13:56:12 | INFO     | geoworld.processors.DataAuditor |   [population] iniciando...
+2026-04-10T14:00:30 | INFO     | geoworld.processors.DataAuditor |   [population] concluído em 258.5s
+2026-04-10T14:00:30 | INFO     | geoworld.processors.DataAuditor |   [slope] iniciando...
+2026-04-10T14:00:39 | INFO     | geoworld.processors.DataAuditor |   [slope] concluído em 8.8s
+2026-04-10T14:00:39 | INFO     | geoworld.processors.DataAuditor |   [wind] iniciando...
+2026-04-10T14:00:58 | INFO     | geoworld.processors.DataAuditor |   [wind] concluído em 18.7s
+2026-04-10T14:00:58 | INFO     | geoworld.processors.DataAuditor |   [seismic] iniciando...
+2026-04-10T14:00:59 | INFO     | geoworld.processors.DataAuditor |   [seismic] concluído em 1.3s
+2026-04-10T14:00:59 | INFO     | geoworld.processors.DataAuditor |   [land_cover] iniciando...
+2026-04-10T14:27:27 | INFO     | geoworld.processors.DataAuditor |   [land_cover] concluído em 1587.2s
+2026-04-10T14:27:27 | INFO     | geoworld |   Phase 1 (Audit) completed in 1893.1s

@@ -1,0 +1,86 @@
+========================================================================
+GHG ABATEMENT SYNTHESIS REPORT — Phase 7
+Egypt (EGY)
+Generated: 2026-04-10 14:16:46
+========================================================================
+
+==============================================================================
+EXECUTIVE SUMMARY
+==============================================================================
+MAC (Marginal Abatement Cost)      : 2.6 USD/tCO₂e
+Breakeven Carbon Price (BCP)       : 2.6 USD/tCO₂e
+CO₂ Avoided (annual)               : 31.68 MtCO₂e/yr
+Total Economic Value               : 0.63 Billion USD/yr
+Grid Substitution Volume           : 60.7 TWh (50.0%)
+Carbon Intensity Reduction         : 506 → 269 gCO₂/kWh
+==============================================================================
+
+SECTION 1 — THERMAL FLEET (BEFORE TRANSITION)
+------------------------------------------------------------
+  Fuel     Cap MW    CF   Gen GWh/yr   EF tCO₂/GWh  SRMC $/MWh   CO₂ MtCO₂/yr
+  ------------------------------------------------------------
+  Coal        500   55%        2,409           820        30.0          1.975
+  Gas      29,077   45%      114,622           490        44.0         56.165
+  Oil       1,000   50%        4,380           750        70.0          3.285
+  TOTAL    30,577            121,411                                       61.425
+
+SECTION 2 — RENEWABLE POTENTIAL (Balanced scenario, Phase 4+5)
+------------------------------------------------------------
+  Tech           Gen GWh/yr     GW  Share %   LCOE $/MWh   MAC $/tCO₂
+  ------------------------------------------------------------
+  Solar PV            162,807   71.5     78.8         40.2         -8.9 ✓ vs LRMC
+  Wind Onshore         19,005    6.2      9.2         62.9         36.1
+  Biomass              24,682    4.0     12.0         71.1         52.3
+
+SECTION 3 — MAC / SUBSTITUTION RESULTS
+------------------------------------------------------------
+  Carbon proxy applied                   : 20 USD/tCO₂e
+  SRMC thermal (gen-weighted)            : 44.7 USD/MWh
+  LRMC thermal (with carbon)             : 54.8 USD/MWh
+  Avg renewable LCOE                     : 46.0 USD/MWh
+  ► MAC (global, gen-weighted)           : 2.56 USD/tCO₂e
+  ► BCP (breakeven carbon price)         : 2.56 USD/tCO₂e
+    → EU ETS proxy at 20 USD/tCO₂ COVERS breakeven
+  Substitution (limit applied)           : 60,705 GWh/yr (50.0% of thermal)
+    N/A
+  CO₂ avoided                            : 31.679 MtCO₂e/yr
+  TOTAL economic value created           : 0.634 Billion USD/yr
+
+SECTION 4 — CARBON INTENSITY (gCO₂eq/kWh)
+------------------------------------------------------------
+  Before transition (thermal mix)        : 505.9 gCO₂/kWh
+  After transition (post-subst mix)      : 269.0 gCO₂/kWh
+  Reduction                              : 46.8%
+  Renewables avg lifecycle               : 48.0 gCO₂/kWh
+
+SECTION 5 — CARBON FOOTPRINT BY SCOPE (GHG Protocol)
+------------------------------------------------------------
+  Scope 1 (direct thermal, after subst.) : 29.746 MtCO₂e/yr
+  Scope 2 (indirect — new renew/grid)    : 16.330 MtCO₂e/yr
+  Scope 3 (renew lifecycle: upstreams)   : 2.914 MtCO₂e/yr
+  Total Scope 1+2+3 (post-transition)    : 48.989 MtCO₂e/yr
+
+SECTION 6 — NET ZERO ANALYSIS (Referencing WHOLE national economy)
+------------------------------------------------------------
+  Country net-zero target year           : 2050
+  Current total CO₂ (all sectors, API)   : 0.0 MtCO₂e/yr
+
+  NDC type                               : absolute reduction target
+  NDC base year / base emissions         : 2015 / 340.0 MtCO₂e/yr
+  NDC 2030 commitment                    : −33% vs 2015 baseline
+  NDC 2030 target (absolute cap)         : <= 227.8 MtCO₂e/yr (all sectors)
+  Current total vs target gap            : 0.0 MtCO₂e/yr to close by 2030
+  Electricity transition contribution    : 28.77 MtCO₂e/yr net avoided
+    → covers nan% of the 2030 gap
+  Residual gap after this transition     : nan MtCO₂e/yr (to be closed by other sectors)
+  Source: Egypt Updated NDC (2022). Ministry of Environment.
+
+SECTION 7 — EMISSION BALANCE DECOMPOSITION
+------------------------------------------------------------
+  Current national footprint (all sectors): +0.00 MtCO₂e/yr
+    of which modelled electricity sector  :  61.42 MtCO₂e/yr
+  − CO₂ avoided (thermal displacement)    : −31.679 MtCO₂e/yr
+  + Lifecycle CO₂ (new renewables built)  : +2.914 MtCO₂e/yr
+  + Residual thermal CO₂ kept for grid    : +29.746 MtCO₂e/yr
+  = Post-transition national proxy        :  0.00 MtCO₂e/yr
+========================================================================

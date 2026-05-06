@@ -1,0 +1,556 @@
+{
+  "_meta": {
+    "version": "2.0",
+    "last_updated": "2026-04-09",
+    "description": "GeoWorld Framework — Transport Decarbonisation Module (Phase 9). Parameters for multi-powertrain fleet electrification (ICE, BEV, HEV, PHEV), charging infrastructure siting, and renewable energy demand modelling from 2025–2050.",
+    "scope": "This file is self-contained and does NOT modify parameters.json. Consumed exclusively by TransportDecarbonizationCalculator.",
+    "powertrain_types": {
+      "ice":  "Internal Combustion Engine (gasoline, diesel, flex, ethanol, biodiesel)",
+      "hev":  "Full Hybrid Electric Vehicle (self-charging, no plug)",
+      "phev": "Plug-in Hybrid Electric Vehicle (partial electric range)",
+      "bev":  "Battery Electric Vehicle (fully electric)",
+      "fcev": "Fuel Cell Electric Vehicle (hydrogen)"
+    },
+    "units": {
+      "fleet_size":               "number of registered vehicles",
+      "ev_range_km":              "km on a full charge (WLTP)",
+      "charging_power_kw":        "kW per charging point",
+      "energy_per_km_kwh":        "kWh per vehicle-km",
+      "emission_factor_gco2_km":  "gCO2eq per vehicle-km (Well-to-Wheel)",
+      "emission_factor_gco2_kwh": "gCO2eq/kWh",
+      "hub_radius_km":            "km between charging hubs",
+      "growth_rate":              "annual fractional growth rate [0-1]",
+      "penetration":              "fraction [0-1] of new sales",
+      "cost_usd":                 "USD"
+    },
+    "key_references": {
+      "[IEA-EV2024]":       "IEA (2024). Global EV Outlook 2024.",
+      "[IEA-EV2025]":       "IEA (2025). Global EV Outlook 2025.",
+      "[ICCT2023]":         "ICCT (2023). Pathways to zero-emission heavy-duty vehicles.",
+      "[IPCC2022]":         "IPCC AR6 WG3 (2022). Transport Chapter 10.",
+      "[IRENA2024t]":       "IRENA (2024). Electrification with Renewables.",
+      "[BloombergNEF2024]": "BNEF (2024). Electric Vehicle Outlook 2024.",
+      "[WRI2023]":          "WRI (2023). Decarbonizing Transport in Emerging Economies.",
+      "[IRF2023]":          "IRF (2023). World Road Statistics 2023."
+    }
+  },
+
+  "global_defaults": {
+    "_note": "Applied when country-specific overrides are absent. Tier 2 fallback.",
+
+    "projection_horizon": {
+      "start_year": 2025,
+      "end_year":   2050
+    },
+
+    "vehicle_categories": {
+      "passenger_car": {
+        "label": "Passenger Cars (LDV)",
+        "share_of_fleet": 0.72,
+        "_share_note": "[IRF2023] Global average.",
+        "energy_per_km_kwh": {
+          "ice_gasoline":   0.068,
+          "ice_diesel":     0.060,
+          "ice_flex_e10":   0.070,
+          "hybrid_hev":     0.045,
+          "hybrid_phev":    0.030,
+          "bev":            0.175,
+          "fcev":           0.008,
+          "biodiesel_b20":  0.062,
+          "biodiesel_b100": 0.064,
+          "ethanol_e85":    0.075
+        },
+        "emission_factor_gco2_km": {
+          "ice_gasoline":   192.0,
+          "ice_diesel":     168.0,
+          "ice_flex_e10":   185.0,
+          "hybrid_hev":     118.0,
+          "_hev_note": "[IPCC2022] HEV ~35-40% lower than equivalent ICE.",
+          "hybrid_phev":     70.0,
+          "_phev_note": "[IEA-EV2024] PHEV real-world ~70 gCO2/km (blended mode).",
+          "bev":              0.0,
+          "fcev":             0.0,
+          "biodiesel_b20":  154.0,
+          "biodiesel_b100":  28.0,
+          "ethanol_e85":     50.0
+        },
+        "ev_range_km": 380,
+        "avg_daily_km": 42.0,
+        "charging_power_kw": {
+          "slow_ac":  7.4,
+          "fast_ac":  22.0,
+          "dc_fast":  50.0,
+          "dc_ultra": 150.0
+        }
+      },
+
+      "light_commercial": {
+        "label": "Light Commercial Vehicles (LCV)",
+        "share_of_fleet": 0.14,
+        "energy_per_km_kwh": {
+          "ice_gasoline":  0.085,
+          "ice_diesel":    0.078,
+          "hybrid_hev":    0.055,
+          "hybrid_phev":   0.042,
+          "bev":           0.280,
+          "biodiesel_b20": 0.081
+        },
+        "emission_factor_gco2_km": {
+          "ice_gasoline":  240.0,
+          "ice_diesel":    215.0,
+          "hybrid_hev":    148.0,
+          "hybrid_phev":   100.0,
+          "bev":             0.0,
+          "biodiesel_b20": 197.0
+        },
+        "ev_range_km": 280,
+        "avg_daily_km": 58.0,
+        "charging_power_kw": {
+          "slow_ac":  11.0,
+          "dc_fast":  50.0,
+          "dc_ultra": 120.0
+        }
+      },
+
+      "heavy_truck": {
+        "label": "Heavy Trucks & Freight (HDV)",
+        "share_of_fleet": 0.07,
+        "energy_per_km_kwh": {
+          "ice_diesel":     2.50,
+          "hybrid_hev":     1.90,
+          "bev":            1.60,
+          "biodiesel_b20":  2.58,
+          "hydrogen_fcev":  0.14
+        },
+        "emission_factor_gco2_km": {
+          "ice_diesel":     900.0,
+          "hybrid_hev":     630.0,
+          "bev":              0.0,
+          "biodiesel_b20":  828.0,
+          "hydrogen_fcev":    0.0
+        },
+        "ev_range_km": 400,
+        "avg_daily_km": 320.0,
+        "charging_power_kw": {
+          "depot_ac":     43.0,
+          "megawatt_mcs": 1000.0
+        }
+      },
+
+      "bus_transit": {
+        "label": "Urban & Transit Buses",
+        "share_of_fleet": 0.04,
+        "energy_per_km_kwh": {
+          "ice_diesel":     1.20,
+          "hybrid_hev":     0.85,
+          "bev":            0.90,
+          "biodiesel_b20":  1.23,
+          "hydrogen_fcev":  0.10
+        },
+        "emission_factor_gco2_km": {
+          "ice_diesel":     760.0,
+          "hybrid_hev":     532.0,
+          "bev":              0.0,
+          "biodiesel_b20":  700.0,
+          "hydrogen_fcev":    0.0
+        },
+        "ev_range_km": 300,
+        "avg_daily_km": 220.0,
+        "charging_power_kw": {
+          "opportunity":       150.0,
+          "depot_overnight":    50.0
+        }
+      },
+
+      "two_three_wheeler": {
+        "label": "Two/Three-Wheelers (2W/3W)",
+        "share_of_fleet": 0.03,
+        "energy_per_km_kwh": {
+          "ice_gasoline": 0.025,
+          "hybrid_hev":   0.018,
+          "bev":          0.040
+        },
+        "emission_factor_gco2_km": {
+          "ice_gasoline": 82.0,
+          "hybrid_hev":   55.0,
+          "bev":           0.0
+        },
+        "ev_range_km": 120,
+        "avg_daily_km": 28.0,
+        "charging_power_kw": {
+          "slow_ac": 3.3
+        }
+      }
+    },
+
+    "fleet_growth": {
+      "annual_growth_rate_default": 0.025,
+      "_note": "2.5%/yr global median for middle-income economies [IEA-EV2024]."
+    },
+
+    "powertrain_penetration_scenarios": {
+      "_note": "Share of NEW SALES per powertrain type per year. Must sum to 1.0 per year. Cumulative fleet stock follows stock-turnover model. Keys: ice, hev, phev, bev, fcev.",
+      "_methodology": "ICE = all combustion variants combined; HEV = self-charging hybrid; PHEV = plug-in hybrid; BEV = full electric; FCEV = hydrogen fuel cell.",
+
+      "reference": {
+        "label": "Reference (Current Policies)",
+        "2025": {"ice": 0.72, "hev": 0.14, "phev": 0.06, "bev": 0.07, "fcev": 0.01},
+        "2030": {"ice": 0.52, "hev": 0.18, "phev": 0.10, "bev": 0.18, "fcev": 0.02},
+        "2035": {"ice": 0.35, "hev": 0.20, "phev": 0.12, "bev": 0.30, "fcev": 0.03},
+        "2040": {"ice": 0.20, "hev": 0.18, "phev": 0.12, "bev": 0.45, "fcev": 0.05},
+        "2045": {"ice": 0.10, "hev": 0.14, "phev": 0.10, "bev": 0.60, "fcev": 0.06},
+        "2050": {"ice": 0.05, "hev": 0.10, "phev": 0.07, "bev": 0.72, "fcev": 0.06}
+      },
+      "accelerated": {
+        "label": "Accelerated (Net-Zero Aligned)",
+        "2025": {"ice": 0.65, "hev": 0.15, "phev": 0.08, "bev": 0.11, "fcev": 0.01},
+        "2030": {"ice": 0.30, "hev": 0.18, "phev": 0.12, "bev": 0.36, "fcev": 0.04},
+        "2035": {"ice": 0.10, "hev": 0.15, "phev": 0.10, "bev": 0.58, "fcev": 0.07},
+        "2040": {"ice": 0.02, "hev": 0.10, "phev": 0.08, "bev": 0.72, "fcev": 0.08},
+        "2045": {"ice": 0.00, "hev": 0.06, "phev": 0.04, "bev": 0.82, "fcev": 0.08},
+        "2050": {"ice": 0.00, "hev": 0.03, "phev": 0.02, "bev": 0.87, "fcev": 0.08}
+      },
+      "conservative": {
+        "label": "Conservative (Delayed Transition)",
+        "2025": {"ice": 0.80, "hev": 0.11, "phev": 0.04, "bev": 0.04, "fcev": 0.01},
+        "2030": {"ice": 0.68, "hev": 0.14, "phev": 0.07, "bev": 0.10, "fcev": 0.01},
+        "2035": {"ice": 0.55, "hev": 0.18, "phev": 0.09, "bev": 0.16, "fcev": 0.02},
+        "2040": {"ice": 0.40, "hev": 0.20, "phev": 0.11, "bev": 0.26, "fcev": 0.03},
+        "2045": {"ice": 0.28, "hev": 0.20, "phev": 0.12, "bev": 0.36, "fcev": 0.04},
+        "2050": {"ice": 0.18, "hev": 0.20, "phev": 0.12, "bev": 0.46, "fcev": 0.04}
+      }
+    },
+
+    "vehicle_lifetime_years": {
+      "passenger_car":     15,
+      "light_commercial":  12,
+      "heavy_truck":       18,
+      "bus_transit":       14,
+      "two_three_wheeler": 10
+    },
+
+    "charging_infrastructure": {
+      "ev_per_public_charger_ratio": 10,
+      "hub_radius_km":        80.0,
+      "hub_min_chargers":      4,
+      "hub_power_mw":          0.5,
+      "hub_capex_usd":         850000,
+      "charger_utilization_factor": 0.15
+    },
+
+    "grid_emission_intensity_defaults": {
+      "_note": "Global fallback trajectory aligned with IEA NZE.",
+      "2025": 436.0,
+      "2030": 380.0,
+      "2035": 290.0,
+      "2040": 200.0,
+      "2045": 120.0,
+      "2050":  50.0
+    },
+
+    "costs": {
+      "bev_premium_usd":         5000,
+      "bev_premium_end_year":    2029,
+      "fuel_cost_usd_lge":       1.45,
+      "electricity_cost_usd_kwh": 0.14,
+      "renewable_build_cost_usd_kw": {
+        "solar":   760.0,
+        "wind":   1360.0,
+        "biomass": 2720.0
+      }
+    },
+
+    "co2_social_cost_usd_tco2": 80.0
+  },
+
+  "countries": {
+
+    "BRA": {
+      "_note": "Brazil — upper-middle income; world leader in sugarcane ethanol; flex-fuel fleet dominant. Slow BEV ramp-up offset by strong HEV/flex transition.",
+      "fleet_size_2024": 115000000,
+      "_fleet_note": "[DENATRAN/SENATRAN 2024] ~115M registered vehicles including motorcycles.",
+      "fleet_size_light_vehicles_2024": 57000000,
+      "_fleet_lv_note": "[SENATRAN 2024] ~57M registered passenger cars (automóveis). Motorcycles ~28M; LCV/trucks/buses ~30M excluded from light-vehicle model.",
+      "annual_fleet_growth_rate": 0.040,
+      "_growth_note": "[ANFAVEA 2024] ~3.5-4.5%/yr fleet growth.",
+      "grid_emission_intensity_gco2_kwh": {
+        "2025": 88.0,
+        "2030": 60.0,
+        "2035": 40.0,
+        "2040": 25.0,
+        "2045": 15.0,
+        "2050":  8.0
+      },
+      "_grid_note": "[ONS 2024, EPE 2024] Hydro-dominant grid; solar+wind further decarbonises.",
+      "hub_placement": {
+        "weight_suitability":      0.45,
+        "weight_demand_proximity": 0.40,
+        "weight_lcoe":             0.15,
+        "max_remote_fraction":     0.55,
+        "demand_grid_cells":       10
+      },
+      "hub_min_suitability": 0.90,
+      "powertrain_penetration_override": {
+        "_note": "Brazil-specific. ICE includes flex-fuel ethanol vehicles (dominant). HEV growing from ~3% in 2024. BEV slow due to price sensitivity and ethanol competitiveness.",
+        "reference": {
+          "2025": {"ice": 0.88, "hev": 0.05, "phev": 0.02, "bev": 0.05, "fcev": 0.00},
+          "2030": {"ice": 0.75, "hev": 0.10, "phev": 0.04, "bev": 0.10, "fcev": 0.01},
+          "2035": {"ice": 0.62, "hev": 0.14, "phev": 0.06, "bev": 0.17, "fcev": 0.01},
+          "2040": {"ice": 0.48, "hev": 0.18, "phev": 0.08, "bev": 0.25, "fcev": 0.01},
+          "2045": {"ice": 0.35, "hev": 0.20, "phev": 0.09, "bev": 0.35, "fcev": 0.01},
+          "2050": {"ice": 0.25, "hev": 0.20, "phev": 0.10, "bev": 0.44, "fcev": 0.01}
+        },
+        "accelerated": {
+          "2025": {"ice": 0.83, "hev": 0.07, "phev": 0.03, "bev": 0.07, "fcev": 0.00},
+          "2030": {"ice": 0.60, "hev": 0.14, "phev": 0.07, "bev": 0.18, "fcev": 0.01},
+          "2035": {"ice": 0.38, "hev": 0.18, "phev": 0.10, "bev": 0.33, "fcev": 0.01},
+          "2040": {"ice": 0.20, "hev": 0.18, "phev": 0.10, "bev": 0.50, "fcev": 0.02},
+          "2045": {"ice": 0.08, "hev": 0.14, "phev": 0.08, "bev": 0.68, "fcev": 0.02},
+          "2050": {"ice": 0.03, "hev": 0.10, "phev": 0.06, "bev": 0.79, "fcev": 0.02}
+        },
+        "conservative": {
+          "2025": {"ice": 0.92, "hev": 0.04, "phev": 0.01, "bev": 0.03, "fcev": 0.00},
+          "2030": {"ice": 0.84, "hev": 0.08, "phev": 0.03, "bev": 0.05, "fcev": 0.00},
+          "2035": {"ice": 0.75, "hev": 0.12, "phev": 0.05, "bev": 0.08, "fcev": 0.00},
+          "2040": {"ice": 0.64, "hev": 0.16, "phev": 0.07, "bev": 0.12, "fcev": 0.01},
+          "2045": {"ice": 0.53, "hev": 0.18, "phev": 0.08, "bev": 0.20, "fcev": 0.01},
+          "2050": {"ice": 0.42, "hev": 0.20, "phev": 0.09, "bev": 0.28, "fcev": 0.01}
+        }
+      },
+      "dominant_fuel_mix": {
+        "_note": "2024 stock composition; used for weighted ICE emission factor calculation.",
+        "passenger_car":    {"ice_flex_e10": 0.20, "ice_gasoline": 0.10, "ethanol_e85": 0.40, "hybrid_hev": 0.05, "bev": 0.03, "ice_diesel": 0.22},
+        "light_commercial": {"ice_diesel": 0.70, "ice_gasoline": 0.20, "hybrid_hev": 0.05, "bev": 0.05},
+        "heavy_truck":      {"ice_diesel": 0.90, "biodiesel_b20": 0.08, "bev": 0.02},
+        "bus_transit":      {"ice_diesel": 0.70, "biodiesel_b20": 0.20, "bev": 0.10},
+        "two_three_wheeler":{"ice_gasoline": 0.90, "bev": 0.10}
+      },
+      "hub_radius_km": 120.0,
+      "_hub_note": "Large territory; sparse road network in north; 120 km practical minimum.",
+      "biodiesel_blend": "B14",
+      "ethanol_blend":   "E27",
+      "_biofuel_note": "[ANP 2024] Brazil mandates B14 biodiesel and E27 hydrous ethanol as of 2024."
+    },
+
+    "PRT": {
+      "_note": "Portugal — high-income EU member; >60% renewable grid; EV adoption leader in Southern Europe.",
+      "fleet_size_2024": 5200000,
+      "_fleet_note": "[IRF2023, ACAP 2024] ~5.1-5.3M registered vehicles.",
+      "fleet_size_light_vehicles_2024": 4200000,
+      "_fleet_lv_note": "[ACAP 2024] ~4.2M registered passenger cars (automóveis ligeiros de passageiros).",
+      "annual_fleet_growth_rate": 0.012,
+      "grid_emission_intensity_gco2_kwh": {
+        "2025": 120.0,
+        "2030":  80.0,
+        "2035":  40.0,
+        "2040":  20.0,
+        "2045":  10.0,
+        "2050":   5.0
+      },
+      "_grid_note": "[REN 2024] Portugal targets 85% renewable electricity by 2030.",
+      "powertrain_penetration_override": {
+        "_note": "Portugal-specific. Aggressive BEV ramp per PNEC 2030/2050 mandates. Strong HEV transition phase 2025-2035.",
+        "reference": {
+          "2025": {"ice": 0.55, "hev": 0.18, "phev": 0.07, "bev": 0.18, "fcev": 0.02},
+          "2030": {"ice": 0.25, "hev": 0.20, "phev": 0.10, "bev": 0.42, "fcev": 0.03},
+          "2035": {"ice": 0.05, "hev": 0.15, "phev": 0.08, "bev": 0.68, "fcev": 0.04},
+          "2040": {"ice": 0.00, "hev": 0.10, "phev": 0.05, "bev": 0.81, "fcev": 0.04},
+          "2045": {"ice": 0.00, "hev": 0.06, "phev": 0.03, "bev": 0.87, "fcev": 0.04},
+          "2050": {"ice": 0.00, "hev": 0.03, "phev": 0.02, "bev": 0.91, "fcev": 0.04}
+        },
+        "accelerated": {
+          "2025": {"ice": 0.45, "hev": 0.18, "phev": 0.09, "bev": 0.26, "fcev": 0.02},
+          "2030": {"ice": 0.10, "hev": 0.15, "phev": 0.08, "bev": 0.63, "fcev": 0.04},
+          "2035": {"ice": 0.00, "hev": 0.08, "phev": 0.04, "bev": 0.83, "fcev": 0.05},
+          "2040": {"ice": 0.00, "hev": 0.04, "phev": 0.02, "bev": 0.89, "fcev": 0.05},
+          "2045": {"ice": 0.00, "hev": 0.02, "phev": 0.01, "bev": 0.92, "fcev": 0.05},
+          "2050": {"ice": 0.00, "hev": 0.01, "phev": 0.00, "bev": 0.94, "fcev": 0.05}
+        },
+        "conservative": {
+          "2025": {"ice": 0.65, "hev": 0.16, "phev": 0.06, "bev": 0.12, "fcev": 0.01},
+          "2030": {"ice": 0.40, "hev": 0.22, "phev": 0.10, "bev": 0.26, "fcev": 0.02},
+          "2035": {"ice": 0.18, "hev": 0.24, "phev": 0.12, "bev": 0.43, "fcev": 0.03},
+          "2040": {"ice": 0.05, "hev": 0.20, "phev": 0.10, "bev": 0.61, "fcev": 0.04},
+          "2045": {"ice": 0.01, "hev": 0.14, "phev": 0.08, "bev": 0.73, "fcev": 0.04},
+          "2050": {"ice": 0.00, "hev": 0.10, "phev": 0.06, "bev": 0.80, "fcev": 0.04}
+        }
+      },
+      "dominant_fuel_mix": {
+        "passenger_car":    {"ice_gasoline": 0.52, "ice_diesel": 0.30, "hybrid_hev": 0.10, "bev": 0.06, "hybrid_phev": 0.02},
+        "light_commercial": {"ice_diesel": 0.80, "hybrid_hev": 0.08, "bev": 0.07, "hybrid_phev": 0.05},
+        "heavy_truck":      {"ice_diesel": 0.95, "bev": 0.02, "biodiesel_b20": 0.03},
+        "bus_transit":      {"ice_diesel": 0.80, "bev": 0.12, "biodiesel_b20": 0.08},
+        "two_three_wheeler":{"ice_gasoline": 0.88, "bev": 0.12}
+      },
+      "hub_radius_km": 60.0,
+      "biodiesel_blend": "B7",
+      "ethanol_blend":   "E10"
+    },
+
+    "ZAF": {
+      "_note": "South Africa — upper-middle income; coal-dominant grid; nascent EV market. HEV likely to dominate transition phase given high vehicle prices.",
+      "fleet_size_2024": 12500000,
+      "_fleet_note": "[NAAMSA 2024] ~12-13M registered vehicles.",
+      "fleet_size_light_vehicles_2024": 9800000,
+      "_fleet_lv_note": "[NAAMSA 2024] ~9.8M registered passenger cars; ~2.7M trucks/buses excluded.",
+      "annual_fleet_growth_rate": 0.022,
+      "grid_emission_intensity_gco2_kwh": {
+        "2025": 850.0,
+        "2030": 680.0,
+        "2035": 480.0,
+        "2040": 300.0,
+        "2045": 150.0,
+        "2050":  60.0
+      },
+      "_grid_note": "[CSIR 2024, DMRE IRP 2023] Coal phase-out by 2040s; large solar+wind additions.",
+      "powertrain_penetration_override": {
+        "_note": "South Africa-specific. Slow BEV uptake due to high import costs, load-shedding risk, and limited charging infra. HEV as pragmatic bridge technology.",
+        "reference": {
+          "2025": {"ice": 0.87, "hev": 0.08, "phev": 0.02, "bev": 0.03, "fcev": 0.00},
+          "2030": {"ice": 0.72, "hev": 0.14, "phev": 0.05, "bev": 0.08, "fcev": 0.01},
+          "2035": {"ice": 0.55, "hev": 0.20, "phev": 0.08, "bev": 0.16, "fcev": 0.01},
+          "2040": {"ice": 0.38, "hev": 0.24, "phev": 0.10, "bev": 0.27, "fcev": 0.01},
+          "2045": {"ice": 0.22, "hev": 0.25, "phev": 0.11, "bev": 0.40, "fcev": 0.02},
+          "2050": {"ice": 0.12, "hev": 0.23, "phev": 0.10, "bev": 0.53, "fcev": 0.02}
+        },
+        "accelerated": {
+          "2025": {"ice": 0.80, "hev": 0.10, "phev": 0.04, "bev": 0.06, "fcev": 0.00},
+          "2030": {"ice": 0.55, "hev": 0.18, "phev": 0.08, "bev": 0.18, "fcev": 0.01},
+          "2035": {"ice": 0.30, "hev": 0.22, "phev": 0.12, "bev": 0.34, "fcev": 0.02},
+          "2040": {"ice": 0.12, "hev": 0.20, "phev": 0.12, "bev": 0.53, "fcev": 0.03},
+          "2045": {"ice": 0.03, "hev": 0.15, "phev": 0.09, "bev": 0.70, "fcev": 0.03},
+          "2050": {"ice": 0.00, "hev": 0.10, "phev": 0.06, "bev": 0.81, "fcev": 0.03}
+        },
+        "conservative": {
+          "2025": {"ice": 0.92, "hev": 0.05, "phev": 0.01, "bev": 0.02, "fcev": 0.00},
+          "2030": {"ice": 0.82, "hev": 0.10, "phev": 0.03, "bev": 0.05, "fcev": 0.00},
+          "2035": {"ice": 0.70, "hev": 0.16, "phev": 0.06, "bev": 0.08, "fcev": 0.00},
+          "2040": {"ice": 0.57, "hev": 0.22, "phev": 0.08, "bev": 0.12, "fcev": 0.01},
+          "2045": {"ice": 0.44, "hev": 0.26, "phev": 0.10, "bev": 0.19, "fcev": 0.01},
+          "2050": {"ice": 0.32, "hev": 0.28, "phev": 0.11, "bev": 0.28, "fcev": 0.01}
+        }
+      },
+      "dominant_fuel_mix": {
+        "passenger_car":    {"ice_gasoline": 0.55, "ice_diesel": 0.38, "hybrid_hev": 0.04, "bev": 0.02, "hybrid_phev": 0.01},
+        "light_commercial": {"ice_diesel": 0.85, "hybrid_hev": 0.08, "bev": 0.04, "hybrid_phev": 0.03},
+        "heavy_truck":      {"ice_diesel": 0.97, "bev": 0.01, "biodiesel_b20": 0.02},
+        "bus_transit":      {"ice_diesel": 0.92, "bev": 0.05, "biodiesel_b20": 0.03},
+        "two_three_wheeler":{"ice_gasoline": 0.95, "bev": 0.05}
+      },
+      "hub_radius_km": 100.0,
+      "biodiesel_blend": "B5",
+      "ethanol_blend":   "E10"
+    },
+
+    "CHN": {
+      "_note": "China — world largest EV market; NEV mandate driving rapid BEV+PHEV adoption; HEV declining relative share.",
+      "fleet_size_2024": 340000000,
+      "_fleet_note": "[MPS China 2024] ~340M registered motor vehicles.",
+      "fleet_size_light_vehicles_2024": 245000000,
+      "_fleet_lv_note": "[MPS China 2024] ~245M passenger cars; ~95M commercial/2W/3W excluded.",
+      "annual_fleet_growth_rate": 0.028,
+      "grid_emission_intensity_gco2_kwh": {
+        "2025": 540.0,
+        "2030": 420.0,
+        "2035": 290.0,
+        "2040": 180.0,
+        "2045": 100.0,
+        "2050":  40.0
+      },
+      "_grid_note": "[NEA China 2024] 14th Five-Year Plan targets 33% non-fossil by 2025.",
+      "powertrain_penetration_override": {
+        "_note": "China-specific. NEV (BEV+PHEV) mandate: 50% by 2035 [MIIT]. PHEV (EREV) is a dominant category in China market. HEV share moderate as NEVs outpace.",
+        "reference": {
+          "2025": {"ice": 0.42, "hev": 0.12, "phev": 0.18, "bev": 0.26, "fcev": 0.02},
+          "2030": {"ice": 0.22, "hev": 0.10, "phev": 0.20, "bev": 0.44, "fcev": 0.04},
+          "2035": {"ice": 0.08, "hev": 0.08, "phev": 0.18, "bev": 0.60, "fcev": 0.06},
+          "2040": {"ice": 0.02, "hev": 0.05, "phev": 0.13, "bev": 0.73, "fcev": 0.07},
+          "2045": {"ice": 0.00, "hev": 0.03, "phev": 0.08, "bev": 0.81, "fcev": 0.08},
+          "2050": {"ice": 0.00, "hev": 0.02, "phev": 0.05, "bev": 0.85, "fcev": 0.08}
+        },
+        "accelerated": {
+          "2025": {"ice": 0.32, "hev": 0.10, "phev": 0.22, "bev": 0.34, "fcev": 0.02},
+          "2030": {"ice": 0.08, "hev": 0.07, "phev": 0.18, "bev": 0.61, "fcev": 0.06},
+          "2035": {"ice": 0.00, "hev": 0.04, "phev": 0.10, "bev": 0.78, "fcev": 0.08},
+          "2040": {"ice": 0.00, "hev": 0.02, "phev": 0.05, "bev": 0.84, "fcev": 0.09},
+          "2045": {"ice": 0.00, "hev": 0.01, "phev": 0.02, "bev": 0.88, "fcev": 0.09},
+          "2050": {"ice": 0.00, "hev": 0.00, "phev": 0.01, "bev": 0.90, "fcev": 0.09}
+        },
+        "conservative": {
+          "2025": {"ice": 0.52, "hev": 0.13, "phev": 0.15, "bev": 0.18, "fcev": 0.02},
+          "2030": {"ice": 0.35, "hev": 0.14, "phev": 0.18, "bev": 0.30, "fcev": 0.03},
+          "2035": {"ice": 0.20, "hev": 0.14, "phev": 0.18, "bev": 0.44, "fcev": 0.04},
+          "2040": {"ice": 0.10, "hev": 0.12, "phev": 0.16, "bev": 0.57, "fcev": 0.05},
+          "2045": {"ice": 0.04, "hev": 0.08, "phev": 0.12, "bev": 0.70, "fcev": 0.06},
+          "2050": {"ice": 0.01, "hev": 0.05, "phev": 0.08, "bev": 0.80, "fcev": 0.06}
+        }
+      },
+      "dominant_fuel_mix": {
+        "passenger_car":    {"ice_gasoline": 0.45, "ice_diesel": 0.10, "hybrid_hev": 0.12, "bev": 0.25, "hybrid_phev": 0.08},
+        "light_commercial": {"ice_diesel": 0.55, "hybrid_hev": 0.10, "bev": 0.28, "hybrid_phev": 0.07},
+        "heavy_truck":      {"ice_diesel": 0.78, "bev": 0.12, "biodiesel_b20": 0.05, "hydrogen_fcev": 0.05},
+        "bus_transit":      {"ice_diesel": 0.40, "bev": 0.50, "biodiesel_b20": 0.05, "hydrogen_fcev": 0.05},
+        "two_three_wheeler":{"ice_gasoline": 0.40, "bev": 0.60}
+      },
+      "hub_radius_km": 90.0,
+      "biodiesel_blend": "B5",
+      "ethanol_blend":   "E10"
+    },
+
+    "IND": {
+      "_note": "India — largest 2W/3W market; coal-dominant grid; EV30@30 target. HEV significant in cars; 2W electrification fastest-growing segment.",
+      "fleet_size_2024": 320000000,
+      "_fleet_note": "[MoRTH India 2024] ~320M registered vehicles; ~75% are 2W/3W.",
+      "fleet_size_light_vehicles_2024": 38000000,
+      "_fleet_lv_note": "[MoRTH India 2024] ~38M registered passenger cars; 2W/3W (~240M) excluded from light-vehicle passenger car model.",
+      "annual_fleet_growth_rate": 0.065,
+      "_growth_note": "[SIAM 2024] World's fastest-growing vehicle fleet.",
+      "grid_emission_intensity_gco2_kwh": {
+        "2025": 710.0,
+        "2030": 570.0,
+        "2035": 400.0,
+        "2040": 250.0,
+        "2045": 130.0,
+        "2050":  50.0
+      },
+      "_grid_note": "[CEA India 2024] Target 50% non-fossil electricity by 2030.",
+      "powertrain_penetration_override": {
+        "_note": "India-specific. 2W/3W BEV fastest segment. Cars dominated by ICE with growing HEV share. PHEV limited by charging infrastructure gaps.",
+        "reference": {
+          "2025": {"ice": 0.78, "hev": 0.10, "phev": 0.03, "bev": 0.09, "fcev": 0.00},
+          "2030": {"ice": 0.55, "hev": 0.16, "phev": 0.05, "bev": 0.23, "fcev": 0.01},
+          "2035": {"ice": 0.35, "hev": 0.20, "phev": 0.07, "bev": 0.37, "fcev": 0.01},
+          "2040": {"ice": 0.18, "hev": 0.22, "phev": 0.08, "bev": 0.51, "fcev": 0.01},
+          "2045": {"ice": 0.08, "hev": 0.20, "phev": 0.08, "bev": 0.63, "fcev": 0.01},
+          "2050": {"ice": 0.03, "hev": 0.17, "phev": 0.07, "bev": 0.72, "fcev": 0.01}
+        },
+        "accelerated": {
+          "2025": {"ice": 0.68, "hev": 0.12, "phev": 0.04, "bev": 0.16, "fcev": 0.00},
+          "2030": {"ice": 0.35, "hev": 0.18, "phev": 0.07, "bev": 0.39, "fcev": 0.01},
+          "2035": {"ice": 0.12, "hev": 0.18, "phev": 0.08, "bev": 0.61, "fcev": 0.01},
+          "2040": {"ice": 0.03, "hev": 0.14, "phev": 0.07, "bev": 0.75, "fcev": 0.01},
+          "2045": {"ice": 0.00, "hev": 0.10, "phev": 0.05, "bev": 0.84, "fcev": 0.01},
+          "2050": {"ice": 0.00, "hev": 0.06, "phev": 0.03, "bev": 0.90, "fcev": 0.01}
+        },
+        "conservative": {
+          "2025": {"ice": 0.86, "hev": 0.08, "phev": 0.02, "bev": 0.04, "fcev": 0.00},
+          "2030": {"ice": 0.72, "hev": 0.14, "phev": 0.04, "bev": 0.10, "fcev": 0.00},
+          "2035": {"ice": 0.57, "hev": 0.20, "phev": 0.06, "bev": 0.17, "fcev": 0.00},
+          "2040": {"ice": 0.42, "hev": 0.24, "phev": 0.08, "bev": 0.25, "fcev": 0.01},
+          "2045": {"ice": 0.28, "hev": 0.26, "phev": 0.09, "bev": 0.36, "fcev": 0.01},
+          "2050": {"ice": 0.17, "hev": 0.26, "phev": 0.10, "bev": 0.46, "fcev": 0.01}
+        }
+      },
+      "dominant_fuel_mix": {
+        "passenger_car":    {"ice_gasoline": 0.55, "ice_diesel": 0.30, "hybrid_hev": 0.05, "bev": 0.04, "ethanol_e85": 0.06},
+        "light_commercial": {"ice_diesel": 0.80, "hybrid_hev": 0.08, "bev": 0.07, "hybrid_phev": 0.05},
+        "heavy_truck":      {"ice_diesel": 0.95, "bev": 0.02, "biodiesel_b20": 0.03},
+        "bus_transit":      {"ice_diesel": 0.65, "bev": 0.20, "biodiesel_b20": 0.10, "hydrogen_fcev": 0.05},
+        "two_three_wheeler":{"ice_gasoline": 0.70, "bev": 0.18, "hybrid_hev": 0.12}
+      },
+      "hub_radius_km": 80.0,
+      "biodiesel_blend": "B7",
+      "ethanol_blend":   "E20"
+    }
+  }
+}

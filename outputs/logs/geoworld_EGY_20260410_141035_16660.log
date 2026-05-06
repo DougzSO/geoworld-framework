@@ -1,0 +1,726 @@
+2026-04-10T14:10:35 | INFO     | geoworld.io.DataManager | Raw data root: D:\Douglas\DOUTORADO\database\raw
+2026-04-10T14:10:35 | INFO     | geoworld | Starting analysis: Egypt (EGY)
+2026-04-10T14:10:35 | INFO     | geoworld.core.ConfigLoader | ----------------------------------------------------
+2026-04-10T14:10:35 | INFO     | geoworld.core.ConfigLoader |   Egypt (EGY)
+2026-04-10T14:10:35 | INFO     | geoworld.core.ConfigLoader |   Solar  : LUF=0.05  thr=0.75  density=55.0 MW/km²
+2026-04-10T14:10:35 | INFO     | geoworld.core.ConfigLoader |   Wind   : LUF=0.030  thr=0.75  density=7.5 MW/km²
+2026-04-10T14:10:35 | INFO     | geoworld.core.ConfigLoader |   Biomass: col=0.30  thr=0.75  density=0.4 MW/km²
+2026-04-10T14:10:35 | INFO     | geoworld.core.ConfigLoader |   OWA    : default=balanced  scenarios=['optimistic', 'balanced', 'conservative']
+2026-04-10T14:10:35 | INFO     | geoworld.core.ConfigLoader |   Criteria: river=5.0 km  road=15.0 km  slope=5°
+2026-04-10T14:10:35 | INFO     | geoworld.core.ConfigLoader | ----------------------------------------------------
+2026-04-10T14:10:35 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T14:10:35 | INFO     | geoworld |   Egypt (EGY)
+2026-04-10T14:10:35 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T14:10:35 | INFO     | geoworld |   Geometry : Mainland only
+2026-04-10T14:10:35 | INFO     | geoworld |   Resolution : Fixed 0.01 deg
+2026-04-10T14:10:35 | INFO     | geoworld |   Suitability optimistic offset : -0.10
+2026-04-10T14:10:35 | INFO     | geoworld |   Protected-area mode : Hard exclusion
+2026-04-10T14:10:35 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T14:10:38 | INFO     | geoworld | Land Cover: 20 tile(s) found.
+2026-04-10T14:10:38 | INFO     | geoworld.io.DataManager | Power plants found: 43
+2026-04-10T14:10:38 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T14:10:38 | INFO     | geoworld |   DATA AVAILABILITY
+2026-04-10T14:10:38 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T14:10:38 | INFO     | geoworld |   [  OK   ] Borders
+2026-04-10T14:10:38 | INFO     | geoworld |   [  OK   ] Land Cover
+2026-04-10T14:10:38 | INFO     | geoworld |   [  OK   ] Elevation
+2026-04-10T14:10:38 | INFO     | geoworld |   [  OK   ] Wind
+2026-04-10T14:10:38 | INFO     | geoworld |   [  OK   ] Solar
+2026-04-10T14:10:38 | INFO     | geoworld |   [  OK   ] Power Plants
+2026-04-10T14:10:38 | INFO     | geoworld |   [  OK   ] Population
+2026-04-10T14:10:38 | INFO     | geoworld |   [  OK   ] Roads
+2026-04-10T14:10:38 | INFO     | geoworld |   [  OK   ] Protected
+2026-04-10T14:10:38 | INFO     | geoworld |   [  OK   ] Lakes
+2026-04-10T14:10:38 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T14:10:38 | INFO     | geoworld.processors.DataAuditor | Auditoria: Egypt (EGY)
+2026-04-10T14:10:38 | INFO     | geoworld.processors.DataAuditor |   [solar] iniciando...
+2026-04-10T14:10:38 | INFO     | geoworld.processors.DataAuditor |   [solar] concluído em 0.4s
+2026-04-10T14:10:38 | INFO     | geoworld.processors.DataAuditor |   [elevation] iniciando...
+2026-04-10T14:10:38 | INFO     | geoworld.processors.DataAuditor |   [elevation] concluído em 0.1s
+2026-04-10T14:10:38 | INFO     | geoworld.processors.DataAuditor |   [population] iniciando...
+2026-04-10T14:10:45 | INFO     | geoworld.processors.DataAuditor |   [population] concluído em 6.2s
+2026-04-10T14:10:45 | INFO     | geoworld.processors.DataAuditor |   [slope] iniciando...
+2026-04-10T14:10:45 | INFO     | geoworld.processors.DataAuditor |   [slope] concluído em 0.2s
+2026-04-10T14:10:45 | INFO     | geoworld.processors.DataAuditor |   [wind] iniciando...
+2026-04-10T14:10:46 | INFO     | geoworld.processors.DataAuditor |   [wind] concluído em 1.7s
+2026-04-10T14:10:46 | INFO     | geoworld.processors.DataAuditor |   [seismic] iniciando...
+2026-04-10T14:10:47 | INFO     | geoworld.processors.DataAuditor |   [seismic] concluído em 0.2s
+2026-04-10T14:10:47 | INFO     | geoworld.processors.DataAuditor |   [land_cover] iniciando...
+2026-04-10T14:14:28 | INFO     | geoworld.processors.DataAuditor |   [land_cover] concluído em 221.0s
+2026-04-10T14:14:28 | INFO     | geoworld.processors.DataAuditor |   [power_plants] iniciando...
+2026-04-10T14:14:28 | INFO     | geoworld.processors.DataAuditor |   [power_plants] concluído em 0.0s
+2026-04-10T14:14:28 | INFO     | geoworld.core.ConfigLoader | ----------------------------------------------------
+2026-04-10T14:14:28 | INFO     | geoworld.core.ConfigLoader |   Egypt (EGY)
+2026-04-10T14:14:28 | INFO     | geoworld.core.ConfigLoader |   Solar  : LUF=0.05  thr=0.75  density=55.0 MW/km²
+2026-04-10T14:14:28 | INFO     | geoworld.core.ConfigLoader |   Wind   : LUF=0.030  thr=0.75  density=7.5 MW/km²
+2026-04-10T14:14:28 | INFO     | geoworld.core.ConfigLoader |   Biomass: col=0.30  thr=0.75  density=0.4 MW/km²
+2026-04-10T14:14:28 | INFO     | geoworld.core.ConfigLoader |   OWA    : default=balanced  scenarios=['optimistic', 'balanced', 'conservative']
+2026-04-10T14:14:28 | INFO     | geoworld.core.ConfigLoader |   Criteria: river=5.0 km  road=15.0 km  slope=5°
+2026-04-10T14:14:28 | INFO     | geoworld.core.ConfigLoader | ----------------------------------------------------
+2026-04-10T14:14:28 | INFO     | geoworld.processors.DataAuditor | Relatório salvo: D:\Douglas\DOUTORADO\geoworld_framework\outputs\reports\audit_EGY_20260410_141038.txt
+2026-04-10T14:14:28 | INFO     | geoworld |   Phase 1 (Audit) completed in 229.8s
+2026-04-10T14:14:28 | INFO     | geoworld.processors.GridAligner |   Grid Extent: 995×1111 px | res=0.01° | bounds=[24.690,21.720,35.800,31.670]
+2026-04-10T14:14:28 | INFO     | geoworld |   [elevation] iniciando...
+2026-04-10T14:14:29 | INFO     | geoworld.processors.GridAligner |     elevation: ⏩ cached.
+2026-04-10T14:14:29 | INFO     | geoworld |   [elevation] concluído em 0.4s
+2026-04-10T14:14:29 | INFO     | geoworld |   [slope] iniciando...
+2026-04-10T14:14:29 | INFO     | geoworld.processors.GridAligner |     slope: ⏩ cached.
+2026-04-10T14:14:29 | INFO     | geoworld |   [slope] concluído em 0.1s
+2026-04-10T14:14:29 | INFO     | geoworld |   [solar] iniciando...
+2026-04-10T14:14:29 | INFO     | geoworld.processors.GridAligner |     solar: ⏩ cached.
+2026-04-10T14:14:29 | INFO     | geoworld |   [solar] concluído em 0.0s
+2026-04-10T14:14:29 | INFO     | geoworld |   [wind] iniciando...
+2026-04-10T14:14:29 | INFO     | geoworld.processors.GridAligner |     wind: ⏩ cached.
+2026-04-10T14:14:29 | INFO     | geoworld |   [wind] concluído em 0.0s
+2026-04-10T14:14:29 | INFO     | geoworld |   [land_cover] iniciando...
+2026-04-10T14:15:01 | INFO     | geoworld |   [land_cover] concluído em 32.6s
+2026-04-10T14:15:01 | INFO     | geoworld |   [population] iniciando...
+2026-04-10T14:15:01 | INFO     | geoworld.processors.GridAligner |     population: ⏩ cached.
+2026-04-10T14:15:01 | INFO     | geoworld |   [population] concluído em 0.1s
+2026-04-10T14:15:01 | INFO     | geoworld |   [grid_distance] iniciando...
+2026-04-10T14:15:01 | INFO     | geoworld.processors.GridAligner |     grid: ⏩ cached.
+2026-04-10T14:15:01 | INFO     | geoworld |   [grid_distance] concluído em 0.0s
+2026-04-10T14:15:01 | INFO     | geoworld |   [roads] iniciando...
+2026-04-10T14:15:01 | INFO     | geoworld.processors.GridAligner |     roads: ⏩ cached.
+2026-04-10T14:15:01 | INFO     | geoworld |   [roads] concluído em 0.0s
+2026-04-10T14:15:01 | INFO     | geoworld |   [lakes] iniciando...
+2026-04-10T14:15:01 | INFO     | geoworld.processors.GridAligner |     lakes: ⏩ cached.
+2026-04-10T14:15:01 | INFO     | geoworld |   [lakes] concluído em 0.1s
+2026-04-10T14:15:01 | INFO     | geoworld |   [rivers] iniciando...
+2026-04-10T14:15:01 | INFO     | geoworld.processors.GridAligner |     rivers: ⏩ cached.
+2026-04-10T14:15:01 | INFO     | geoworld |   [rivers] concluído em 0.0s
+2026-04-10T14:15:01 | INFO     | geoworld |   [seismic] iniciando...
+2026-04-10T14:15:01 | INFO     | geoworld.processors.GridAligner |     seismic: ⏩ cached.
+2026-04-10T14:15:01 | INFO     | geoworld |   [seismic] concluído em 0.0s
+2026-04-10T14:15:02 | INFO     | geoworld.processors.GridAligner |   ✅ All geometries mapped to strictly congruent matrix shape=(995, 1111)
+2026-04-10T14:15:02 | INFO     | geoworld |   Phase 2a (Grid Alignment) completed in 34.0s
+2026-04-10T14:15:02 | INFO     | geoworld.processors.CriteriaBuilder | 
+Phase 2b — Criteria Builder: EGY
+2026-04-10T14:15:02 | INFO     | geoworld.processors.CriteriaBuilder |   Admin boundaries: 27 regions loaded
+2026-04-10T14:15:02 | INFO     | geoworld.processors.CriteriaBuilder |   [solar_resource] mathematical projection initiated...
+2026-04-10T14:15:02 | INFO     | geoworld.processors.CriteriaBuilder |   [solar_resource] resolved in 0.2s
+2026-04-10T14:15:02 | INFO     | geoworld.processors.CriteriaBuilder |   [wind_resource] mathematical projection initiated...
+2026-04-10T14:15:02 | INFO     | geoworld.processors.CriteriaBuilder |   [wind_resource] resolved in 0.2s
+2026-04-10T14:15:02 | INFO     | geoworld.processors.CriteriaBuilder |   [terrain_score] mathematical projection initiated...
+2026-04-10T14:15:02 | INFO     | geoworld.processors.CriteriaBuilder |   [terrain_score] resolved in 0.2s
+2026-04-10T14:15:02 | INFO     | geoworld.processors.CriteriaBuilder |   [slope_degrees] mathematical projection initiated...
+2026-04-10T14:15:03 | INFO     | geoworld.processors.CriteriaBuilder |   [slope_degrees] resolved in 0.4s
+2026-04-10T14:15:03 | INFO     | geoworld.processors.CriteriaBuilder |   [land_cover] mathematical projection initiated...
+2026-04-10T14:15:03 | INFO     | geoworld.processors.CriteriaBuilder |   [land_cover] resolved in 0.0s
+2026-04-10T14:15:03 | INFO     | geoworld.processors.CriteriaBuilder |   [biomass_resource] mathematical projection initiated...
+2026-04-10T14:15:03 | INFO     | geoworld.processors.CriteriaBuilder |   [biomass_resource] resolved in 0.1s
+2026-04-10T14:15:03 | INFO     | geoworld.processors.CriteriaBuilder |   [protected_areas] mathematical projection initiated...
+2026-04-10T14:15:03 | INFO     | geoworld.processors.CriteriaBuilder |   [protected_areas] resolved in 0.7s
+2026-04-10T14:15:03 | INFO     | geoworld.processors.CriteriaBuilder |   [pop_suitability] mathematical projection initiated...
+2026-04-10T14:15:03 | INFO     | geoworld.processors.CriteriaBuilder |   [pop_suitability] resolved in 0.1s
+2026-04-10T14:15:03 | INFO     | geoworld.processors.CriteriaBuilder |   [road_suitability] mathematical projection initiated...
+2026-04-10T14:15:04 | INFO     | geoworld.processors.CriteriaBuilder |   [road_suitability] resolved in 0.1s
+2026-04-10T14:15:04 | INFO     | geoworld.processors.CriteriaBuilder |   [lakes_exclusion] mathematical projection initiated...
+2026-04-10T14:15:04 | INFO     | geoworld.processors.CriteriaBuilder |   [lakes_exclusion] resolved in 0.0s
+2026-04-10T14:15:04 | INFO     | geoworld.processors.CriteriaBuilder |   [river_solar] mathematical projection initiated...
+2026-04-10T14:15:04 | INFO     | geoworld.processors.CriteriaBuilder |   [river_solar] resolved in 0.1s
+2026-04-10T14:15:04 | INFO     | geoworld.processors.CriteriaBuilder |   [river_wind] mathematical projection initiated...
+2026-04-10T14:15:04 | INFO     | geoworld.processors.CriteriaBuilder |   [river_wind] resolved in 0.2s
+2026-04-10T14:15:04 | INFO     | geoworld.processors.CriteriaBuilder |   [river_biomass] mathematical projection initiated...
+2026-04-10T14:15:04 | INFO     | geoworld.processors.CriteriaBuilder |   [river_biomass] resolved in 0.1s
+2026-04-10T14:15:04 | INFO     | geoworld.processors.CriteriaBuilder |   [seismic_suitability] mathematical projection initiated...
+2026-04-10T14:15:04 | INFO     | geoworld.processors.CriteriaBuilder |   [seismic_suitability] resolved in 0.2s
+2026-04-10T14:15:04 | INFO     | geoworld.processors.CriteriaBuilder |   [grid_suitability] mathematical projection initiated...
+2026-04-10T14:15:04 | INFO     | geoworld.processors.CriteriaBuilder |   [grid_suitability] resolved in 0.1s
+2026-04-10T14:15:04 | INFO     | geoworld.processors.CriteriaBuilder |   Computation: 2.6s | 15 maps queued for rendering
+2026-04-10T14:15:04 | INFO     | geoworld.processors.CriteriaBuilder |   Rendering 15 maps across 4 worker(s)...
+2026-04-10T14:15:22 | INFO     | geoworld.processors.CriteriaBuilder |   Render: 18.2s (parallel) | Phase total: 20.8s
+2026-04-10T14:15:23 | INFO     | geoworld.processors.CriteriaBuilder | 
+==============================================================
+  CRITERIA BUILDER — EGY
+  Output: D:\Douglas\DOUTORADO\geoworld_framework\outputs\EGY\criteria_builder
+==============================================================
+2026-04-10T14:15:23 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ solar_resource          : mean=0.573 | >=0.6:  50.9% | n=891,865
+2026-04-10T14:15:23 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ wind_resource           : mean=0.450 | >=0.6:  26.9% | n=890,306
+2026-04-10T14:15:23 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ terrain_score           : mean=0.842 | >=0.6:  89.5% | n=891,780
+2026-04-10T14:15:23 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ lc_biomass              : mean=0.127 | >=0.6:   3.5% | n=891,865
+2026-04-10T14:15:23 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ biomass_resource        : mean=0.062 | >=0.6:   5.7% | n=891,865
+2026-04-10T14:15:23 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ protected_areas         : mean=0.978 | >=0.6:  95.8% | n=891,865
+2026-04-10T14:15:23 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ pop_suitability         : mean=0.981 | >=0.6:  97.8% | n=883,215
+2026-04-10T14:15:23 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ road_suitability        : mean=0.276 | >=0.6:  26.0% | n=891,865
+2026-04-10T14:15:23 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ lakes_exclusion         : mean=0.988 | >=0.6:  98.8% | n=891,865
+2026-04-10T14:15:23 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ river_solar             : mean=0.711 | >=0.6:  71.1% | n=891,865
+2026-04-10T14:15:23 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ river_wind              : mean=0.711 | >=0.6:  71.1% | n=891,865
+2026-04-10T14:15:23 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ river_biomass           : mean=0.962 | >=0.6: 100.0% | n=891,865
+2026-04-10T14:15:23 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ seismic_suitability     : mean=0.871 | >=0.6:  89.6% | n=890,447
+2026-04-10T14:15:23 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ grid_suitability        : mean=0.199 | >=0.6:  18.6% | n=891,865
+2026-04-10T14:15:23 | INFO     | geoworld.processors.CriteriaBuilder |   Total time: 21.0s
+==============================================================
+2026-04-10T14:15:23 | INFO     | geoworld |   Phase 2b (Criteria) completed in 21.1s
+2026-04-10T14:15:23 | INFO     | geoworld |   [load_criteria] iniciando...
+2026-04-10T14:15:23 | INFO     | geoworld |   [load_criteria] concluído em 0.3s
+2026-04-10T14:15:23 | INFO     | geoworld.processors.SuitabilityBuilder |   [suitability] Policy Active: ESA class 10 (Trees/Forest) blocked for Solar/Wind/Biomass.
+2026-04-10T14:15:23 | INFO     | geoworld.processors.SuitabilityBuilder | 
+  ──────────────────────────────────────────────────
+  Technology: Solar PV
+  ──────────────────────────────────────────────────
+2026-04-10T14:15:23 | INFO     | geoworld |   [solar] iniciando...
+2026-04-10T14:15:23 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar] AHP Saaty (subtle) — ✅ Consistent
+2026-04-10T14:15:23 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   λ_max=7.3039 | CI=0.0506 | CR=0.0384
+2026-04-10T14:15:23 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   solar_resource                : 0.3314  (33.1%)
+2026-04-10T14:15:23 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   grid_suitability              : 0.2385  (23.9%)
+2026-04-10T14:15:23 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   terrain_score                 : 0.1620  (16.2%)
+2026-04-10T14:15:23 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   road_suitability              : 0.1090  (10.9%)
+2026-04-10T14:15:23 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   river_solar                   : 0.0734  (7.3%)
+2026-04-10T14:15:23 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   seismic_suitability           : 0.0498  (5.0%)
+2026-04-10T14:15:23 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   pop_suitability               : 0.0359  (3.6%)
+2026-04-10T14:15:23 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar] AHP weights saved: EGY_solar_weights.json
+2026-04-10T14:15:23 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar] Pixels: total=881778 | excluded=52160 (slope=0, lc=20302) | valid=829618 (94.1%)
+2026-04-10T14:15:27 | INFO     | geoworld |   [solar] concluído em 3.7s
+2026-04-10T14:15:27 | INFO     | geoworld.processors.SuitabilityBuilder | 
+  ──────────────────────────────────────────────────
+  Technology: Wind Onshore
+  ──────────────────────────────────────────────────
+2026-04-10T14:15:27 | INFO     | geoworld |   [wind] iniciando...
+2026-04-10T14:15:27 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind] AHP Saaty (moderate) — ✅ Consistent
+2026-04-10T14:15:27 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   λ_max=7.7714 | CI=0.1286 | CR=0.0974
+2026-04-10T14:15:27 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   wind_resource                 : 0.3820  (38.2%)
+2026-04-10T14:15:27 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   grid_suitability              : 0.2480  (24.8%)
+2026-04-10T14:15:27 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   terrain_score                 : 0.1582  (15.8%)
+2026-04-10T14:15:27 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   road_suitability              : 0.0983  (9.8%)
+2026-04-10T14:15:27 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   pop_suitability               : 0.0614  (6.1%)
+2026-04-10T14:15:27 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   seismic_suitability           : 0.0314  (3.1%)
+2026-04-10T14:15:27 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   river_wind                    : 0.0208  (2.1%)
+2026-04-10T14:15:27 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind] AHP weights saved: EGY_wind_weights.json
+2026-04-10T14:15:27 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind] Pixels: total=881778 | excluded=52160 (slope=0, lc=20302) | valid=829618 (94.1%)
+2026-04-10T14:15:31 | INFO     | geoworld |   [wind] concluído em 3.8s
+2026-04-10T14:15:31 | INFO     | geoworld.processors.SuitabilityBuilder | 
+  ──────────────────────────────────────────────────
+  Technology: Biomass / Bioenergy
+  ──────────────────────────────────────────────────
+2026-04-10T14:15:31 | INFO     | geoworld |   [biomass] iniciando...
+2026-04-10T14:15:31 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass] AHP Saaty (subtle) — ✅ Consistent
+2026-04-10T14:15:31 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   λ_max=8.4744 | CI=0.0678 | CR=0.0481
+2026-04-10T14:15:31 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   biomass_resource              : 0.3076  (30.8%)
+2026-04-10T14:15:31 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   lc_biomass                    : 0.2255  (22.5%)
+2026-04-10T14:15:31 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   road_suitability              : 0.1615  (16.2%)
+2026-04-10T14:15:31 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   river_biomass                 : 0.1111  (11.1%)
+2026-04-10T14:15:31 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   grid_suitability              : 0.0792  (7.9%)
+2026-04-10T14:15:31 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   pop_suitability               : 0.0573  (5.7%)
+2026-04-10T14:15:31 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   terrain_score                 : 0.0326  (3.3%)
+2026-04-10T14:15:31 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   seismic_suitability           : 0.0252  (2.5%)
+2026-04-10T14:15:31 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass] AHP weights saved: EGY_biomass_weights.json
+2026-04-10T14:15:31 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass] Pixels: total=881778 | excluded=52160 (slope=0, lc=20302) | valid=829618 (94.1%)
+2026-04-10T14:15:34 | INFO     | geoworld |   [biomass] concluído em 3.7s
+2026-04-10T14:15:34 | INFO     | geoworld |   [comparison_map] iniciando...
+2026-04-10T14:15:46 | INFO     | geoworld |   [comparison_map] concluído em 12.0s
+2026-04-10T14:15:46 | INFO     | geoworld.processors.SuitabilityBuilder | 
+====================================================================
+  SUITABILITY REPORT — AHP (Saaty) + TOPSIS MCDA
+  Egypt (EGY)
+  2026-04-10 14:15:23
+====================================================================
+
+--------------------------------------------------------------------
+  SOLAR PV
+--------------------------------------------------------------------
+    Total territorial pixels            : 881,778
+    Hard exclusions (pixels)            : 52,160  (5.9%)
+    Valid pixels (TOPSIS)               : 829,618  (94.1%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.423 ± 0.130
+      P10 / P50 / P90                   : 0.296 / 0.389 / 0.626
+      Score >= 0.6 (high suitability)   : 11.7%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0384  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      solar_resource                     0.3314  ( 33.1%)
+      grid_suitability                   0.2385  ( 23.9%)
+      terrain_score                      0.1620  ( 16.2%)
+      road_suitability                   0.1090  ( 10.9%)
+      river_solar                        0.0734  (  7.3%)
+      seismic_suitability                0.0498  (  5.0%)
+      pop_suitability                    0.0359  (  3.6%)
+
+    Weights JSON: EGY_solar_weights.json
+
+--------------------------------------------------------------------
+  WIND ONSHORE
+--------------------------------------------------------------------
+    Total territorial pixels            : 881,778
+    Hard exclusions (pixels)            : 52,160  (5.9%)
+    Valid pixels (TOPSIS)               : 829,618  (94.1%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.392 ± 0.151
+      P10 / P50 / P90                   : 0.218 / 0.364 / 0.577
+      Score >= 0.6 (high suitability)   : 8.7%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0974  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      wind_resource                      0.3820  ( 38.2%)
+      grid_suitability                   0.2480  ( 24.8%)
+      terrain_score                      0.1582  ( 15.8%)
+      road_suitability                   0.0983  (  9.8%)
+      pop_suitability                    0.0614  (  6.1%)
+      seismic_suitability                0.0314  (  3.1%)
+      river_wind                         0.0208  (  2.1%)
+
+    Weights JSON: EGY_wind_weights.json
+
+--------------------------------------------------------------------
+  BIOMASS / BIOENERGY
+--------------------------------------------------------------------
+    Total territorial pixels            : 881,778
+    Hard exclusions (pixels)            : 52,160  (5.9%)
+    Valid pixels (TOPSIS)               : 829,618  (94.1%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.120 ± 0.183
+      P10 / P50 / P90                   : 0.044 / 0.047 / 0.184
+      Score >= 0.6 (high suitability)   : 4.5%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0481  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      biomass_resource                   0.3076  ( 30.8%)
+      lc_biomass                         0.2255  ( 22.5%)
+      road_suitability                   0.1615  ( 16.2%)
+      river_biomass                      0.1111  ( 11.1%)
+      grid_suitability                   0.0792  (  7.9%)
+      pop_suitability                    0.0573  (  5.7%)
+      terrain_score                      0.0326  (  3.3%)
+      seismic_suitability                0.0252  (  2.5%)
+
+    Weights JSON: EGY_biomass_weights.json
+
+====================================================================
+  TIMINGS BY STAGE
+--------------------------------------------------------------------
+    load_criteria           :    0.3s
+    solar                   :    3.7s
+    wind                    :    3.8s
+    biomass                 :    3.7s
+    comparison_map          :   12.0s
+    TOTAL                   : 23.7s
+====================================================================
+
+2026-04-10T14:15:46 | INFO     | geoworld |   Phase 3 (Suitability) completed in 23.7s
+2026-04-10T14:15:46 | INFO     | geoworld.processors.PotentialCalculator |   [params] solar=55.0 MW/km² lu=0.05 thr=0.75 | wind=7.5 MW/km² thr=0.75 | biomass=0.4 MW/km² thr=0.75
+2026-04-10T14:15:46 | INFO     | geoworld.processors.PotentialCalculator |   Admin boundaries: 27 regions active
+2026-04-10T14:15:46 | INFO     | geoworld.processors.PotentialCalculator | 
+  ──────────────────────────────────────────────────
+  Technology: Solar PV
+  ──────────────────────────────────────────────────
+2026-04-10T14:15:46 | INFO     | geoworld |   [solar] iniciando...
+2026-04-10T14:15:46 | INFO     | geoworld.processors.PotentialCalculator |   [solar] Grid: 995x1111 px | lat_center=26.70° | px_area=1.103 km²
+2026-04-10T14:15:46 | INFO     | geoworld.processors.PotentialCalculator |   [solar/optimistic] threshold=0.65 | area=78,356 km² | cap=215.48 GW | gen=490.78 TWh/yr
+2026-04-10T14:15:47 | INFO     | geoworld.processors.PotentialCalculator |   [solar/balanced] threshold=0.75 | area=25,993 km² | cap=71.48 GW | gen=162.81 TWh/yr
+2026-04-10T14:15:47 | INFO     | geoworld.processors.PotentialCalculator |   [solar/conservative] threshold=0.85 | area=3,301 km² | cap=9.08 GW | gen=20.67 TWh/yr
+2026-04-10T14:15:51 | INFO     | geoworld |   [solar] concluído em 4.6s
+2026-04-10T14:15:51 | INFO     | geoworld.processors.PotentialCalculator | 
+  ──────────────────────────────────────────────────
+  Technology: Wind Onshore
+  ──────────────────────────────────────────────────
+2026-04-10T14:15:51 | INFO     | geoworld |   [wind] iniciando...
+2026-04-10T14:15:51 | INFO     | geoworld.processors.PotentialCalculator |   [wind] Grid: 995x1111 px | lat_center=26.70° | px_area=1.103 km²
+2026-04-10T14:15:51 | INFO     | geoworld.processors.PotentialCalculator |   [wind/optimistic] threshold=0.65 | area=59,131 km² | cap=13.30 GW | gen=40.79 TWh/yr
+2026-04-10T14:15:51 | INFO     | geoworld.processors.PotentialCalculator |   [wind/balanced] threshold=0.75 | area=27,549 km² | cap=6.20 GW | gen=19.00 TWh/yr
+2026-04-10T14:15:51 | INFO     | geoworld.processors.PotentialCalculator |   [wind/conservative] threshold=0.85 | area=9,762 km² | cap=2.20 GW | gen=6.73 TWh/yr
+2026-04-10T14:15:56 | INFO     | geoworld |   [wind] concluído em 5.1s
+2026-04-10T14:15:56 | INFO     | geoworld.processors.PotentialCalculator | 
+  ──────────────────────────────────────────────────
+  Technology: Biomass / Bioenergy
+  ──────────────────────────────────────────────────
+2026-04-10T14:15:56 | INFO     | geoworld |   [biomass] iniciando...
+2026-04-10T14:15:56 | INFO     | geoworld.processors.PotentialCalculator |   [biomass] Grid: 995x1111 px | lat_center=26.70° | px_area=1.103 km²
+2026-04-10T14:15:56 | INFO     | geoworld.processors.PotentialCalculator |   [biomass/optimistic] threshold=0.65 | area=34,070 km² | cap=4.09 GW | gen=25.07 TWh/yr
+2026-04-10T14:15:57 | INFO     | geoworld.processors.PotentialCalculator |   [biomass/balanced] threshold=0.75 | area=33,543 km² | cap=4.03 GW | gen=24.68 TWh/yr
+2026-04-10T14:15:57 | INFO     | geoworld.processors.PotentialCalculator |   [biomass/conservative] threshold=0.85 | area=31,126 km² | cap=3.74 GW | gen=22.90 TWh/yr
+2026-04-10T14:16:02 | INFO     | geoworld |   [biomass] concluído em 6.2s
+2026-04-10T14:16:02 | INFO     | geoworld |   [comparison_map] iniciando...
+2026-04-10T14:16:04 | INFO     | geoworld |   [comparison_map] concluído em 1.6s
+2026-04-10T14:16:04 | INFO     | geoworld |   [scenario_chart] iniciando...
+2026-04-10T14:16:04 | INFO     | geoworld |   [scenario_chart] concluído em 0.3s
+2026-04-10T14:16:04 | INFO     | geoworld.processors.PotentialCalculator | 
+========================================================================
+  POTENTIAL REPORT — Technical & Energy Potential
+  Egypt (EGY)
+  2026-04-10 14:15:46
+========================================================================
+
+------------------------------------------------------------------------
+  SOLAR PV
+  Land Use: 5.0%  |  Density: 55.0 MW/km²  |  CF: 26.0%
+------------------------------------------------------------------------
+  Scenario         Thr   Area (km²)       GW     TWh/yr   Pixels
+  ------------------------------------------------------------
+  Optimistic      0.65       78,356   215.48     490.78   70,860
+  Balanced        0.75       25,993    71.48     162.81   23,568
+  Conservative    0.85        3,301     9.08      20.67    3,009
+
+    Top 5 Districts (Balanced Scenario):
+    District                     MW       GWh/yr   Pixels
+    ------------------------------------------------------
+    AL WADI AL JADID         19,886       45,293    6,419
+    AL BAHR AL AHMAR         15,323       34,900    5,090
+    JANUB SINA'              10,076       22,948    3,385
+    SHAMAL SINA'              6,360       14,486    2,158
+    ASWAN                     5,604       12,763    1,803
+
+------------------------------------------------------------------------
+  WIND ONSHORE
+  Land Use: 3.0%  |  Density: 7.5 MW/km²  |  CF: 35.0%
+------------------------------------------------------------------------
+  Scenario         Thr   Area (km²)       GW     TWh/yr   Pixels
+  ------------------------------------------------------------
+  Optimistic      0.65       59,131    13.30      40.79   53,253
+  Balanced        0.75       27,549     6.20      19.00   24,790
+  Conservative    0.85        9,762     2.20       6.73    8,824
+
+    Top 5 Districts (Balanced Scenario):
+    District                     MW       GWh/yr   Pixels
+    ------------------------------------------------------
+    AL WADI AL JADID          2,221        6,811    8,746
+    AL BAHR AL AHMAR          1,505        4,614    6,097
+    ASWAN                       917        2,812    3,600
+    JANUB SINA'                 572        1,754    2,351
+    SUHAJ                       430        1,318    1,734
+
+------------------------------------------------------------------------
+  BIOMASS / BIOENERGY
+  Land Use: 30.0%  |  Density: 0.4 MW/km²  |  CF: 70.0%
+------------------------------------------------------------------------
+  Scenario         Thr   Area (km²)       GW     TWh/yr   Pixels
+  ------------------------------------------------------------
+  Optimistic      0.65       34,070     4.09      25.07   31,727
+  Balanced        0.75       33,543     4.03      24.68   31,239
+  Conservative    0.85       31,126     3.73      22.90   29,020
+
+    Top 5 Districts (Balanced Scenario):
+    District                     MW       GWh/yr   Pixels
+    ------------------------------------------------------
+    AL BUHAYRAH                 670        4,107    5,260
+    ASH SHARQIYAH               391        2,399    3,070
+    AD DAQAHLIYAH               330        2,025    2,601
+    AL MINYA                    274        1,681    2,100
+    KAFR ASH SHAYKH             260        1,595    2,053
+
+========================================================================
+  COMPARATIVE SUMMARY — BALANCED SCENARIO
+------------------------------------------------------------------------
+  Technology                 GW     TWh/yr     Area km²    CF%
+  ------------------------------------------------------------
+  Solar PV                71.48     162.81       25,993   26.0%
+  Wind Onshore             6.20      19.00       27,549   35.0%
+  Biomass / Bioenergy      4.03      24.68       33,543   70.0%
+  ------------------------------------------------------------
+  TOTAL                   81.71     206.49
+
+========================================================================
+  TIMINGS BY STAGE
+------------------------------------------------------------------------
+    solar                     :    4.6s
+    wind                      :    5.1s
+    biomass                   :    6.2s
+    comparison_map            :    1.6s
+    scenario_chart            :    0.3s
+    TOTAL                     : 17.9s
+========================================================================
+
+2026-04-10T14:16:04 | INFO     | geoworld |   Phase 4 (Potential) completed in 18.0s
+2026-04-10T14:16:04 | INFO     | geoworld.processors.LCOECalculator |   [LCOE Params] Bounded country parameters for EGY.
+2026-04-10T14:16:04 | INFO     | geoworld.processors.LCOECalculator |   [pot_params] Anchoring physical constants: Solar LUF=0.05 | Wind CF=0.350
+2026-04-10T14:16:04 | INFO     | geoworld.processors.LCOECalculator |   Admin boundaries: 27 regions loaded
+2026-04-10T14:16:04 | INFO     | geoworld.processors.LCOECalculator | 
+  ──────────────────────────────────────────────────
+  Technology: Solar PV
+  ──────────────────────────────────────────────────
+2026-04-10T14:16:04 | INFO     | geoworld.processors.LCOECalculator |   [solar] financial projection initiated...
+2026-04-10T14:16:09 | INFO     | geoworld.processors.LCOECalculator |   [solar] resolved in 4.7s
+2026-04-10T14:16:09 | INFO     | geoworld.processors.LCOECalculator | 
+  ──────────────────────────────────────────────────
+  Technology: Wind Onshore
+  ──────────────────────────────────────────────────
+2026-04-10T14:16:09 | INFO     | geoworld.processors.LCOECalculator |   [wind] financial projection initiated...
+2026-04-10T14:16:15 | INFO     | geoworld.processors.LCOECalculator |   [wind] resolved in 6.2s
+2026-04-10T14:16:15 | INFO     | geoworld.processors.LCOECalculator | 
+  ──────────────────────────────────────────────────
+  Technology: Biomass / Bioenergy
+  ──────────────────────────────────────────────────
+2026-04-10T14:16:15 | INFO     | geoworld.processors.LCOECalculator |   [biomass] financial projection initiated...
+2026-04-10T14:16:19 | INFO     | geoworld.processors.LCOECalculator |   [biomass] resolved in 3.8s
+2026-04-10T14:16:19 | INFO     | geoworld.processors.LCOECalculator |   [comparison_map] financial projection initiated...
+2026-04-10T14:16:32 | INFO     | geoworld.processors.LCOECalculator |   [comparison_map] resolved in 12.5s
+2026-04-10T14:16:32 | INFO     | geoworld.processors.LCOECalculator | 
+========================================================================
+  LCOE REPORT — Levelized Cost of Energy (Phase 5)
+  Egypt (EGY)
+  2026-04-10 14:16:04
+========================================================================
+
+------------------------------------------------------------------------
+  SOLAR PV
+------------------------------------------------------------------------
+  CAPEX: 680 USD/kW  |  OPEX: 11 USD/kW/yr  |  r: 10%  |  n: 25 yr
+  CRF: 0.1102  |  Base CF: 0.260
+
+  Metric                                    Value     Unit
+  --------------------------------------------------------
+  Base LCOE (National mean CF)               37.7  USD/MWh
+  Spatial mean LCOE                          38.7  USD/MWh
+  P10 — Cheapest 10%                         30.6  USD/MWh
+  P90 — Most expensive 10%                   47.5  USD/MWh
+
+  Available capacity by cost threshold:
+  Threshold (USD/MWh)        Available GW
+  ----------------------------------------
+  <=  40 USD/MWh              41.61 GW  (58.2%)
+  <=  50 USD/MWh              70.37 GW  (98.4%)
+  <=  60 USD/MWh              71.48 GW  (100.0%)
+  <=  70 USD/MWh              71.48 GW  (100.0%)
+  <=  80 USD/MWh              71.48 GW  (100.0%)
+  <= 100 USD/MWh              71.48 GW  (100.0%)
+  <= 120 USD/MWh              71.48 GW  (100.0%)
+
+------------------------------------------------------------------------
+  WIND ONSHORE
+------------------------------------------------------------------------
+  CAPEX: 1300 USD/kW  |  OPEX: 40 USD/kW/yr  |  r: 10%  |  n: 25 yr
+  CRF: 0.1102  |  Base CF: 0.350
+
+  Metric                                    Value     Unit
+  --------------------------------------------------------
+  Base LCOE (National mean CF)               59.8  USD/MWh
+  Spatial mean LCOE                          61.0  USD/MWh
+  P10 — Cheapest 10%                         51.4  USD/MWh
+  P90 — Most expensive 10%                   74.9  USD/MWh
+
+  Available capacity by cost threshold:
+  Threshold (USD/MWh)        Available GW
+  ----------------------------------------
+  <=  40 USD/MWh               0.00 GW  (0.0%)
+  <=  50 USD/MWh               0.00 GW  (0.0%)
+  <=  60 USD/MWh               3.08 GW  (49.7%)
+  <=  70 USD/MWh               4.97 GW  (80.2%)
+  <=  80 USD/MWh               6.07 GW  (97.9%)
+  <= 100 USD/MWh               6.20 GW  (100.0%)
+  <= 120 USD/MWh               6.20 GW  (100.0%)
+
+------------------------------------------------------------------------
+  BIOMASS / BIOENERGY
+------------------------------------------------------------------------
+  CAPEX: 2700 USD/kW  |  OPEX: 108 USD/kW/yr  |  r: 10%  |  n: 20 yr
+  CRF: 0.1215  |  Base CF: 0.700
+
+  Metric                                    Value     Unit
+  --------------------------------------------------------
+  Base LCOE (National mean CF)               71.1  USD/MWh
+  Spatial mean LCOE                          71.1  USD/MWh
+  P10 — Cheapest 10%                         71.1  USD/MWh
+  P90 — Most expensive 10%                   71.1  USD/MWh
+
+  Available capacity by cost threshold:
+  Threshold (USD/MWh)        Available GW
+  ----------------------------------------
+  <=  40 USD/MWh               0.00 GW  (0.0%)
+  <=  50 USD/MWh               0.00 GW  (0.0%)
+  <=  60 USD/MWh               0.00 GW  (0.0%)
+  <=  70 USD/MWh               0.00 GW  (0.0%)
+  <=  80 USD/MWh               4.03 GW  (100.0%)
+  <= 100 USD/MWh               4.03 GW  (100.0%)
+  <= 120 USD/MWh               4.03 GW  (100.0%)
+
+========================================================================
+  TIMINGS BY STAGE
+------------------------------------------------------------------------
+    solar                     :    4.7s
+    wind                      :    6.2s
+    biomass                   :    3.8s
+    comparison_map            :   12.5s
+========================================================================
+
+2026-04-10T14:16:32 | INFO     | geoworld |   Phase 5 (LCOE) completed in 27.4s
+2026-04-10T14:16:32 | INFO     | geoworld.processors.ResultsWriter |   [Recovery] Reconstructing Potential data from disk...
+2026-04-10T14:16:32 | INFO     | geoworld.processors.ResultsWriter |   [Recovery] Reconstructing LCOE data from disk...
+2026-04-10T14:16:32 | WARNING  | geoworld.processors.ResultsWriter |   [Recovery] LCOE TIF not found for solar
+2026-04-10T14:16:32 | WARNING  | geoworld.processors.ResultsWriter |   [Recovery] LCOE TIF not found for wind
+2026-04-10T14:16:32 | WARNING  | geoworld.processors.ResultsWriter |   [Recovery] LCOE TIF not found for biomass
+2026-04-10T14:16:32 | INFO     | geoworld.processors.ResultsWriter |   Admin: 27 districts loaded
+2026-04-10T14:16:32 | INFO     | geoworld.processors.ResultsWriter |   [solar] Suitability TIF loaded.
+2026-04-10T14:16:32 | INFO     | geoworld.processors.ResultsWriter |   [wind] Suitability TIF loaded.
+2026-04-10T14:16:32 | INFO     | geoworld.processors.ResultsWriter |   [biomass] Suitability TIF loaded.
+2026-04-10T14:16:32 | INFO     | geoworld |   [dominance_suitability] iniciando...
+2026-04-10T14:16:36 | INFO     | geoworld |   [dominance_suitability] concluído em 3.6s
+2026-04-10T14:16:36 | INFO     | geoworld |   [dominance_lcoe] iniciando...
+2026-04-10T14:16:39 | INFO     | geoworld |   [dominance_lcoe] concluído em 3.0s
+2026-04-10T14:16:39 | INFO     | geoworld |   [executive_dashboard] iniciando...
+2026-04-10T14:16:45 | INFO     | geoworld |   [executive_dashboard] concluído em 6.9s
+2026-04-10T14:16:45 | INFO     | geoworld |   [geotiff_export] iniciando...
+2026-04-10T14:16:46 | INFO     | geoworld.processors.ResultsWriter |   GIS: EGY_solar_suitability.tif
+2026-04-10T14:16:46 | INFO     | geoworld.processors.ResultsWriter |   GIS: EGY_wind_suitability.tif
+2026-04-10T14:16:46 | INFO     | geoworld.processors.ResultsWriter |   GIS: EGY_biomass_suitability.tif
+2026-04-10T14:16:46 | INFO     | geoworld.processors.ResultsWriter |   GIS: EGY_dominance_suitability.tif
+2026-04-10T14:16:46 | INFO     | geoworld.processors.ResultsWriter |   GIS: EGY_dominance_lcoe.tif
+2026-04-10T14:16:46 | INFO     | geoworld |   [geotiff_export] concluído em 0.5s
+2026-04-10T14:16:46 | INFO     | geoworld.processors.ResultsWriter | 
+========================================================================
+  RESULTS SYNTHESIS REPORT — Phase 6
+  Egypt (EGY)
+  2026-04-10 14:16:32
+========================================================================
+
+------------------------------------------------------------------------
+  SUITABILITY DOMINANCE — TOPSIS Score
+------------------------------------------------------------------------
+  Solar PV                    443,197 px  ( 56.2%)
+  Wind Onshore                307,611 px  ( 39.0%)
+  Biomass / Bioenergy          37,281 px  (  4.7%)
+
+------------------------------------------------------------------------
+  LCOE DOMINANCE — Cheapest Technology per Pixel
+------------------------------------------------------------------------
+  Solar PV                          0 px  (  0.0%)
+  Wind Onshore                      0 px  (  0.0%)
+  Biomass / Bioenergy               0 px  (  0.0%)
+
+------------------------------------------------------------------------
+  BALANCED SCENARIO — INTEGRATED SUMMARY
+------------------------------------------------------------------------
+  Technology                   GW    TWh/yr        km²     $/MWh
+  ──────────────────────────────────────────────────────────────
+  Solar PV                   71.5     162.8     24,682       0.0
+  Wind Onshore                6.2      19.0     25,962       0.0
+  Biomass / Bioenergy         4.0      24.7     32,716       0.0
+  ──────────────────────────────────────────────────────────────
+  TOTAL                      81.7     206.5
+
+------------------------------------------------------------------------
+  GeoTIFFs EXPORTED  →  results/gis/
+------------------------------------------------------------------------
+  ✓  EGY_solar_suitability.tif
+  ✓  EGY_wind_suitability.tif
+  ✓  EGY_biomass_suitability.tif
+  ✓  EGY_dominance_suitability.tif
+  ✓  EGY_dominance_lcoe.tif
+
+========================================================================
+  TIMINGS
+------------------------------------------------------------------------
+    dominance_suitability           :    3.6s
+    dominance_lcoe                  :    3.0s
+    executive_dashboard             :    6.9s
+    geotiff_export                  :    0.5s
+    TOTAL                           :   14.3s
+========================================================================
+
+2026-04-10T14:16:46 | INFO     | geoworld |   Phase 6 (Results) completed in 14.3s
+2026-04-10T14:16:46 | INFO     | geoworld.processors.GHGAbatementCalculator | ==============================================================
+2026-04-10T14:16:46 | INFO     | geoworld.processors.GHGAbatementCalculator |   GHG ABATEMENT CALCULATOR — Egypt (EGY)
+2026-04-10T14:16:46 | INFO     | geoworld.processors.GHGAbatementCalculator |   Saída: D:\Douglas\DOUTORADO\geoworld_framework\outputs\EGY\abatement
+2026-04-10T14:16:46 | INFO     | geoworld.processors.GHGAbatementCalculator | ==============================================================
+2026-04-10T14:16:47 | INFO     | geoworld.processors.GHGAbatementCalculator | Net Zero DB carregado com sucesso — net_zero_db.json
+2026-04-10T14:16:48 | WARNING  | geoworld.processors.GHGAbatementCalculator | [EGY] NDC gap appears zero (total_now_mt=0.0 <= target=227.8). OWID API data is fossils-only (missing large LULUCF emissions). National gap undetermined.
+2026-04-10T14:16:48 | INFO     | geoworld.processors.GHGAbatementCalculator | [EGY] NDC Profile: Target Year 2050 | Type: absolute | Current Nat. Emissions: 0.0 Mt
+2026-04-10T14:16:50 | INFO     | geoworld.utils.plots_abatement | Geography map saved: EGY_abatement_maps.png
+2026-04-10T14:16:50 | INFO     | geoworld.utils.plots_abatement | MACC curve saved: EGY_macc_curve.png
+2026-04-10T14:16:51 | INFO     | geoworld.utils.plots_abatement | Substitution curves saved: EGY_substitution_curves.png
+2026-04-10T14:16:51 | INFO     | geoworld.utils.plots_abatement | Carbon intensity chart saved: EGY_carbon_intensity.png
+2026-04-10T14:16:51 | INFO     | geoworld.utils.plots_abatement | Net Zero analysis saved: EGY_net_zero.png
+2026-04-10T14:16:51 | INFO     | geoworld.processors.GHGAbatementCalculator | [EGY] MAC 2.6 USD/tCO₂e (needs 2.6 USD/tCO2) | Net Avoided: 28.77 MtCO₂/yr | Value: 0.63 B USD | Substituted: 60.7 TWh | NDC coverage: N/D
+2026-04-10T14:16:51 | INFO     | geoworld.processors.GHGAbatementCalculator | [EGY] Phase 7 completed in 5.3s.
+2026-04-10T14:16:51 | INFO     | geoworld |   Phase 7 (Abatement) completed in 5.3s
+2026-04-10T14:16:51 | INFO     | geoworld.processors.SensitivityAnalyzer | ==============================================================
+2026-04-10T14:16:51 | INFO     | geoworld.processors.SensitivityAnalyzer |   SENSITIVITY ANALYZER — Phase 8 (EGY)
+2026-04-10T14:16:51 | INFO     | geoworld.processors.SensitivityAnalyzer |   Output: D:\Douglas\DOUTORADO\geoworld_framework\outputs\EGY\sensitivity
+2026-04-10T14:16:51 | INFO     | geoworld.processors.SensitivityAnalyzer | ==============================================================
+2026-04-10T14:16:51 | INFO     | geoworld.processors.SensitivityAnalyzer |   Reference grid: 995×1111 pixels
+2026-04-10T14:16:51 | INFO     | geoworld.processors.SensitivityAnalyzer |   Technologies to analyze: ['solar', 'wind', 'biomass']
+2026-04-10T14:16:51 | INFO     | geoworld.processors.SensitivityAnalyzer |   [SA-5] GHG function built from Phase 7 abatement results.
+2026-04-10T14:16:51 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] Starting SA suite (7 criteria)...
+2026-04-10T14:16:51 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-1: OAT weight perturbation...
+2026-04-10T14:17:03 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-1 complete: rho_min=0.8939, most_sensitive=solar_resource
+2026-04-10T14:17:03 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-2: Monte Carlo AHP (1000 samples)...
+2026-04-10T14:17:51 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-2 complete: stable_fraction=1.4%
+2026-04-10T14:17:51 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-3: threshold sweep...
+2026-04-10T14:17:51 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-3 complete: 11 thresholds evaluated
+2026-04-10T14:17:51 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-4: LCOE Monte Carlo (10000 samples)...
+2026-04-10T14:17:51 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-4 complete: P50=$45.9/MWh, CI90=$10.0
+2026-04-10T14:17:51 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-6: potential parameter sensitivity...
+2026-04-10T14:17:52 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-6 complete: base=71.5 GW
+2026-04-10T14:17:52 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] Dashboard saved: EGY_solar_dashboard.png
+2026-04-10T14:17:52 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] Starting SA suite (7 criteria)...
+2026-04-10T14:17:52 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-1: OAT weight perturbation...
+2026-04-10T14:18:04 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-1 complete: rho_min=0.9215, most_sensitive=wind_resource
+2026-04-10T14:18:04 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-2: Monte Carlo AHP (1000 samples)...
+2026-04-10T14:18:53 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-2 complete: stable_fraction=2.4%
+2026-04-10T14:18:53 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-3: threshold sweep...
+2026-04-10T14:18:53 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-3 complete: 11 thresholds evaluated
+2026-04-10T14:18:53 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-4: LCOE Monte Carlo (10000 samples)...
+2026-04-10T14:18:53 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-4 complete: P50=$61.2/MWh, CI90=$12.6
+2026-04-10T14:18:53 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-6: potential parameter sensitivity...
+2026-04-10T14:18:54 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-6 complete: base=6.2 GW
+2026-04-10T14:18:54 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] Dashboard saved: EGY_wind_dashboard.png
+2026-04-10T14:18:54 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] Starting SA suite (8 criteria)...
+2026-04-10T14:18:54 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-1: OAT weight perturbation...
+2026-04-10T14:19:08 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-1 complete: rho_min=0.9917, most_sensitive=river_biomass
+2026-04-10T14:19:08 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-2: Monte Carlo AHP (1000 samples)...
+2026-04-10T14:19:57 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-2 complete: stable_fraction=19.7%
+2026-04-10T14:19:57 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-3: threshold sweep...
+2026-04-10T14:19:57 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-3 complete: 11 thresholds evaluated
+2026-04-10T14:19:57 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-4: LCOE Monte Carlo (10000 samples)...
+2026-04-10T14:19:57 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-4 complete: P50=$55.6/MWh, CI90=$11.4
+2026-04-10T14:19:57 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-6: potential parameter sensitivity...
+2026-04-10T14:19:58 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-6 complete: base=4.0 GW
+2026-04-10T14:19:58 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] Dashboard saved: EGY_biomass_dashboard.png
+2026-04-10T14:19:58 | INFO     | geoworld.processors.SensitivityAnalyzer |   [SA-5] Sobol global sensitivity (GHG abatement)...
+2026-04-10T14:19:59 | INFO     | geoworld.processors.SensitivityAnalyzer |   [SA-5] Sobol complete: dominant=penetration_factor (ST=0.568)
+2026-04-10T14:19:59 | INFO     | geoworld.processors.SensitivityAnalyzer | [EGY] Phase 8 completed in 187.3s.
+2026-04-10T14:19:59 | INFO     | geoworld.processors.SensitivityAnalyzer | [EGY] Outputs: 13 CSVs, 22 plots
+2026-04-10T14:19:59 | INFO     | geoworld |   Phase 8 (Sensitivity) completed in 187.3s
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | Loaded transport parameters from: D:\Douglas\DOUTORADO\geoworld_framework\configs\transport_parameters.json
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | ============================================================
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   PHASE 9 — TRANSPORT DECARBONISATION
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Egypt (EGY)
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | ============================================================
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | ----------------------------------------------------
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   PARAMETERS IN USE
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | ----------------------------------------------------
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Projection horizon : 2025 – 2050
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Fleet size (2024)  : 0 vehicles
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Annual fleet growth: 2.5%
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Grid intensity (gCO2/kWh):
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2025 : 436
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2030 : 380
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2035 : 290
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2040 : 200
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2045 : 120
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2050 : 50
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Hub spacing radius : 80 km
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Biofuel blends     : B7 / E10
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Powertrain penetration (global defaults — reference, new sales):
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2025 : ICE 72% | HEV 14% | PHEV 6% | BEV 7% | FCEV 1%
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2035 : ICE 35% | HEV 20% | PHEV 12% | BEV 30% | FCEV 3%
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2050 : ICE 5% | HEV 10% | PHEV 7% | BEV 72% | FCEV 6%
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | ============================================================
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [1/7] Building fleet size trajectory ...
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Fleet base (light vehicles): fleet_size_2024(10,000,000) × share_of_fleet(0.72) = 7,200,000
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [2/7] Calculating EV electricity demand & RE requirements ...
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [3/7] Computing GHG emission trajectories ...
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [4/7] Computing transport electrification costs ...
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     Using Phase-5 LCOEs — Solar: 55.0 USD/MWh | Wind: 48.0 USD/MWh | Biomass: 85.0 USD/MWh
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [5/7] Locating charging hubs from suitability rasters ...
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     Hub placement from: EGY_solar_suitability.tif, EGY_wind_suitability.tif (min suitability: 0.90)
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     Score weights — suitability: 0.50 | demand proximity: 0.35 | LCOE: 0.15
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     Solar: 550 candidate pixels (score >= 0.90)
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     Wind: 3926 candidate pixels (score >= 0.90)
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     Placed 21 charging hubs (spacing ≥ 80 km, score ≥ 0.90) — Solar: 4, Wind: 17, Biomass: 0.
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [6/7] Building summary ...
+2026-04-10T14:19:59 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [7/7] Writing outputs & maps ...
+2026-04-10T14:20:04 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | Phase 9 (Transport Decarbonisation) completed in 5.5s
+2026-04-10T14:20:04 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Report : D:\Douglas\DOUTORADO\geoworld_framework\outputs\EGY\transport\reports\EGY_transport_decarbonization_report.txt
+2026-04-10T14:20:04 | INFO     | geoworld |   Phase 9 (Transport Decarbonisation) completed in 5.5s
+2026-04-10T14:20:04 | INFO     | geoworld | Pipeline completed for Egypt (EGY).
+2026-04-10T14:20:04 | INFO     | geoworld | Result: COMPLETED
+2026-04-10T14:20:04 | INFO     | geoworld | Total elapsed time: 568.7s

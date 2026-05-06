@@ -1,0 +1,666 @@
+2026-04-10T16:53:21 | INFO     | geoworld.io.DataManager | Raw data root: D:\Douglas\DOUTORADO\database\raw
+2026-04-10T16:53:21 | INFO     | geoworld | Starting analysis: Russia (RUS)
+2026-04-10T16:53:21 | INFO     | geoworld.core.ConfigLoader | ----------------------------------------------------
+2026-04-10T16:53:21 | INFO     | geoworld.core.ConfigLoader |   Russia (RUS)
+2026-04-10T16:53:21 | INFO     | geoworld.core.ConfigLoader |   Solar  : LUF=0.05  thr=0.75  density=35.0 MW/km²
+2026-04-10T16:53:21 | INFO     | geoworld.core.ConfigLoader |   Wind   : LUF=0.030  thr=0.75  density=5.0 MW/km²
+2026-04-10T16:53:21 | INFO     | geoworld.core.ConfigLoader |   Biomass: col=0.25  thr=0.75  density=0.5 MW/km²
+2026-04-10T16:53:21 | INFO     | geoworld.core.ConfigLoader |   OWA    : default=balanced  scenarios=['optimistic', 'balanced', 'conservative']
+2026-04-10T16:53:21 | INFO     | geoworld.core.ConfigLoader |   Criteria: river=5.0 km  road=15.0 km  slope=12°
+2026-04-10T16:53:21 | INFO     | geoworld.core.ConfigLoader | ----------------------------------------------------
+2026-04-10T16:53:21 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T16:53:21 | INFO     | geoworld |   Russia (RUS)
+2026-04-10T16:53:21 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T16:53:21 | INFO     | geoworld |   Geometry : Mainland only
+2026-04-10T16:53:21 | INFO     | geoworld |   Resolution : Fixed 0.01 deg
+2026-04-10T16:53:21 | INFO     | geoworld |   Suitability optimistic offset : -0.10
+2026-04-10T16:53:21 | INFO     | geoworld |   Protected-area mode : Hard exclusion
+2026-04-10T16:53:21 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T16:54:01 | INFO     | geoworld | Land Cover: 559 tile(s) found.
+2026-04-10T16:54:02 | INFO     | geoworld.io.DataManager | Power plants found: 90
+2026-04-10T16:54:02 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T16:54:02 | INFO     | geoworld |   DATA AVAILABILITY
+2026-04-10T16:54:02 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T16:54:02 | INFO     | geoworld |   [  OK   ] Borders
+2026-04-10T16:54:02 | INFO     | geoworld |   [  OK   ] Land Cover
+2026-04-10T16:54:02 | INFO     | geoworld |   [  OK   ] Elevation
+2026-04-10T16:54:02 | INFO     | geoworld |   [  OK   ] Wind
+2026-04-10T16:54:02 | INFO     | geoworld |   [  OK   ] Solar
+2026-04-10T16:54:02 | INFO     | geoworld |   [  OK   ] Power Plants
+2026-04-10T16:54:02 | INFO     | geoworld |   [  OK   ] Population
+2026-04-10T16:54:02 | INFO     | geoworld |   [  OK   ] Roads
+2026-04-10T16:54:02 | INFO     | geoworld |   [  OK   ] Protected
+2026-04-10T16:54:02 | INFO     | geoworld |   [  OK   ] Lakes
+2026-04-10T16:54:02 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T16:54:02 | INFO     | geoworld | Phase 1 (Audit): skipped.
+2026-04-10T16:54:02 | INFO     | geoworld | Phase 2a (Grid Alignment): skipped.
+2026-04-10T16:54:02 | INFO     | geoworld.processors.CriteriaBuilder | 
+Phase 2b — Criteria Builder: RUS
+2026-04-10T16:54:03 | INFO     | geoworld.processors.CriteriaBuilder |   Admin boundaries: 81 regions loaded
+2026-04-10T16:54:03 | INFO     | geoworld.processors.CriteriaBuilder |   [solar_resource] mathematical projection initiated...
+2026-04-10T16:54:07 | INFO     | geoworld.processors.CriteriaBuilder |   [solar_resource] resolved in 3.2s
+2026-04-10T16:54:07 | INFO     | geoworld.processors.CriteriaBuilder |   [wind_resource] mathematical projection initiated...
+2026-04-10T16:54:14 | INFO     | geoworld.processors.CriteriaBuilder |   [wind_resource] resolved in 7.3s
+2026-04-10T16:54:14 | INFO     | geoworld.processors.CriteriaBuilder |   [terrain_score] mathematical projection initiated...
+2026-04-10T16:54:23 | INFO     | geoworld.processors.CriteriaBuilder |   [terrain_score] resolved in 9.3s
+2026-04-10T16:54:23 | INFO     | geoworld.processors.CriteriaBuilder |   [slope_degrees] mathematical projection initiated...
+2026-04-10T16:54:30 | INFO     | geoworld.processors.CriteriaBuilder |   [slope_degrees] resolved in 6.4s
+2026-04-10T16:54:30 | INFO     | geoworld.processors.CriteriaBuilder |   [land_cover] mathematical projection initiated...
+2026-04-10T16:54:31 | INFO     | geoworld.processors.CriteriaBuilder |   [land_cover] resolved in 1.1s
+2026-04-10T16:54:32 | INFO     | geoworld.processors.CriteriaBuilder |   [biomass_resource] mathematical projection initiated...
+2026-04-10T16:54:39 | INFO     | geoworld.processors.CriteriaBuilder |   [biomass_resource] resolved in 7.2s
+2026-04-10T16:54:39 | INFO     | geoworld.processors.CriteriaBuilder |   [protected_areas] mathematical projection initiated...
+2026-04-10T16:58:50 | INFO     | geoworld.processors.CriteriaBuilder |   [protected_areas] resolved in 251.0s
+2026-04-10T16:58:50 | INFO     | geoworld.processors.CriteriaBuilder |   [pop_suitability] mathematical projection initiated...
+2026-04-10T16:58:57 | INFO     | geoworld.processors.CriteriaBuilder |   [pop_suitability] resolved in 6.7s
+2026-04-10T16:58:57 | INFO     | geoworld.processors.CriteriaBuilder |   [road_suitability] mathematical projection initiated...
+2026-04-10T16:58:59 | INFO     | geoworld.processors.CriteriaBuilder |   [road_suitability] resolved in 2.4s
+2026-04-10T16:58:59 | INFO     | geoworld.processors.CriteriaBuilder |   [lakes_exclusion] mathematical projection initiated...
+2026-04-10T16:59:00 | INFO     | geoworld.processors.CriteriaBuilder |   [lakes_exclusion] resolved in 1.4s
+2026-04-10T16:59:00 | INFO     | geoworld.processors.CriteriaBuilder |   [river_solar] mathematical projection initiated...
+2026-04-10T16:59:02 | INFO     | geoworld.processors.CriteriaBuilder |   [river_solar] resolved in 1.9s
+2026-04-10T16:59:02 | INFO     | geoworld.processors.CriteriaBuilder |   [river_wind] mathematical projection initiated...
+2026-04-10T16:59:04 | INFO     | geoworld.processors.CriteriaBuilder |   [river_wind] resolved in 1.7s
+2026-04-10T16:59:04 | INFO     | geoworld.processors.CriteriaBuilder |   [river_biomass] mathematical projection initiated...
+2026-04-10T16:59:06 | INFO     | geoworld.processors.CriteriaBuilder |   [river_biomass] resolved in 2.3s
+2026-04-10T16:59:06 | INFO     | geoworld.processors.CriteriaBuilder |   [seismic_suitability] mathematical projection initiated...
+2026-04-10T16:59:12 | INFO     | geoworld.processors.CriteriaBuilder |   [seismic_suitability] resolved in 5.5s
+2026-04-10T16:59:12 | INFO     | geoworld.processors.CriteriaBuilder |   [grid_suitability] mathematical projection initiated...
+2026-04-10T16:59:16 | INFO     | geoworld.processors.CriteriaBuilder |   [grid_suitability] resolved in 4.1s
+2026-04-10T16:59:16 | INFO     | geoworld.processors.CriteriaBuilder |   Computation: 313.9s | 15 maps queued for rendering
+2026-04-10T16:59:16 | INFO     | geoworld.processors.CriteriaBuilder |   Rendering 15 maps across 4 worker(s)...
+2026-04-10T17:03:02 | INFO     | geoworld.processors.CriteriaBuilder |   Render: 226.2s (parallel) | Phase total: 540.1s
+2026-04-10T17:03:14 | INFO     | geoworld.processors.CriteriaBuilder | 
+==============================================================
+  CRITERIA BUILDER — RUS
+  Output: D:\Douglas\DOUTORADO\geoworld_framework\outputs\RUS\criteria_builder
+==============================================================
+2026-04-10T17:03:14 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ solar_resource          : mean=0.405 | >=0.6:  22.9% | n=11,243,538
+2026-04-10T17:03:15 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ wind_resource           : mean=0.531 | >=0.6:  42.4% | n=28,147,379
+2026-04-10T17:03:15 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ terrain_score           : mean=0.648 | >=0.6:  56.7% | n=27,884,021
+2026-04-10T17:03:15 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ lc_biomass              : mean=0.248 | >=0.6:  26.8% | n=28,153,292
+2026-04-10T17:03:15 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ biomass_resource        : mean=0.619 | >=0.6:  56.0% | n=28,153,292
+2026-04-10T17:03:15 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ protected_areas         : mean=0.977 | >=0.6:  96.5% | n=28,153,292
+2026-04-10T17:03:15 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ pop_suitability         : mean=0.997 | >=0.6:  99.9% | n=27,364,673
+2026-04-10T17:03:16 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ road_suitability        : mean=0.500 | >=0.6:   0.0% | n=28,153,292
+2026-04-10T17:03:16 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ lakes_exclusion         : mean=0.949 | >=0.6:  94.9% | n=28,153,292
+2026-04-10T17:03:16 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ river_solar             : mean=0.798 | >=0.6:  79.8% | n=28,153,292
+2026-04-10T17:03:16 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ river_wind              : mean=0.798 | >=0.6:  79.8% | n=28,153,292
+2026-04-10T17:03:16 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ river_biomass           : mean=0.955 | >=0.6: 100.0% | n=28,153,292
+2026-04-10T17:03:16 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ seismic_suitability     : mean=0.849 | >=0.6:  87.8% | n=28,073,837
+2026-04-10T17:03:17 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ grid_suitability        : mean=0.207 | >=0.6:  19.7% | n=28,153,292
+2026-04-10T17:03:17 | INFO     | geoworld.processors.CriteriaBuilder |   Total time: 554.4s
+==============================================================
+2026-04-10T17:03:17 | INFO     | geoworld |   Phase 2b (Criteria) completed in 554.6s
+2026-04-10T17:03:19 | INFO     | geoworld |   [load_criteria] iniciando...
+2026-04-10T17:03:39 | INFO     | geoworld |   [load_criteria] concluído em 20.6s
+2026-04-10T17:03:41 | INFO     | geoworld.processors.SuitabilityBuilder |   [suitability] Policy Active: ESA class 10 (Trees/Forest) blocked for Solar/Wind/Biomass.
+2026-04-10T17:03:41 | INFO     | geoworld.processors.SuitabilityBuilder | 
+  ──────────────────────────────────────────────────
+  Technology: Solar PV
+  ──────────────────────────────────────────────────
+2026-04-10T17:03:41 | INFO     | geoworld |   [solar] iniciando...
+2026-04-10T17:03:41 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar] AHP Saaty (subtle) — ✅ Consistent
+2026-04-10T17:03:41 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   λ_max=7.3039 | CI=0.0506 | CR=0.0384
+2026-04-10T17:03:41 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   solar_resource                : 0.3314  (33.1%)
+2026-04-10T17:03:41 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   grid_suitability              : 0.2385  (23.9%)
+2026-04-10T17:03:41 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   terrain_score                 : 0.1620  (16.2%)
+2026-04-10T17:03:41 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   road_suitability              : 0.1090  (10.9%)
+2026-04-10T17:03:41 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   river_solar                   : 0.0734  (7.3%)
+2026-04-10T17:03:41 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   seismic_suitability           : 0.0498  (5.0%)
+2026-04-10T17:03:41 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   pop_suitability               : 0.0359  (3.6%)
+2026-04-10T17:03:41 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar] AHP weights saved: RUS_solar_weights.json
+2026-04-10T17:03:42 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar] Pixels: total=10888331 | excluded=7257763 (slope=177098, lc=17731343) | valid=3630568 (33.3%)
+2026-04-10T17:04:20 | INFO     | geoworld |   [solar] concluído em 38.7s
+2026-04-10T17:04:20 | INFO     | geoworld.processors.SuitabilityBuilder | 
+  ──────────────────────────────────────────────────
+  Technology: Wind Onshore
+  ──────────────────────────────────────────────────
+2026-04-10T17:04:20 | INFO     | geoworld |   [wind] iniciando...
+2026-04-10T17:04:20 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind] AHP Saaty (moderate) — ✅ Consistent
+2026-04-10T17:04:20 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   λ_max=7.7714 | CI=0.1286 | CR=0.0974
+2026-04-10T17:04:20 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   wind_resource                 : 0.3820  (38.2%)
+2026-04-10T17:04:20 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   grid_suitability              : 0.2480  (24.8%)
+2026-04-10T17:04:20 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   terrain_score                 : 0.1582  (15.8%)
+2026-04-10T17:04:20 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   road_suitability              : 0.0983  (9.8%)
+2026-04-10T17:04:20 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   pop_suitability               : 0.0614  (6.1%)
+2026-04-10T17:04:20 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   seismic_suitability           : 0.0314  (3.1%)
+2026-04-10T17:04:20 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   river_wind                    : 0.0208  (2.1%)
+2026-04-10T17:04:20 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind] AHP weights saved: RUS_wind_weights.json
+2026-04-10T17:04:21 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind] Pixels: total=27026587 | excluded=17409605 (slope=30849, lc=17731343) | valid=9616982 (35.6%)
+2026-04-10T17:05:08 | INFO     | geoworld |   [wind] concluído em 48.3s
+2026-04-10T17:05:08 | INFO     | geoworld.processors.SuitabilityBuilder | 
+  ──────────────────────────────────────────────────
+  Technology: Biomass / Bioenergy
+  ──────────────────────────────────────────────────
+2026-04-10T17:05:08 | INFO     | geoworld |   [biomass] iniciando...
+2026-04-10T17:05:08 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass] AHP Saaty (subtle) — ✅ Consistent
+2026-04-10T17:05:08 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   λ_max=8.4744 | CI=0.0678 | CR=0.0481
+2026-04-10T17:05:08 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   biomass_resource              : 0.3076  (30.8%)
+2026-04-10T17:05:08 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   lc_biomass                    : 0.2255  (22.5%)
+2026-04-10T17:05:08 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   road_suitability              : 0.1615  (16.2%)
+2026-04-10T17:05:08 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   river_biomass                 : 0.1111  (11.1%)
+2026-04-10T17:05:08 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   grid_suitability              : 0.0792  (7.9%)
+2026-04-10T17:05:08 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   pop_suitability               : 0.0573  (5.7%)
+2026-04-10T17:05:08 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   terrain_score                 : 0.0326  (3.3%)
+2026-04-10T17:05:08 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   seismic_suitability           : 0.0252  (2.5%)
+2026-04-10T17:05:08 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass] AHP weights saved: RUS_biomass_weights.json
+2026-04-10T17:05:09 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass] Pixels: total=27030985 | excluded=17393755 (slope=363, lc=17731343) | valid=9637230 (35.7%)
+2026-04-10T17:05:58 | INFO     | geoworld |   [biomass] concluído em 49.7s
+2026-04-10T17:05:58 | INFO     | geoworld |   [comparison_map] iniciando...
+2026-04-10T17:07:35 | INFO     | geoworld |   [comparison_map] concluído em 97.3s
+2026-04-10T17:07:35 | INFO     | geoworld.processors.SuitabilityBuilder | 
+====================================================================
+  SUITABILITY REPORT — AHP (Saaty) + TOPSIS MCDA
+  Russia (RUS)
+  2026-04-10 17:03:17
+====================================================================
+
+--------------------------------------------------------------------
+  SOLAR PV
+--------------------------------------------------------------------
+    Total territorial pixels            : 10,888,331
+    Hard exclusions (pixels)            : 7,257,763  (66.7%)
+    Valid pixels (TOPSIS)               : 3,630,568  (33.3%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.472 ± 0.157
+      P10 / P50 / P90                   : 0.292 / 0.457 / 0.660
+      Score >= 0.6 (high suitability)   : 20.3%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0384  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      solar_resource                     0.3314  ( 33.1%)
+      grid_suitability                   0.2385  ( 23.9%)
+      terrain_score                      0.1620  ( 16.2%)
+      road_suitability                   0.1090  ( 10.9%)
+      river_solar                        0.0734  (  7.3%)
+      seismic_suitability                0.0498  (  5.0%)
+      pop_suitability                    0.0359  (  3.6%)
+
+    Weights JSON: RUS_solar_weights.json
+
+--------------------------------------------------------------------
+  WIND ONSHORE
+--------------------------------------------------------------------
+    Total territorial pixels            : 27,026,587
+    Hard exclusions (pixels)            : 17,409,605  (64.4%)
+    Valid pixels (TOPSIS)               : 9,616,982  (35.6%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.469 ± 0.204
+      P10 / P50 / P90                   : 0.216 / 0.453 / 0.807
+      Score >= 0.6 (high suitability)   : 22.3%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0974  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      wind_resource                      0.3820  ( 38.2%)
+      grid_suitability                   0.2480  ( 24.8%)
+      terrain_score                      0.1582  ( 15.8%)
+      road_suitability                   0.0983  (  9.8%)
+      pop_suitability                    0.0614  (  6.1%)
+      seismic_suitability                0.0314  (  3.1%)
+      river_wind                         0.0208  (  2.1%)
+
+    Weights JSON: RUS_wind_weights.json
+
+--------------------------------------------------------------------
+  BIOMASS / BIOENERGY
+--------------------------------------------------------------------
+    Total territorial pixels            : 27,030,985
+    Hard exclusions (pixels)            : 17,393,755  (64.3%)
+    Valid pixels (TOPSIS)               : 9,637,230  (35.7%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.474 ± 0.193
+      P10 / P50 / P90                   : 0.161 / 0.466 / 0.716
+      Score >= 0.6 (high suitability)   : 30.3%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0481  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      biomass_resource                   0.3076  ( 30.8%)
+      lc_biomass                         0.2255  ( 22.5%)
+      road_suitability                   0.1615  ( 16.2%)
+      river_biomass                      0.1111  ( 11.1%)
+      grid_suitability                   0.0792  (  7.9%)
+      pop_suitability                    0.0573  (  5.7%)
+      terrain_score                      0.0326  (  3.3%)
+      seismic_suitability                0.0252  (  2.5%)
+
+    Weights JSON: RUS_biomass_weights.json
+
+====================================================================
+  TIMINGS BY STAGE
+--------------------------------------------------------------------
+    load_criteria           :   20.6s
+    solar                   :   38.7s
+    wind                    :   48.3s
+    biomass                 :   49.7s
+    comparison_map          :   97.3s
+    TOTAL                   : 258.3s
+====================================================================
+
+2026-04-10T17:07:35 | INFO     | geoworld |   Phase 3 (Suitability) completed in 258.5s
+2026-04-10T17:07:35 | INFO     | geoworld.processors.PotentialCalculator |   [params] solar=35.0 MW/km² lu=0.05 thr=0.75 | wind=5.0 MW/km² thr=0.75 | biomass=0.5 MW/km² thr=0.75
+2026-04-10T17:07:37 | INFO     | geoworld.processors.PotentialCalculator |   Admin boundaries: 81 regions active
+2026-04-10T17:07:37 | INFO     | geoworld.processors.PotentialCalculator | 
+  ──────────────────────────────────────────────────
+  Technology: Solar PV
+  ──────────────────────────────────────────────────
+2026-04-10T17:07:37 | INFO     | geoworld |   [solar] iniciando...
+2026-04-10T17:07:37 | INFO     | geoworld.processors.PotentialCalculator |   [solar] Grid: 3654x15270 px | lat_center=59.45° | px_area=0.632 km²
+2026-04-10T17:07:37 | INFO     | geoworld.processors.PotentialCalculator |   [solar/optimistic] threshold=0.65 | area=337,066 km² | cap=589.87 GW | gen=723.41 TWh/yr
+2026-04-10T17:07:50 | INFO     | geoworld.processors.PotentialCalculator |   [solar/balanced] threshold=0.75 | area=157,120 km² | cap=274.96 GW | gen=337.21 TWh/yr
+2026-04-10T17:08:02 | INFO     | geoworld.processors.PotentialCalculator |   [solar/conservative] threshold=0.85 | area=61,168 km² | cap=107.04 GW | gen=131.28 TWh/yr
+2026-04-10T17:08:59 | INFO     | geoworld |   [solar] concluído em 82.4s
+2026-04-10T17:08:59 | INFO     | geoworld.processors.PotentialCalculator | 
+  ──────────────────────────────────────────────────
+  Technology: Wind Onshore
+  ──────────────────────────────────────────────────
+2026-04-10T17:08:59 | INFO     | geoworld |   [wind] iniciando...
+2026-04-10T17:09:00 | INFO     | geoworld.processors.PotentialCalculator |   [wind] Grid: 3654x15270 px | lat_center=59.45° | px_area=0.632 km²
+2026-04-10T17:09:00 | INFO     | geoworld.processors.PotentialCalculator |   [wind/optimistic] threshold=0.65 | area=1,424,176 km² | cap=213.63 GW | gen=486.56 TWh/yr
+2026-04-10T17:09:13 | INFO     | geoworld.processors.PotentialCalculator |   [wind/balanced] threshold=0.75 | area=1,033,054 km² | cap=154.96 GW | gen=352.93 TWh/yr
+2026-04-10T17:09:25 | INFO     | geoworld.processors.PotentialCalculator |   [wind/conservative] threshold=0.85 | area=446,228 km² | cap=66.93 GW | gen=152.45 TWh/yr
+2026-04-10T17:10:22 | INFO     | geoworld |   [wind] concluído em 82.7s
+2026-04-10T17:10:22 | INFO     | geoworld.processors.PotentialCalculator | 
+  ──────────────────────────────────────────────────
+  Technology: Biomass / Bioenergy
+  ──────────────────────────────────────────────────
+2026-04-10T17:10:22 | INFO     | geoworld |   [biomass] iniciando...
+2026-04-10T17:10:22 | INFO     | geoworld.processors.PotentialCalculator |   [biomass] Grid: 3654x15270 px | lat_center=59.45° | px_area=0.632 km²
+2026-04-10T17:10:23 | INFO     | geoworld.processors.PotentialCalculator |   [biomass/optimistic] threshold=0.65 | area=1,396,841 km² | cap=209.53 GW | gen=1376.59 TWh/yr
+2026-04-10T17:10:35 | INFO     | geoworld.processors.PotentialCalculator |   [biomass/balanced] threshold=0.75 | area=398,022 km² | cap=59.70 GW | gen=392.25 TWh/yr
+2026-04-10T17:10:47 | INFO     | geoworld.processors.PotentialCalculator |   [biomass/conservative] threshold=0.85 | area=75,295 km² | cap=11.29 GW | gen=74.20 TWh/yr
+2026-04-10T17:11:44 | INFO     | geoworld |   [biomass] concluído em 82.5s
+2026-04-10T17:11:44 | INFO     | geoworld |   [comparison_map] iniciando...
+2026-04-10T17:11:45 | INFO     | geoworld |   [comparison_map] concluído em 1.1s
+2026-04-10T17:11:45 | INFO     | geoworld |   [scenario_chart] iniciando...
+2026-04-10T17:11:46 | INFO     | geoworld |   [scenario_chart] concluído em 0.2s
+2026-04-10T17:11:46 | INFO     | geoworld.processors.PotentialCalculator | 
+========================================================================
+  POTENTIAL REPORT — Technical & Energy Potential
+  Russia (RUS)
+  2026-04-10 17:07:35
+========================================================================
+
+------------------------------------------------------------------------
+  SOLAR PV
+  Land Use: 5.0%  |  Density: 35.0 MW/km²  |  CF: 14.0%
+------------------------------------------------------------------------
+  Scenario         Thr   Area (km²)       GW     TWh/yr   Pixels
+  ------------------------------------------------------------
+  Optimistic      0.65      337,066   589.87     723.41  426,573
+  Balanced        0.75      157,120   274.96     337.21  200,801
+  Conservative    0.85       61,168   107.04     131.28   78,201
+
+    Top 5 Districts (Balanced Scenario):
+    District                     MW       GWh/yr   Pixels
+    ------------------------------------------------------
+    ZABAYKAL'YE             121,441      148,935   89,126
+    IRKUTSK                  34,966       42,882   27,008
+    AMUR                     34,190       41,931   25,432
+    BURYAT                   28,108       34,472   20,815
+    PRIMOR'YE                18,028       22,110   11,671
+
+------------------------------------------------------------------------
+  WIND ONSHORE
+  Land Use: 3.0%  |  Density: 5.0 MW/km²  |  CF: 26.0%
+------------------------------------------------------------------------
+  Scenario         Thr   Area (km²)       GW     TWh/yr   Pixels
+  ------------------------------------------------------------
+  Optimistic      0.65    1,424,176   213.63     486.56 1,944,570
+  Balanced        0.75    1,033,054   154.96     352.93 1,399,168
+  Conservative    0.85      446,228    66.93     152.45  595,267
+
+    Top 5 Districts (Balanced Scenario):
+    District                     MW       GWh/yr   Pixels
+    ------------------------------------------------------
+    ROSTOV                   11,304       25,745   90,261
+    VOLGOGRAD                 9,729       22,159   80,235
+    ORENBURG                  9,329       21,248   81,230
+    NOVOSIBIRSK               8,581       19,545   80,097
+    ALTAY                     8,416       19,168   74,270
+
+------------------------------------------------------------------------
+  BIOMASS / BIOENERGY
+  Land Use: 30.0%  |  Density: 0.5 MW/km²  |  CF: 75.0%
+------------------------------------------------------------------------
+  Scenario         Thr   Area (km²)       GW     TWh/yr   Pixels
+  ------------------------------------------------------------
+  Optimistic      0.65    1,396,841   209.53    1376.59 2,053,803
+  Balanced        0.75      398,022    59.70     392.25  610,977
+  Conservative    0.85       75,296    11.29      74.20  112,784
+
+    Top 5 Districts (Balanced Scenario):
+    District                     MW       GWh/yr   Pixels
+    ------------------------------------------------------
+    SAKHA                     8,149       53,540   99,903
+    KRASNOYARSK               4,243       27,875   47,923
+    IRKUTSK                   2,621       17,219   25,438
+    ZABAYKAL'YE               2,256       14,820   20,020
+    KHABAROVSK                1,830       12,023   16,850
+
+========================================================================
+  COMPARATIVE SUMMARY — BALANCED SCENARIO
+------------------------------------------------------------------------
+  Technology                 GW     TWh/yr     Area km²    CF%
+  ------------------------------------------------------------
+  Solar PV               274.96     337.21      157,120   14.0%
+  Wind Onshore           154.96     352.93    1,033,054   26.0%
+  Biomass / Bioenergy     59.70     392.25      398,022   75.0%
+  ------------------------------------------------------------
+  TOTAL                  489.62    1082.39
+
+========================================================================
+  TIMINGS BY STAGE
+------------------------------------------------------------------------
+    solar                     :   82.4s
+    wind                      :   82.7s
+    biomass                   :   82.5s
+    comparison_map            :    1.1s
+    scenario_chart            :    0.2s
+    TOTAL                     : 250.2s
+========================================================================
+
+2026-04-10T17:11:46 | INFO     | geoworld |   Phase 4 (Potential) completed in 250.2s
+2026-04-10T17:11:46 | INFO     | geoworld.processors.LCOECalculator |   [LCOE Params] Bounded country parameters for RUS.
+2026-04-10T17:11:46 | INFO     | geoworld.processors.LCOECalculator |   [pot_params] Anchoring physical constants: Solar LUF=0.05 | Wind CF=0.260
+2026-04-10T17:11:47 | INFO     | geoworld.processors.LCOECalculator |   Admin boundaries: 81 regions loaded
+2026-04-10T17:11:47 | INFO     | geoworld.processors.LCOECalculator | 
+  ──────────────────────────────────────────────────
+  Technology: Solar PV
+  ──────────────────────────────────────────────────
+2026-04-10T17:11:47 | INFO     | geoworld.processors.LCOECalculator |   [solar] financial projection initiated...
+2026-04-10T17:12:38 | INFO     | geoworld.processors.LCOECalculator |   [solar] resolved in 51.2s
+2026-04-10T17:12:38 | INFO     | geoworld.processors.LCOECalculator | 
+  ──────────────────────────────────────────────────
+  Technology: Wind Onshore
+  ──────────────────────────────────────────────────
+2026-04-10T17:12:38 | INFO     | geoworld.processors.LCOECalculator |   [wind] financial projection initiated...
+2026-04-10T17:13:30 | INFO     | geoworld.processors.LCOECalculator |   [wind] resolved in 52.0s
+2026-04-10T17:13:30 | INFO     | geoworld.processors.LCOECalculator | 
+  ──────────────────────────────────────────────────
+  Technology: Biomass / Bioenergy
+  ──────────────────────────────────────────────────
+2026-04-10T17:13:30 | INFO     | geoworld.processors.LCOECalculator |   [biomass] financial projection initiated...
+2026-04-10T17:14:21 | INFO     | geoworld.processors.LCOECalculator |   [biomass] resolved in 51.3s
+2026-04-10T17:14:21 | INFO     | geoworld.processors.LCOECalculator |   [comparison_map] financial projection initiated...
+2026-04-10T17:16:12 | INFO     | geoworld.processors.LCOECalculator |   [comparison_map] resolved in 110.3s
+2026-04-10T17:16:12 | INFO     | geoworld.processors.LCOECalculator | 
+========================================================================
+  LCOE REPORT — Levelized Cost of Energy (Phase 5)
+  Russia (RUS)
+  2026-04-10 17:11:46
+========================================================================
+
+------------------------------------------------------------------------
+  SOLAR PV
+------------------------------------------------------------------------
+  CAPEX: 1050 USD/kW  |  OPEX: 16 USD/kW/yr  |  r: 7%  |  n: 25 yr
+  CRF: 0.0858  |  Base CF: 0.140
+
+  Metric                                    Value     Unit
+  --------------------------------------------------------
+  Base LCOE (National mean CF)               86.5  USD/MWh
+  Spatial mean LCOE                          87.0  USD/MWh
+  P10 — Cheapest 10%                         82.9  USD/MWh
+  P90 — Most expensive 10%                   98.0  USD/MWh
+
+  Available capacity by cost threshold:
+  Threshold (USD/MWh)        Available GW
+  ----------------------------------------
+  <=  40 USD/MWh               0.00 GW  (0.0%)
+  <=  50 USD/MWh               0.00 GW  (0.0%)
+  <=  60 USD/MWh               0.00 GW  (0.0%)
+  <=  70 USD/MWh               0.00 GW  (0.0%)
+  <=  80 USD/MWh               0.00 GW  (0.0%)
+  <= 100 USD/MWh             253.93 GW  (92.4%)
+  <= 120 USD/MWh             274.95 GW  (100.0%)
+
+------------------------------------------------------------------------
+  WIND ONSHORE
+------------------------------------------------------------------------
+  CAPEX: 1650 USD/kW  |  OPEX: 52 USD/kW/yr  |  r: 7%  |  n: 25 yr
+  CRF: 0.0858  |  Base CF: 0.260
+
+  Metric                                    Value     Unit
+  --------------------------------------------------------
+  Base LCOE (National mean CF)               85.0  USD/MWh
+  Spatial mean LCOE                          86.2  USD/MWh
+  P10 — Cheapest 10%                         74.1  USD/MWh
+  P90 — Most expensive 10%                  102.0  USD/MWh
+
+  Available capacity by cost threshold:
+  Threshold (USD/MWh)        Available GW
+  ----------------------------------------
+  <=  40 USD/MWh               0.00 GW  (0.0%)
+  <=  50 USD/MWh               0.00 GW  (0.0%)
+  <=  60 USD/MWh               0.00 GW  (0.0%)
+  <=  70 USD/MWh               3.76 GW  (2.4%)
+  <=  80 USD/MWh              50.77 GW  (32.8%)
+  <= 100 USD/MWh             136.16 GW  (87.9%)
+  <= 120 USD/MWh             154.93 GW  (100.0%)
+
+------------------------------------------------------------------------
+  BIOMASS / BIOENERGY
+------------------------------------------------------------------------
+  CAPEX: 2800 USD/kW  |  OPEX: 115 USD/kW/yr  |  r: 8%  |  n: 20 yr
+  CRF: 0.1019  |  Base CF: 0.750
+
+  Metric                                    Value     Unit
+  --------------------------------------------------------
+  Base LCOE (National mean CF)               60.9  USD/MWh
+  Spatial mean LCOE                          60.9  USD/MWh
+  P10 — Cheapest 10%                         60.9  USD/MWh
+  P90 — Most expensive 10%                   60.9  USD/MWh
+
+  Available capacity by cost threshold:
+  Threshold (USD/MWh)        Available GW
+  ----------------------------------------
+  <=  40 USD/MWh               0.00 GW  (0.0%)
+  <=  50 USD/MWh               0.00 GW  (0.0%)
+  <=  60 USD/MWh               0.00 GW  (0.0%)
+  <=  70 USD/MWh              59.70 GW  (100.0%)
+  <=  80 USD/MWh              59.70 GW  (100.0%)
+  <= 100 USD/MWh              59.70 GW  (100.0%)
+  <= 120 USD/MWh              59.70 GW  (100.0%)
+
+========================================================================
+  TIMINGS BY STAGE
+------------------------------------------------------------------------
+    solar                     :   51.2s
+    wind                      :   52.0s
+    biomass                   :   51.3s
+    comparison_map            :  110.3s
+========================================================================
+
+2026-04-10T17:16:12 | INFO     | geoworld |   Phase 5 (LCOE) completed in 266.1s
+2026-04-10T17:16:12 | INFO     | geoworld.processors.ResultsWriter |   [Recovery] Reconstructing Potential data from disk...
+2026-04-10T17:16:12 | INFO     | geoworld.processors.ResultsWriter |   [Recovery] Reconstructing LCOE data from disk...
+2026-04-10T17:16:12 | WARNING  | geoworld.processors.ResultsWriter |   [Recovery] LCOE TIF not found for solar
+2026-04-10T17:16:12 | WARNING  | geoworld.processors.ResultsWriter |   [Recovery] LCOE TIF not found for wind
+2026-04-10T17:16:12 | WARNING  | geoworld.processors.ResultsWriter |   [Recovery] LCOE TIF not found for biomass
+2026-04-10T17:16:13 | INFO     | geoworld.processors.ResultsWriter |   Admin: 81 districts loaded
+2026-04-10T17:16:14 | INFO     | geoworld.processors.ResultsWriter |   [solar] Suitability TIF loaded.
+2026-04-10T17:16:14 | INFO     | geoworld.processors.ResultsWriter |   [wind] Suitability TIF loaded.
+2026-04-10T17:16:15 | INFO     | geoworld.processors.ResultsWriter |   [biomass] Suitability TIF loaded.
+2026-04-10T17:16:15 | INFO     | geoworld |   [dominance_suitability] iniciando...
+2026-04-10T17:16:57 | INFO     | geoworld |   [dominance_suitability] concluído em 42.5s
+2026-04-10T17:16:57 | INFO     | geoworld |   [dominance_lcoe] iniciando...
+2026-04-10T17:17:35 | INFO     | geoworld |   [dominance_lcoe] concluído em 37.6s
+2026-04-10T17:17:35 | INFO     | geoworld |   [executive_dashboard] iniciando...
+2026-04-10T17:18:52 | INFO     | geoworld |   [executive_dashboard] concluído em 77.2s
+2026-04-10T17:18:52 | INFO     | geoworld |   [geotiff_export] iniciando...
+2026-04-10T17:18:55 | INFO     | geoworld.processors.ResultsWriter |   GIS: RUS_solar_suitability.tif
+2026-04-10T17:18:58 | INFO     | geoworld.processors.ResultsWriter |   GIS: RUS_wind_suitability.tif
+2026-04-10T17:19:03 | INFO     | geoworld.processors.ResultsWriter |   GIS: RUS_biomass_suitability.tif
+2026-04-10T17:19:03 | INFO     | geoworld.processors.ResultsWriter |   GIS: RUS_dominance_suitability.tif
+2026-04-10T17:19:04 | INFO     | geoworld.processors.ResultsWriter |   GIS: RUS_dominance_lcoe.tif
+2026-04-10T17:19:04 | INFO     | geoworld |   [geotiff_export] concluído em 11.4s
+2026-04-10T17:19:04 | INFO     | geoworld.processors.ResultsWriter | 
+========================================================================
+  RESULTS SYNTHESIS REPORT — Phase 6
+  Russia (RUS)
+  2026-04-10 17:16:12
+========================================================================
+
+------------------------------------------------------------------------
+  SUITABILITY DOMINANCE — TOPSIS Score
+------------------------------------------------------------------------
+  Solar PV                    502,326 px  (  5.4%)
+  Wind Onshore               4,792,926 px  ( 51.7%)
+  Biomass / Bioenergy        3,967,208 px  ( 42.8%)
+
+------------------------------------------------------------------------
+  LCOE DOMINANCE — Cheapest Technology per Pixel
+------------------------------------------------------------------------
+  Solar PV                          0 px  (  0.0%)
+  Wind Onshore                      0 px  (  0.0%)
+  Biomass / Bioenergy               0 px  (  0.0%)
+
+------------------------------------------------------------------------
+  BALANCED SCENARIO — INTEGRATED SUMMARY
+------------------------------------------------------------------------
+  Technology                   GW    TWh/yr        km²     $/MWh
+  ──────────────────────────────────────────────────────────────
+  Solar PV                  275.0     337.2    210,296       0.0
+  Wind Onshore              155.0     352.9  1,465,328       0.0
+  Biomass / Bioenergy        59.7     392.3    639,867       0.0
+  ──────────────────────────────────────────────────────────────
+  TOTAL                     489.6    1082.4
+
+------------------------------------------------------------------------
+  GeoTIFFs EXPORTED  →  results/gis/
+------------------------------------------------------------------------
+  ✓  RUS_solar_suitability.tif
+  ✓  RUS_wind_suitability.tif
+  ✓  RUS_biomass_suitability.tif
+  ✓  RUS_dominance_suitability.tif
+  ✓  RUS_dominance_lcoe.tif
+
+========================================================================
+  TIMINGS
+------------------------------------------------------------------------
+    dominance_suitability           :   42.5s
+    dominance_lcoe                  :   37.6s
+    executive_dashboard             :   77.2s
+    geotiff_export                  :   11.4s
+    TOTAL                           :  171.9s
+========================================================================
+
+2026-04-10T17:19:04 | INFO     | geoworld |   Phase 6 (Results) completed in 172.7s
+2026-04-10T17:19:04 | INFO     | geoworld.processors.GHGAbatementCalculator | ==============================================================
+2026-04-10T17:19:04 | INFO     | geoworld.processors.GHGAbatementCalculator |   GHG ABATEMENT CALCULATOR — Russia (RUS)
+2026-04-10T17:19:04 | INFO     | geoworld.processors.GHGAbatementCalculator |   Saída: D:\Douglas\DOUTORADO\geoworld_framework\outputs\RUS\abatement
+2026-04-10T17:19:04 | INFO     | geoworld.processors.GHGAbatementCalculator | ==============================================================
+2026-04-10T17:19:06 | INFO     | geoworld.processors.GHGAbatementCalculator | Net Zero DB carregado com sucesso — net_zero_db.json
+2026-04-10T17:19:06 | WARNING  | geoworld.processors.GHGAbatementCalculator | [RUS] NDC gap appears zero (total_now_mt=0.0 <= target=2352.7). OWID API data is fossils-only (missing large LULUCF emissions). National gap undetermined.
+2026-04-10T17:19:06 | INFO     | geoworld.processors.GHGAbatementCalculator | [RUS] NDC Profile: Target Year 2060 | Type: absolute | Current Nat. Emissions: 0.0 Mt
+2026-04-10T17:19:16 | INFO     | geoworld.utils.plots_abatement | Geography map saved: RUS_abatement_maps.png
+2026-04-10T17:19:16 | INFO     | geoworld.utils.plots_abatement | MACC curve saved: RUS_macc_curve.png
+2026-04-10T17:19:17 | INFO     | geoworld.utils.plots_abatement | Substitution curves saved: RUS_substitution_curves.png
+2026-04-10T17:19:17 | INFO     | geoworld.utils.plots_abatement | Carbon intensity chart saved: RUS_carbon_intensity.png
+2026-04-10T17:19:17 | INFO     | geoworld.utils.plots_abatement | Net Zero analysis saved: RUS_net_zero.png
+2026-04-10T17:19:17 | INFO     | geoworld.processors.GHGAbatementCalculator | [RUS] MAC 70.1 USD/tCO₂e (needs 70.1 USD/tCO2) | Net Avoided: 35.29 MtCO₂/yr | Value: 0.00 B USD | Substituted: 80.5 TWh | NDC coverage: N/D
+2026-04-10T17:19:17 | INFO     | geoworld.processors.GHGAbatementCalculator | [RUS] Phase 7 completed in 12.9s.
+2026-04-10T17:19:17 | INFO     | geoworld |   Phase 7 (Abatement) completed in 12.9s
+2026-04-10T17:19:17 | INFO     | geoworld.processors.SensitivityAnalyzer | ==============================================================
+2026-04-10T17:19:17 | INFO     | geoworld.processors.SensitivityAnalyzer |   SENSITIVITY ANALYZER — Phase 8 (RUS)
+2026-04-10T17:19:17 | INFO     | geoworld.processors.SensitivityAnalyzer |   Output: D:\Douglas\DOUTORADO\geoworld_framework\outputs\RUS\sensitivity
+2026-04-10T17:19:17 | INFO     | geoworld.processors.SensitivityAnalyzer | ==============================================================
+2026-04-10T17:19:17 | INFO     | geoworld.processors.SensitivityAnalyzer |   Reference grid: 3654×15270 pixels
+2026-04-10T17:19:17 | INFO     | geoworld.processors.SensitivityAnalyzer |   Technologies to analyze: ['solar', 'wind', 'biomass']
+2026-04-10T17:19:17 | INFO     | geoworld.processors.SensitivityAnalyzer |   [SA-5] GHG function built from Phase 7 abatement results.
+2026-04-10T17:19:17 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] Starting SA suite (7 criteria)...
+2026-04-10T17:19:17 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-1: OAT weight perturbation...
+2026-04-10T17:19:43 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-1 complete: rho_min=0.8435, most_sensitive=solar_resource
+2026-04-10T17:19:43 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-2: Monte Carlo AHP (1000 samples)...
+2026-04-10T17:20:34 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-2 complete: stable_fraction=1.7%
+2026-04-10T17:20:34 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-3: threshold sweep...
+2026-04-10T17:20:37 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-3 complete: 11 thresholds evaluated
+2026-04-10T17:20:37 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-4: LCOE Monte Carlo (10000 samples)...
+2026-04-10T17:20:37 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-4 complete: P50=$45.9/MWh, CI90=$10.0
+2026-04-10T17:20:37 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-6: potential parameter sensitivity...
+2026-04-10T17:20:38 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-6 complete: base=275.0 GW
+2026-04-10T17:20:39 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] Dashboard saved: RUS_solar_dashboard.png
+2026-04-10T17:20:39 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] Starting SA suite (7 criteria)...
+2026-04-10T17:20:39 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-1: OAT weight perturbation...
+2026-04-10T17:20:57 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-1 complete: rho_min=0.9640, most_sensitive=wind_resource
+2026-04-10T17:20:57 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-2: Monte Carlo AHP (1000 samples)...
+2026-04-10T17:21:48 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-2 complete: stable_fraction=6.6%
+2026-04-10T17:21:48 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-3: threshold sweep...
+2026-04-10T17:21:51 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-3 complete: 11 thresholds evaluated
+2026-04-10T17:21:51 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-4: LCOE Monte Carlo (10000 samples)...
+2026-04-10T17:21:51 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-4 complete: P50=$61.2/MWh, CI90=$12.6
+2026-04-10T17:21:51 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-6: potential parameter sensitivity...
+2026-04-10T17:21:52 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-6 complete: base=155.0 GW
+2026-04-10T17:21:53 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] Dashboard saved: RUS_wind_dashboard.png
+2026-04-10T17:21:53 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] Starting SA suite (8 criteria)...
+2026-04-10T17:21:53 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-1: OAT weight perturbation...
+2026-04-10T17:22:12 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-1 complete: rho_min=0.7536, most_sensitive=lc_biomass
+2026-04-10T17:22:12 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-2: Monte Carlo AHP (1000 samples)...
+2026-04-10T17:23:05 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-2 complete: stable_fraction=0.2%
+2026-04-10T17:23:05 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-3: threshold sweep...
+2026-04-10T17:23:08 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-3 complete: 11 thresholds evaluated
+2026-04-10T17:23:08 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-4: LCOE Monte Carlo (10000 samples)...
+2026-04-10T17:23:09 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-4 complete: P50=$55.6/MWh, CI90=$11.4
+2026-04-10T17:23:09 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-6: potential parameter sensitivity...
+2026-04-10T17:23:10 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-6 complete: base=59.7 GW
+2026-04-10T17:23:10 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] Dashboard saved: RUS_biomass_dashboard.png
+2026-04-10T17:23:10 | INFO     | geoworld.processors.SensitivityAnalyzer |   [SA-5] Sobol global sensitivity (GHG abatement)...
+2026-04-10T17:23:11 | INFO     | geoworld.processors.SensitivityAnalyzer |   [SA-5] Sobol complete: dominant=penetration_factor (ST=0.580)
+2026-04-10T17:23:11 | INFO     | geoworld.processors.SensitivityAnalyzer | [RUS] Phase 8 completed in 233.8s.
+2026-04-10T17:23:11 | INFO     | geoworld.processors.SensitivityAnalyzer | [RUS] Outputs: 13 CSVs, 22 plots
+2026-04-10T17:23:11 | INFO     | geoworld |   Phase 8 (Sensitivity) completed in 233.8s
+2026-04-10T17:23:11 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | Loaded transport parameters from: D:\Douglas\DOUTORADO\geoworld_framework\configs\transport_parameters.json
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | ============================================================
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   PHASE 9 — TRANSPORT DECARBONISATION
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Russia (RUS)
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | ============================================================
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | ----------------------------------------------------
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   PARAMETERS IN USE
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | ----------------------------------------------------
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Projection horizon : 2025 – 2050
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Fleet size (2024)  : 0 vehicles
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Annual fleet growth: 2.5%
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Grid intensity (gCO2/kWh):
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2025 : 436
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2030 : 380
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2035 : 290
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2040 : 200
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2045 : 120
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2050 : 50
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Hub spacing radius : 80 km
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Biofuel blends     : B7 / E10
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Powertrain penetration (global defaults — reference, new sales):
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2025 : ICE 72% | HEV 14% | PHEV 6% | BEV 7% | FCEV 1%
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2035 : ICE 35% | HEV 20% | PHEV 12% | BEV 30% | FCEV 3%
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2050 : ICE 5% | HEV 10% | PHEV 7% | BEV 72% | FCEV 6%
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | ============================================================
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [1/7] Building fleet size trajectory ...
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Fleet base (light vehicles): fleet_size_2024(10,000,000) × share_of_fleet(0.72) = 7,200,000
+2026-04-10T17:23:12 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [2/7] Calculating EV electricity demand & RE requirements ...
+2026-04-10T17:23:13 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [3/7] Computing GHG emission trajectories ...
+2026-04-10T17:23:13 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [4/7] Computing transport electrification costs ...
+2026-04-10T17:23:13 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     Using Phase-5 LCOEs — Solar: 55.0 USD/MWh | Wind: 48.0 USD/MWh | Biomass: 85.0 USD/MWh
+2026-04-10T17:23:13 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [5/7] Locating charging hubs from suitability rasters ...
+2026-04-10T17:23:13 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     Hub placement from: RUS_solar_suitability.tif, RUS_wind_suitability.tif (min suitability: 0.90)
+2026-04-10T17:23:13 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     Score weights — suitability: 0.50 | demand proximity: 0.35 | LCOE: 0.15
+2026-04-10T17:23:14 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     Solar: 19513 candidate pixels (score >= 0.90)
+2026-04-10T17:23:15 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     Wind: 223764 candidate pixels (score >= 0.90)
+2026-04-10T17:23:24 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     Placed 459 charging hubs (spacing ≥ 80 km, score ≥ 0.90) — Solar: 91, Wind: 368, Biomass: 0.
+2026-04-10T17:23:24 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [6/7] Building summary ...
+2026-04-10T17:23:24 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [7/7] Writing outputs & maps ...
+2026-04-10T17:24:03 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | Phase 9 (Transport Decarbonisation) completed in 51.9s
+2026-04-10T17:24:03 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Report : D:\Douglas\DOUTORADO\geoworld_framework\outputs\RUS\transport\reports\RUS_transport_decarbonization_report.txt
+2026-04-10T17:24:03 | INFO     | geoworld |   Phase 9 (Transport Decarbonisation) completed in 51.9s
+2026-04-10T17:24:03 | INFO     | geoworld | Pipeline completed for Russia (RUS).
+2026-04-10T17:24:03 | INFO     | geoworld | Result: COMPLETED
+2026-04-10T17:24:03 | INFO     | geoworld | Total elapsed time: 1842.3s

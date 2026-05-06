@@ -1,0 +1,139 @@
+========================================================================
+  TRANSPORT DECARBONISATION REPORT
+  Energy Transition Pathways — Clean Electrification & Decarbonisation
+  Egypt (EGY)
+  Generated: 2026-04-10 17:19 UTC
+  Powertrain model: ICE · HEV · PHEV · BEV · FCEV
+========================================================================
+
+  EXECUTIVE SUMMARY
+----------------------------------------------------
+  [REFERENCE   ] 2050 EV demand: 13.0 TWh | RE needed: 5.9 GW | GHG avoided (cumul.): 926 MtCO2 | Capex: USD 7.2 bn
+                  Fleet 2050: ICE 18.9% | HEV 11.0% | PHEV 7.0% | BEV 34.9%
+  [ACCELERATED ] 2050 EV demand: 18.2 TWh | RE needed: 8.2 GW | GHG avoided (cumul.): 1004 MtCO2 | Capex: USD 11.6 bn
+                  Fleet 2050: ICE 9.7% | HEV 6.8% | PHEV 4.5% | BEV 49.1%
+  [CONSERVATIVE] 2050 EV demand: 7.9 TWh | RE needed: 3.6 GW | GHG avoided (cumul.): 857 MtCO2 | Capex: USD 4.2 bn
+                  Fleet 2050: ICE 30.7% | HEV 13.6% | PHEV 7.5% | BEV 21.0%
+
+  RENEWABLE ENERGY AVAILABILITY (Phase 4)
+----------------------------------------------------
+  Solar  : 71.5 GW
+  Wind   : 6.2 GW
+  Biomass: 4.0 GW
+  TOTAL  : 81.7 GW
+
+========================================================================
+  PARAMETERS USED
+------------------------------------------------------------------------
+  Fleet size (2024)  : 0 vehicles
+  Annual fleet growth: 2.5%/yr
+  Projection         : 2025 – 2050
+  Hub spacing        : 80 km
+  Biodiesel blend    : B7
+  Ethanol blend      : E10
+  PHEV electric frac : 45% of km driven electrically
+
+  Grid emission intensity (gCO2/kWh):
+    2025: 436
+    2030: 380
+    2035: 290
+    2040: 200
+    2045: 120
+    2050: 50
+
+  Powertrain penetration — new sales (reference scenario):
+  Year     ICE     HEV    PHEV     BEV    FCEV
+  ----------------------------------------
+  2025   72.0%   14.0%    6.0%    7.0%    1.0%
+  2030   52.0%   18.0%   10.0%   18.0%    2.0%
+  2035   35.0%   20.0%   12.0%   30.0%    3.0%
+  2040   20.0%   18.0%   12.0%   45.0%    5.0%
+  2045   10.0%   14.0%   10.0%   60.0%    6.0%
+  2050    5.0%   10.0%    7.0%   72.0%    6.0%
+
+========================================================================
+  ANNUAL TIMESERIES — REFERENCE SCENARIO
+------------------------------------------------------------------------
+  Year  Fleet(M)    EV TWh    RE GW    CO2 Mt   Avoid Mt   Capex bn$
+  --------------------------------------------------------------
+  2025      7.38      1.44     0.65    17.965     19.246       0.076
+  2030      8.35      1.91     0.86    17.762     24.339       0.101
+  2035      9.45      3.18     1.44    17.168     30.465       0.167
+  2040     10.69      5.41     2.44    15.956     37.937       0.284
+  2045     12.09      8.72     3.94    14.027     46.947       0.458
+  2050     13.68     12.99     5.87    11.538     57.449       0.683
+
+========================================================================
+  SCENARIO COMPARISON — 2050
+------------------------------------------------------------------------
+  Scenario         EV TWh   RE GW   CO2 Mt   Avoided   Capex bn$         Cover
+  ----------------------------------------------------------------------
+  Reference          13.0     5.9   11.538       926         7.2       COVERED
+  Accelerated        18.2     8.2    6.858      1004        11.6       COVERED
+  Conservative        7.9     3.6   16.744       857         4.2       COVERED
+
+========================================================================
+  FLEET COMPOSITION — 2050
+------------------------------------------------------------------------
+  Scenario        Total(M)    ICE%    HEV%   PHEV%    BEV%
+  --------------------------------------------------------
+  Reference          13.68    18.9    11.0     7.0    34.9
+  Accelerated        13.68     9.7     6.8     4.5    49.1
+  Conservative       13.68    30.7    13.6     7.5    21.0
+
+========================================================================
+  FLEET BY POWERTRAIN — ABSOLUTE STOCK (Millions of vehicles)
+------------------------------------------------------------------------
+  Reference scenario — stock at milestone years
+  Year     Total       ICE       HEV      PHEV       BEV     FCEV
+  --------------------------------------------------------------
+  2025      7.38      5.18      1.01      0.43      0.50    0.072
+  2030      8.35      5.02      1.09      0.50      0.68    0.088
+  2035      9.45      4.61      1.27      0.64      1.14    0.130
+  2040     10.69      4.01      1.44      0.80      1.96    0.217
+  2045     12.09      3.29      1.53      0.92      3.18    0.339
+  2050     13.68      2.58      1.51      0.95      4.77    0.463
+
+  Accelerated scenario — stock at milestone years
+  Year     Total       ICE       HEV      PHEV       BEV     FCEV
+  --------------------------------------------------------------
+  2025      7.38      4.68      1.08      0.58      0.79    0.072
+  2030      8.35      4.28      1.15      0.65      1.17    0.117
+  2035      9.45      3.48      1.23      0.73      2.12    0.235
+  2040     10.69      2.61      1.21      0.77      3.44    0.388
+  2045     12.09      1.87      1.10      0.73      5.02    0.538
+  2050     13.68      1.32      0.93      0.62      6.72    0.679
+
+========================================================================
+  CHARGING INFRASTRUCTURE
+------------------------------------------------------------------------
+  Candidate hub locations    : 21
+  Hub spacing (min)          : 80 km
+  Chargers per hub           : 4
+  Hub peak power             : 0.5 MW
+  Hub unit capex             : USD 850,000
+  Total hub infrastructure   : USD 0.02 bn
+  Total peak power (fleet)   : 10 MW
+
+========================================================================
+  METHODOLOGY NOTES
+------------------------------------------------------------------------
+  Fleet model    : Stock-turnover per powertrain × vehicle category.
+  Powertrain mix : Linear interpolation between anchor year shares.
+  Grid demand    : BEV full + PHEV partial (utility factor 45%).
+  RE requirement : EV demand × 65% solar / 35% wind (adj. CFs).
+  GHG — ICE/HEV  : Tailpipe; weighted by dominant fuel mix.
+  GHG — PHEV     : Blend of tailpipe (combustion) + grid indirect.
+  GHG — BEV      : Grid indirect only (tailpipe zero).
+  GHG — FCEV     : Zero (green hydrogen assumed).
+  Grid intensity : Country trajectory, linearly interpolated.
+  Hub placement  : Greedy max-score, minimum spacing constraint.
+  Cost model     : Delta-capex/yr; fuel-savings offset.
+
+  Key references:
+    [IEA-EV2024]      IEA Global EV Outlook 2024
+    [IPCC2022]        IPCC AR6 WG3 Chapter 10 — Transport
+    [IRENA2024t]      IRENA Electrification with Renewables 2024
+    [BloombergNEF2024] BNEF Electric Vehicle Outlook 2024
+
+========================================================================

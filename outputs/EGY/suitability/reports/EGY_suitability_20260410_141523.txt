@@ -1,0 +1,95 @@
+====================================================================
+  SUITABILITY REPORT — AHP (Saaty) + TOPSIS MCDA
+  Egypt (EGY)
+  2026-04-10 14:15:23
+====================================================================
+
+--------------------------------------------------------------------
+  SOLAR PV
+--------------------------------------------------------------------
+    Total territorial pixels            : 881,778
+    Hard exclusions (pixels)            : 52,160  (5.9%)
+    Valid pixels (TOPSIS)               : 829,618  (94.1%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.423 ± 0.130
+      P10 / P50 / P90                   : 0.296 / 0.389 / 0.626
+      Score >= 0.6 (high suitability)   : 11.7%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0384  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      solar_resource                     0.3314  ( 33.1%)
+      grid_suitability                   0.2385  ( 23.9%)
+      terrain_score                      0.1620  ( 16.2%)
+      road_suitability                   0.1090  ( 10.9%)
+      river_solar                        0.0734  (  7.3%)
+      seismic_suitability                0.0498  (  5.0%)
+      pop_suitability                    0.0359  (  3.6%)
+
+    Weights JSON: EGY_solar_weights.json
+
+--------------------------------------------------------------------
+  WIND ONSHORE
+--------------------------------------------------------------------
+    Total territorial pixels            : 881,778
+    Hard exclusions (pixels)            : 52,160  (5.9%)
+    Valid pixels (TOPSIS)               : 829,618  (94.1%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.392 ± 0.151
+      P10 / P50 / P90                   : 0.218 / 0.364 / 0.577
+      Score >= 0.6 (high suitability)   : 8.7%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0974  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      wind_resource                      0.3820  ( 38.2%)
+      grid_suitability                   0.2480  ( 24.8%)
+      terrain_score                      0.1582  ( 15.8%)
+      road_suitability                   0.0983  (  9.8%)
+      pop_suitability                    0.0614  (  6.1%)
+      seismic_suitability                0.0314  (  3.1%)
+      river_wind                         0.0208  (  2.1%)
+
+    Weights JSON: EGY_wind_weights.json
+
+--------------------------------------------------------------------
+  BIOMASS / BIOENERGY
+--------------------------------------------------------------------
+    Total territorial pixels            : 881,778
+    Hard exclusions (pixels)            : 52,160  (5.9%)
+    Valid pixels (TOPSIS)               : 829,618  (94.1%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.120 ± 0.183
+      P10 / P50 / P90                   : 0.044 / 0.047 / 0.184
+      Score >= 0.6 (high suitability)   : 4.5%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0481  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      biomass_resource                   0.3076  ( 30.8%)
+      lc_biomass                         0.2255  ( 22.5%)
+      road_suitability                   0.1615  ( 16.2%)
+      river_biomass                      0.1111  ( 11.1%)
+      grid_suitability                   0.0792  (  7.9%)
+      pop_suitability                    0.0573  (  5.7%)
+      terrain_score                      0.0326  (  3.3%)
+      seismic_suitability                0.0252  (  2.5%)
+
+    Weights JSON: EGY_biomass_weights.json
+
+====================================================================
+  TIMINGS BY STAGE
+--------------------------------------------------------------------
+    load_criteria           :    0.3s
+    solar                   :    3.7s
+    wind                    :    3.8s
+    biomass                 :    3.7s
+    comparison_map          :   12.0s
+    TOTAL                   : 23.7s
+====================================================================

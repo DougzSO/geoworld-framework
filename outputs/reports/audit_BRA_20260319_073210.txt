@@ -1,0 +1,179 @@
+===============================================================
+  RELATÓRIO DE AUDITORIA DE DADOS
+  Brazil (BRA)
+  2026-03-19 07:32:10
+================================================================
+
+  RASTERS
+----------------------------------------------------------------
+  ✅ SOLAR  [4.8s]
+    Arquivo                          : PVOUT.tif
+    Tamanho                          : 351.7 MB
+    CRS                              : EPSG:4326
+    Resolução                        : 0.00833333°
+    Máscara usada                    : polígono do país (windowed)
+    Shape global                     : (15000, 43200)
+    Shape no país                    : (4681, 4704)
+    Área válida                      :  8,506,919 km²
+    Min / Máx                        : 2.559 / 5.242
+    Média                            : 4.2483
+    Pixels válidos                   : 46.4%
+
+  ✅ ELEVATION  [12.6s]
+    Arquivo                          : BRA_elevation.tif
+    Tamanho                          : 224.3 MB
+    CRS                              : EPSG:4326
+    Resolução                        : 0.005°
+    Máscara usada                    : polígono do país (windowed)
+    Shape global                     : (8582, 8231)
+    Shape no país                    : (7802, 7839)
+    Área válida                      :  8,502,507 km²
+    Min / Máx                        : -34.2319 / 2713.8726
+    Média                            : 318.0976
+    Pixels válidos                   : 46.4%
+
+  ✅ POPULATION  [336.9s]
+    Arquivo                          : bra_pop_2020.tif
+    Tamanho                          : 4171.73 MB
+    CRS                              : EPSG:4326
+    Resolução                        : 0.00083333°
+    Máscara usada                    : polígono do país (chunked)
+    Shape                            : (46814, 54172)
+    Área válida                      :  8,383,312 km²
+    Min / Máx                        : 0.0 / 3691.7532
+    Média                            : 0.2152
+    Pixels válidos                   : 39.7%
+
+  ✅ SLOPE  [12.6s]
+    Arquivo                          : BRA_slope.tif
+    Tamanho                          : 230.47 MB
+    CRS                              : EPSG:4326
+    Resolução                        : 0.005°
+    Máscara usada                    : polígono do país (windowed)
+    Shape global                     : (8582, 8231)
+    Shape no país                    : (7802, 7839)
+    Área válida                      :  8,493,845 km²
+    Min / Máx                        : 0.0 / 40.4318
+    Média                            : 1.3941
+    Pixels válidos                   : 46.4%
+
+  ✅ WIND  [26.2s]
+    Arquivo                          : BRA_power-density_100m.tif
+    Tamanho                          : 520.97 MB
+    CRS                              : EPSG:4326
+    Resolução                        : 0.0025°
+    Máscara usada                    : polígono do país (windowed)
+    Shape global                     : (17150, 19204)
+    Shape no país                    : (15604, 15679)
+    Área válida                      :  8,506,217 km²
+    Min / Máx                        : 0.2873 / 7630.9126
+    Média                            : 76.2564
+    Pixels válidos                   : 46.4%
+
+  ✅ SEISMIC  [2.5s]
+    Arquivo                          : seismic_hazard_global.tif
+    Tamanho                          : 164.81 MB
+    CRS                              : EPSG:4326
+    Resolução                        : 0.05°
+    Máscara usada                    : polígono do país (windowed)
+    Shape global                     : (3000, 7200)
+    Shape no país                    : (780, 784)
+    Área válida                      :  8,506,634 km²
+    Min / Máx                        : 0.0 / 0.4404
+    Média                            : 0.0065
+    Pixels válidos                   : 46.4%
+
+----------------------------------------------------------------
+  HIDROLOGIA (VETORES)
+----------------------------------------------------------------
+  ✅ HydroLAKES
+    Arquivo                          : HydroLAKES_polys_v10.shp
+    Tamanho                          : 1112.0 MB  (global — crop no GridAligner)
+  ✅ HydroRIVERS
+    Arquivo                          : HydroRIVERS_v10.shp
+    Tamanho                          : 1247.4 MB  (global — crop no GridAligner)
+
+----------------------------------------------------------------
+  ✅ LAND COVER (ESA WorldCover)  [3687.4s]
+    Tiles totais                     : 155
+    Tiles usados                     : 112  (37 sem sobreposição)
+    CRS                              : EPSG:4326
+    Resolução(ões)                   : 8.333e-05
+    Área total                       :  8,506,858 km²
+
+    Código | Classe                         |    km²     |    %
+    ----------------------------------------------------------
+        10 | Trees / Floresta               | 4,738,371.2 |  55.7%
+        20 | Shrubland / Arbustos           |  886,701.1 |  10.4%
+        30 | Grassland / Pastagem           | 1,838,282.3 |  21.6%
+        40 | Cropland / Agricultura         |  691,854.9 |   8.1%
+        50 | Built-up / Urbano              |   31,609.1 |   0.4%
+        60 | Bare / Solo exposto            |   64,414.4 |   0.8%
+        80 | Water / Água                   |  151,708.3 |   1.8%
+        90 | Wetland / Zonas húmidas        |   91,547.2 |   1.1%
+        95 | Mangroves / Manguezais         |   12,369.3 |   0.1%
+  ⚠  ESA_WorldCover_10m_2020_v100_S36W060_Map.tif: 'D:\Douglas\DOUTORADO\database\raw\land_cover\Brazil\ESA_WorldCover_10m_2020_v100_S36W060_Map.tif' not recognized as being in a supported file format.
+  ⚠  ESA_WorldCover_10m_2020_v100_S36W063_Map.tif: 'D:\Douglas\DOUTORADO\database\raw\land_cover\Brazil\ESA_WorldCover_10m_2020_v100_S36W063_Map.tif' not recognized as being in a supported file format.
+  ⚠  ESA_WorldCover_10m_2020_v100_S36W066_Map.tif: 'D:\Douglas\DOUTORADO\database\raw\land_cover\Brazil\ESA_WorldCover_10m_2020_v100_S36W066_Map.tif' not recognized as being in a supported file format.
+  ⚠  ESA_WorldCover_10m_2020_v100_S36W069_Map.tif: 'D:\Douglas\DOUTORADO\database\raw\land_cover\Brazil\ESA_WorldCover_10m_2020_v100_S36W069_Map.tif' not recognized as being in a supported file format.
+  ⚠  ESA_WorldCover_10m_2020_v100_S36W072_Map.tif: 'D:\Douglas\DOUTORADO\database\raw\land_cover\Brazil\ESA_WorldCover_10m_2020_v100_S36W072_Map.tif' not recognized as being in a supported file format.
+  ⚠  ESA_WorldCover_10m_2020_v100_S36W075_Map.tif: 'D:\Douglas\DOUTORADO\database\raw\land_cover\Brazil\ESA_WorldCover_10m_2020_v100_S36W075_Map.tif' not recognized as being in a supported file format.
+
+----------------------------------------------------------------
+  USINAS EXISTENTES  [0.1s]
+----------------------------------------------------------------
+    Total de usinas                  : 2340
+    Capacidade total                 : 145,788 MW
+
+    Combustível                    |    MW
+    --------------------------------------
+    Hydro                           |   98,039
+    Biomass                         |   12,844
+    Gas                             |   11,286
+    Wind                            |   10,295
+    Oil                             |    8,282
+    Coal                            |    2,793
+    Nuclear                         |    1,990
+    Other                           |      147
+    Waste                           |      106
+    Solar                           |        7
+
+----------------------------------------------------------------
+  ALERTAS DE CONSISTÊNCIA
+----------------------------------------------------------------
+  ✅ Nenhum alerta — dados consistentes.
+
+================================================================
+  SUMÁRIO
+----------------------------------------------------------------
+    Camadas OK                       : solar, elevation, population, slope, wind, seismic
+    Camadas ausentes                 : nenhuma
+    Tiles LC (usados)                : 112 / 155
+    Área land cover                  : 8,506,858 km²
+    Classes LC                       : 9
+    Arquivos de vento                : 3
+    Solar PVOUT (kWh/m²/d)           : 2.559 – 5.242
+    Elevação (m)                     : -34 – 2714
+    Slope (°)                        : 0.0 – 40.4
+    População (hab/pixel)            : 0.0 – 3691.8
+    Sismicidade (hazard)             : 0.0000 – 0.4404
+    HydroLAKES                       : ✅ encontrado
+    HydroRIVERS                      : ✅ encontrado
+    Usinas                           : 2340
+    Capacidade instalada             : 145,788 MW
+    Alertas                          : 0
+
+  TEMPO POR ETAPA
+----------------------------------------------------------------
+    solar                 :    4.8s
+    elevation             :   12.6s
+    population            :  336.9s
+    slope                 :   12.6s
+    wind                  :   26.2s
+    seismic               :    2.5s
+    lakes                 :    0.0s
+    rivers                :    0.0s
+    land_cover            : 3687.4s
+    power_plants          :    0.1s
+    TOTAL                            : 4084.0s
+================================================================

@@ -1,0 +1,20 @@
+{
+  "tech": "biomass",
+  "country_code": "EGY",
+  "intensity": "subtle",
+  "lambda_max": 8.474426,
+  "ci": 0.067775,
+  "cr": 0.048067,
+  "cr_ok": true,
+  "criteria_count": 8,
+  "weights": {
+    "biomass_resource": 0.307605,
+    "lc_biomass": 0.225474,
+    "road_suitability": 0.161548,
+    "river_biomass": 0.111089,
+    "grid_suitability": 0.079188,
+    "pop_suitability": 0.057285,
+    "terrain_score": 0.032641,
+    "seismic_suitability": 0.02517
+  }
+}

@@ -1,0 +1,173 @@
+================================================================
+  RELATÓRIO DE AUDITORIA DE DADOS
+  South Africa (ZAF)
+  2026-04-10 14:03:24
+================================================================
+
+  RASTERS
+----------------------------------------------------------------
+  ✅ SOLAR  [1.7s]
+    Arquivo                          : PVOUT.tif
+    Tamanho                          : 351.7 MB
+    CRS                              : EPSG:4326
+    Resolução                        : 0.00833333°
+    Máscara usada                    : polígono do país (windowed)
+    Shape global                     : (15000, 43200)
+    Shape no país                    : (1525, 1973)
+    Área válida                      :  1,219,574 km²
+    Min / Máx                        : 2.563 / 5.713
+    Média                            : 5.0326
+    Pixels válidos                   : 54.1%
+
+  ✅ ELEVATION  [1.9s]
+    Arquivo                          : ZAF_elevation.tif
+    Tamanho                          : 34.9 MB
+    CRS                              : EPSG:4326
+    Resolução                        : 0.005°
+    Máscara usada                    : polígono do país (windowed)
+    Shape global                     : (2702, 3616)
+    Shape no país                    : (2542, 3288)
+    Área válida                      :  1,216,307 km²
+    Min / Máx                        : -27.7631 / 3424.5745
+    Média                            : 1057.455
+    Pixels válidos                   : 54.0%
+
+  ✅ POPULATION  [17.1s]
+    Arquivo                          : zaf_pop_2020.tif
+    Tamanho                          : 712.83 MB
+    CRS                              : EPSG:4326
+    Resolução                        : 0.00083333°
+    Máscara usada                    : polígono do país (windowed)
+    Shape global                     : (29827, 25856)
+    Shape no país                    : (15250, 19720)
+    Área válida                      :  1,213,303 km²
+    Min / Máx                        : 0.0 / 2519.1294
+    Média                            : 0.37
+    Pixels válidos                   : 53.9%
+
+  ✅ SLOPE  [1.7s]
+    Arquivo                          : ZAF_slope.tif
+    Tamanho                          : 36.56 MB
+    CRS                              : EPSG:4326
+    Resolução                        : 0.005°
+    Máscara usada                    : polígono do país (windowed)
+    Shape global                     : (2702, 3616)
+    Shape no país                    : (2542, 3288)
+    Área válida                      :  1,209,586 km²
+    Min / Máx                        : 0.0001 / 39.6512
+    Média                            : 2.1966
+    Pixels válidos                   : 53.7%
+
+  ✅ WIND  [3.5s]
+    Arquivo                          : ZAF_power-density_100m.tif
+    Tamanho                          : 105.22 MB
+    CRS                              : EPSG:4326
+    Resolução                        : 0.0025°
+    Máscara usada                    : polígono do país (windowed)
+    Shape global                     : (9960, 9879)
+    Shape no país                    : (5084, 6576)
+    Área válida                      :  1,219,679 km²
+    Min / Máx                        : 0.1206 / 11187.0684
+    Média                            : 230.7371
+    Pixels válidos                   : 54.1%
+
+  ✅ SEISMIC  [0.2s]
+    Arquivo                          : seismic_hazard_global.tif
+    Tamanho                          : 164.81 MB
+    CRS                              : EPSG:4326
+    Resolução                        : 0.05°
+    Máscara usada                    : polígono do país (windowed)
+    Shape global                     : (3000, 7200)
+    Shape no país                    : (254, 329)
+    Área válida                      :  1,220,166 km²
+    Min / Máx                        : 0.0 / 0.5612
+    Média                            : 0.0309
+    Pixels válidos                   : 54.2%
+
+----------------------------------------------------------------
+  HIDROLOGIA (VETORES)
+----------------------------------------------------------------
+  ✅ HydroLAKES
+    Arquivo                          : HydroLAKES_polys_v10.shp
+    Tamanho                          : 1112.0 MB  (global — crop no GridAligner)
+  ✅ HydroRIVERS
+    Arquivo                          : HydroRIVERS_v10.shp
+    Tamanho                          : 1247.4 MB  (global — crop no GridAligner)
+
+----------------------------------------------------------------
+  ✅ LAND COVER (ESA WorldCover)  [6.9s]
+    Tiles totais                     : 29
+    Tiles usados                     : 25  (4 sem sobreposição)
+    CRS                              : EPSG:4326
+    Resolução(ões)                   : 0.0008982
+    Área total                       :  1,219,688 km²
+
+    Código | Classe                         |    km²     |    %
+    ----------------------------------------------------------
+        10 | Tree cover                     |   75,267.6 |   6.2%
+        20 | Shrubland                      |  305,981.7 |  25.1%
+        30 | Grassland                      |  579,841.3 |  47.5%
+        40 | Cropland                       |  109,719.0 |   9.0%
+        50 | Built-up                       |    9,368.2 |   0.8%
+        60 | Bare / Sparse vegetation       |  134,434.9 |  11.0%
+        80 | Permanent water bodies         |    4,598.2 |   0.4%
+        90 | Herbaceous wetland             |      452.9 |   0.0%
+        95 | Mangroves                      |       23.9 |   0.0%
+
+----------------------------------------------------------------
+  USINAS EXISTENTES  [0.0s]
+----------------------------------------------------------------
+    Total de usinas                  : 101
+    Capacidade total                 : 50,172 MW
+
+    Combustível                    |    MW
+    --------------------------------------
+    Coal                            |   39,794
+    Oil                             |    2,067
+    Solar                           |    2,063
+    Wind                            |    2,031
+    Hydro                           |    2,020
+    Nuclear                         |    1,800
+    Gas                             |      342
+    Waste                           |       43
+    Biomass                         |       14
+
+----------------------------------------------------------------
+  ALERTAS DE CONSISTÊNCIA
+----------------------------------------------------------------
+  ✅ Nenhum alerta — dados consistentes.
+
+================================================================
+  SUMÁRIO
+----------------------------------------------------------------
+    Camadas OK                       : solar, elevation, population, slope, wind, seismic
+    Camadas ausentes                 : nenhuma
+    Tiles LC (usados)                : 25 / 29
+    Área land cover                  : 1,219,688 km²
+    Classes LC                       : 9
+    Arquivos de vento                : 3
+    Solar PVOUT (kWh/m²/d)           : 2.563 – 5.713
+    Elevação (m)                     : -28 – 3425
+    Slope (°)                        : 0.0 – 39.7
+    População (hab/pixel)            : 0.0 – 2519.1
+    Sismicidade (hazard)             : 0.0000 – 0.5612
+    HydroLAKES                       : ✅ encontrado
+    HydroRIVERS                      : ✅ encontrado
+    Usinas                           : 101
+    Capacidade instalada             : 50,172 MW
+    Alertas                          : 0
+
+  TEMPO POR ETAPA
+----------------------------------------------------------------
+    solar                 :    1.7s
+    elevation             :    1.9s
+    population            :   17.1s
+    slope                 :    1.7s
+    wind                  :    3.5s
+    seismic               :    0.2s
+    lakes                 :    0.0s
+    rivers                :    0.0s
+    land_cover            :    6.9s
+    power_plants          :    0.0s
+    TOTAL                            : 33.2s
+================================================================

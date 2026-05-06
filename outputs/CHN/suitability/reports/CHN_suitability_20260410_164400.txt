@@ -1,0 +1,92 @@
+====================================================================
+  SUITABILITY REPORT — AHP (Saaty) + TOPSIS MCDA
+  China (CHN)
+  2026-04-10 16:44:00
+====================================================================
+
+--------------------------------------------------------------------
+  SOLAR PV
+--------------------------------------------------------------------
+    Total territorial pixels            : 9,191,333
+    Hard exclusions (pixels)            : 2,828,492  (30.8%)
+    Valid pixels (TOPSIS)               : 6,362,841  (69.2%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.568 ± 0.125
+      P10 / P50 / P90                   : 0.420 / 0.551 / 0.750
+      Score >= 0.6 (high suitability)   : 36.1%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0395  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      solar_resource                     0.3663  ( 36.6%)
+      grid_suitability                   0.2618  ( 26.2%)
+      terrain_score                      0.1784  ( 17.8%)
+      river_solar                        0.0892  (  8.9%)
+      seismic_suitability                0.0608  (  6.1%)
+      pop_suitability                    0.0434  (  4.3%)
+
+    Weights JSON: CHN_solar_weights.json
+
+--------------------------------------------------------------------
+  WIND ONSHORE
+--------------------------------------------------------------------
+    Total territorial pixels            : 9,188,285
+    Hard exclusions (pixels)            : 2,702,552  (29.4%)
+    Valid pixels (TOPSIS)               : 6,485,733  (70.6%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.480 ± 0.167
+      P10 / P50 / P90                   : 0.282 / 0.465 / 0.710
+      Score >= 0.6 (high suitability)   : 23.5%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.1016  ⚠️  INCONSISTENT
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      wind_resource                      0.4249  ( 42.5%)
+      grid_suitability                   0.2664  ( 26.6%)
+      terrain_score                      0.1653  ( 16.5%)
+      pop_suitability                    0.0790  (  7.9%)
+      seismic_suitability                0.0394  (  3.9%)
+      river_wind                         0.0251  (  2.5%)
+
+    Weights JSON: CHN_wind_weights.json
+
+--------------------------------------------------------------------
+  BIOMASS / BIOENERGY
+--------------------------------------------------------------------
+    Total territorial pixels            : 9,191,333
+    Hard exclusions (pixels)            : 2,661,191  (28.9%)
+    Valid pixels (TOPSIS)               : 6,530,142  (71.0%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.471 ± 0.272
+      P10 / P50 / P90                   : 0.145 / 0.533 / 0.829
+      Score >= 0.6 (high suitability)   : 43.9%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0559  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      biomass_resource                   0.3517  ( 35.2%)
+      lc_biomass                         0.2613  ( 26.1%)
+      river_biomass                      0.1419  ( 14.2%)
+      grid_suitability                   0.1021  ( 10.2%)
+      pop_suitability                    0.0735  (  7.3%)
+      terrain_score                      0.0399  (  4.0%)
+      seismic_suitability                0.0296  (  3.0%)
+
+    Weights JSON: CHN_biomass_weights.json
+
+====================================================================
+  TIMINGS BY STAGE
+--------------------------------------------------------------------
+    load_criteria           :    3.1s
+    solar                   :   45.8s
+    wind                    :   45.1s
+    biomass                 :   45.2s
+    comparison_map          :  119.5s
+    TOTAL                   : 260.8s
+====================================================================

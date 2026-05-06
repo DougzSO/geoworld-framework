@@ -1,0 +1,40 @@
+2026-04-10T14:20:12 | INFO     | geoworld.io.DataManager | Raw data root: D:\Douglas\DOUTORADO\database\raw
+2026-04-10T14:20:12 | INFO     | geoworld | Starting analysis: China (CHN)
+2026-04-10T14:20:12 | INFO     | geoworld.core.ConfigLoader | ----------------------------------------------------
+2026-04-10T14:20:12 | INFO     | geoworld.core.ConfigLoader |   China (CHN)
+2026-04-10T14:20:12 | INFO     | geoworld.core.ConfigLoader |   Solar  : LUF=0.05  thr=0.75  density=50.0 MW/km²
+2026-04-10T14:20:12 | INFO     | geoworld.core.ConfigLoader |   Wind   : LUF=0.030  thr=0.75  density=7.0 MW/km²
+2026-04-10T14:20:12 | INFO     | geoworld.core.ConfigLoader |   Biomass: col=0.30  thr=0.75  density=0.5 MW/km²
+2026-04-10T14:20:12 | INFO     | geoworld.core.ConfigLoader |   OWA    : default=balanced  scenarios=['optimistic', 'balanced', 'conservative']
+2026-04-10T14:20:12 | INFO     | geoworld.core.ConfigLoader |   Criteria: river=5.0 km  road=15.0 km  slope=12°
+2026-04-10T14:20:12 | INFO     | geoworld.core.ConfigLoader | ----------------------------------------------------
+2026-04-10T14:20:12 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T14:20:12 | INFO     | geoworld |   China (CHN)
+2026-04-10T14:20:12 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T14:20:12 | INFO     | geoworld |   Geometry : Mainland only
+2026-04-10T14:20:12 | INFO     | geoworld |   Resolution : Fixed 0.01 deg
+2026-04-10T14:20:12 | INFO     | geoworld |   Suitability optimistic offset : -0.10
+2026-04-10T14:20:12 | INFO     | geoworld |   Protected-area mode : Hard exclusion
+2026-04-10T14:20:12 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T14:20:52 | INFO     | geoworld | Land Cover: 240 tile(s) found.
+2026-04-10T14:20:52 | INFO     | geoworld.io.DataManager | Power plants found: 3041
+2026-04-10T14:20:52 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T14:20:52 | INFO     | geoworld |   DATA AVAILABILITY
+2026-04-10T14:20:52 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T14:20:52 | INFO     | geoworld |   [  OK   ] Borders
+2026-04-10T14:20:52 | INFO     | geoworld |   [  OK   ] Land Cover
+2026-04-10T14:20:52 | INFO     | geoworld |   [  OK   ] Elevation
+2026-04-10T14:20:52 | INFO     | geoworld |   [  OK   ] Wind
+2026-04-10T14:20:52 | INFO     | geoworld |   [  OK   ] Solar
+2026-04-10T14:20:52 | INFO     | geoworld |   [  OK   ] Power Plants
+2026-04-10T14:20:52 | INFO     | geoworld |   [  OK   ] Population
+2026-04-10T14:20:52 | INFO     | geoworld |   [  OK   ] Roads
+2026-04-10T14:20:52 | INFO     | geoworld |   [  OK   ] Protected
+2026-04-10T14:20:52 | INFO     | geoworld |   [  OK   ] Lakes
+2026-04-10T14:20:52 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T14:20:53 | INFO     | geoworld.processors.DataAuditor | Auditoria: China (CHN)
+2026-04-10T14:20:53 | INFO     | geoworld.processors.DataAuditor |   [solar] iniciando...
+2026-04-10T14:20:58 | INFO     | geoworld.processors.DataAuditor |   [solar] concluído em 5.2s
+2026-04-10T14:20:58 | INFO     | geoworld.processors.DataAuditor |   [elevation] iniciando...
+2026-04-10T14:21:04 | INFO     | geoworld.processors.DataAuditor |   [elevation] concluído em 6.3s
+2026-04-10T14:21:04 | INFO     | geoworld.processors.DataAuditor |   [population] iniciando...

@@ -1,0 +1,197 @@
+# =============================================================================
+# settings.yaml — GeoWorld Framework
+# =============================================================================
+# Operational and infrastructure parameters.
+# Scientific parameters (MCDA weights, per-country thresholds, LCOE economics)
+# are defined in parameters.json — this file governs infrastructure and defaults.
+# =============================================================================
+
+system:
+  log_level: "INFO"
+
+paths:
+  raw_data:       "data/raw"
+  processed_data: "data/processed"
+  outputs:        "outputs"
+  transport_params: "configs/transport_parameters.json"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Geospatial
+# ─────────────────────────────────────────────────────────────────────────────
+geospatial:
+  crs: "EPSG:4326"
+  resolutions:
+    land_cover:  0.001    # ~100 m  — resampled from 10 m ESA WorldCover
+    suitability: 0.01     # ~1 km   — consistent with global climate datasets
+    dem_slope:   0.005    # ~500 m
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Phase 1 — Data Quality Audit
+# ─────────────────────────────────────────────────────────────────────────────
+audit:
+  expected_resolutions:
+    wind:  0.0025         # Global Wind Atlas ~250 m
+    solar: 0.0083         # Global Solar Atlas ~1 km
+  resolution_tolerance: 0.5
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Criteria defaults (fallback when country-specific values are absent)
+# ─────────────────────────────────────────────────────────────────────────────
+criteria_defaults:
+  roads:
+    max_dist_km: 15.0
+  population:
+    density_threshold: 300.0    # inhabitants/km²
+  protected_areas:
+    as_exclusion: true
+  rivers:
+    safety_buffer_km: 0.5      # riparian setback
+    max_dist_km: 5.0           # solar/wind saturation distance
+    max_dist_biomass_km: 30.0  # biomass water-access saturation
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Phase 4 — Potential & Energy Estimation
+# ─────────────────────────────────────────────────────────────────────────────
+potential:
+  scenarios:
+    optimistic:
+      suitability_threshold: -0.10
+      land_use_multiplier:    1.20
+    balanced:
+      suitability_threshold:  0.00
+      land_use_multiplier:    1.00
+    conservative:
+      suitability_threshold: +0.10
+      land_use_multiplier:    0.50
+
+  # Global fallback technology parameters (tier 2).
+  # Country-specific values in parameters.json take precedence (tier 1).
+  technologies:
+    solar:
+      base_threshold:          0.60
+      land_use_factor:         0.05      # standard conservative (Bolinger 2022)
+      power_density_mw_km2:    40.0      # global median tracking (Fu et al. 2017)
+      capacity_factor_max:     0.22
+    wind:
+      base_threshold:          0.60
+      land_use_factor:         0.03
+      power_density_mw_km2:    6.5
+      capacity_factor_max:     0.35
+    biomass:
+      base_threshold:          0.60
+      land_use_factor:         0.30      # collection_factor alias
+      power_density_mw_km2:    0.5
+      capacity_factor_max:     0.80
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Phase 5 — LCOE global fallback (IRENA, 2024)
+# Country-specific overrides in parameters.json take precedence.
+# ─────────────────────────────────────────────────────────────────────────────
+lcoe:
+  technologies:
+    solar:
+      capex_usd_kw:    760.0
+      opex_usd_kw_yr:   13.0
+      lifetime_years:    25
+      discount_rate:    0.060
+    wind:
+      capex_usd_kw:   1360.0
+      opex_usd_kw_yr:   44.0
+      lifetime_years:    25
+      discount_rate:    0.060
+    biomass:
+      capex_usd_kw:   2720.0
+      opex_usd_kw_yr:  109.0
+      lifetime_years:    20
+      discount_rate:    0.070
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Visualization
+# ─────────────────────────────────────────────────────────────────────────────
+visualization:
+  show_lat_lon_grid: false
+  render_workers: 4
+
+  layout:
+    dpi: 150
+    figure_width_inches: 8.0
+    colorbar_shrink: 0.65
+    colorbar_pad: 0.02
+    colorbar_aspect: 20
+    north_xfrac: 0.06
+    north_yfrac: 0.06
+    scale_xfrac: 0.08
+    scale_yfrac: 0.04
+    admin_max_labels: 12
+
+  colors:
+    ocean_background:       "#D6EAF8"
+    figure_background:      "#F5F5F5"
+    context_countries_fill: "#EEEEEE"
+    context_countries_edge: "#CCCCCC"
+    country_border:         "#222222"
+
+  plant_colors:
+    Wind:       "#1565C0"
+    Solar:      "#F9A825"
+    Hydro:      "#1B5E20"
+    Biomass:    "#6A1B9A"
+    Gas:        "#E65100"
+    Oil:        "#BF360C"
+    Coal:       "#37474F"
+    Nuclear:    "#FF6F00"
+    Waste:      "#558B2F"
+    Geothermal: "#880E4F"
+    Other:      "#78909C"
+
+  criteria_meta:
+    solar_resource:      ["Solar Resource (PVOUT)",              "Potential (normalised)", "YlOrRd", false]
+    wind_resource:       ["Wind Resource (Power Density)",       "Potential (normalised)", "Blues",   false]
+    terrain_score:       ["Terrain Suitability (Slope + TRI)",   "Score (0–1)",            "RdYlGn", false]
+    lc_biomass:          ["Land Cover Suitability — Biomass",    "Score (0–1)",            "RdYlGn", false]
+    biomass_resource:    ["Biomass Resource (Yield by LC)",      "Potential (normalised)", "Greens", false]
+    proximity_plants:    ["Proximity to Power Plants",           "Score (0–1)",            "RdYlGn", false]
+    pop_suitability:     ["Population Suitability",              "Score (0–1)",            "RdYlGn", false]
+    road_suitability:    ["Proximity to Roads",                  "Score (0–1)",            "RdYlGn", false]
+    slope_degrees:       ["Slope",                               "Degrees",                "YlOrRd", false]
+    protected_areas:     ["Protected Areas Constraint",          "Score (0–1)",            "RdYlGn", false]
+    lakes_exclusion:     ["Lakes Exclusion (HydroLAKES)",        "Binary (0=lake, 1=ok)",  "RdYlGn", false]
+    river_solar:         ["River Buffer — Solar/Wind",           "Score (0–1)",            "RdYlGn", false]
+    river_wind:          ["River Buffer — Wind",                 "Score (0–1)",            "RdYlGn", false]
+    river_biomass:       ["River Access — Biomass",              "Score (0–1)",            "Blues",   false]
+    seismic_suitability: ["Seismic Hazard Suitability",          "Score (0–1)",            "RdYlGn", false]
+    grid_suitability:    ["Power Grid Proximity (OSM)",          "Score (0–1)",            "RdYlGn", false]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Pipeline execution control
+# ─────────────────────────────────────────────────────────────────────────────
+pipeline:
+  use_mainland_only: true
+  skip_criteria_maps: false
+  map_dpi_export: 150
+
+  skip_audit:       true
+  skip_land_cover:  true
+  skip_align:       true
+  skip_criteria:    false
+  skip_suitability: false
+  skip_potential:   false
+  skip_lcoe:        false
+  skip_results:     false
+  skip_abatement:   false
+  skip_sensitivity: false
+  skip_transport: false
+
+  sensitivity:
+    run_sa1: true       # OAT weight sensitivity
+    run_sa2: true       # Monte Carlo AHP
+    run_sa3: true       # Threshold sweep
+    run_sa4: true       # LCOE uncertainty
+    run_sa5: true       # GHG abatement sensitivity
+    run_sa6: true       # Sobol global sensitivity
+    n_mc_samples: 1000
+  
+  transport:
+    primary_scenario: "reference"   # EV penetration scenario to use as the "primary" in reports and maps. Options: reference | accelerated | conservative
+    hub_suitability_threshold: 0.75 # Minimum suitability score for hub placement (0–1)
+    run_all_scenarios: true

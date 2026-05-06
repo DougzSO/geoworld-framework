@@ -1,0 +1,59 @@
+{
+  "country_code": "PRT",
+  "country_name": "Portugal",
+  "generated_at": "2026-04-10T17:02:41.665608",
+  "scenarios": {
+    "reference": {
+      "ev_electricity_demand_2050_twh": 9.25,
+      "re_needed_total_gw_2050": 4.18,
+      "co2_total_2050_mtco2eq": 2.796,
+      "co2_avoided_cumulative_mtco2eq": 1455.5,
+      "cumulative_capex_2050_bn_usd": 7.0,
+      "fleet_2050_total": 5727204,
+      "fleet_2050_bev_pct": 59.9,
+      "fleet_2050_hev_pct": 8.9,
+      "fleet_2050_phev_pct": 4.3,
+      "fleet_2050_ice_pct": 10.5,
+      "re_sufficiency_solar_2050_pct": 100.0,
+      "ev_demand_vs_re_potential": "COVERED"
+    },
+    "accelerated": {
+      "ev_electricity_demand_2050_twh": 10.3,
+      "re_needed_total_gw_2050": 4.65,
+      "co2_total_2050_mtco2eq": 1.941,
+      "co2_avoided_cumulative_mtco2eq": 1486.2,
+      "cumulative_capex_2050_bn_usd": 8.7,
+      "fleet_2050_total": 5727204,
+      "fleet_2050_bev_pct": 66.8,
+      "fleet_2050_hev_pct": 5.7,
+      "fleet_2050_phev_pct": 2.8,
+      "fleet_2050_ice_pct": 7.5,
+      "re_sufficiency_solar_2050_pct": 100.0,
+      "ev_demand_vs_re_potential": "COVERED"
+    },
+    "conservative": {
+      "ev_electricity_demand_2050_twh": 7.36,
+      "re_needed_total_gw_2050": 3.32,
+      "co2_total_2050_mtco2eq": 4.189,
+      "co2_avoided_cumulative_mtco2eq": 1419.3,
+      "cumulative_capex_2050_bn_usd": 5.0,
+      "fleet_2050_total": 5727204,
+      "fleet_2050_bev_pct": 47.4,
+      "fleet_2050_hev_pct": 14.1,
+      "fleet_2050_phev_pct": 7.1,
+      "fleet_2050_ice_pct": 15.2,
+      "re_sufficiency_solar_2050_pct": 100.0,
+      "ev_demand_vs_re_potential": "COVERED"
+    }
+  },
+  "charging_hubs": {
+    "total": 12,
+    "total_peak_power_mw": 6.0,
+    "total_capex_bn_usd": 0.0102
+  },
+  "renewable_potential_available_gw": {
+    "solar": 30.728,
+    "wind": 0.666,
+    "biomass": 0.428
+  }
+}

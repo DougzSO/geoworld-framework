@@ -1,0 +1,59 @@
+{
+  "country_code": "ZAF",
+  "country_name": "South Africa",
+  "generated_at": "2026-04-10T17:10:22.169241",
+  "scenarios": {
+    "reference": {
+      "ev_electricity_demand_2050_twh": 11.08,
+      "re_needed_total_gw_2050": 5.0,
+      "co2_total_2050_mtco2eq": 21.038,
+      "co2_avoided_cumulative_mtco2eq": 3666.6,
+      "cumulative_capex_2050_bn_usd": 5.4,
+      "fleet_2050_total": 17256367,
+      "fleet_2050_bev_pct": 23.4,
+      "fleet_2050_hev_pct": 15.9,
+      "fleet_2050_phev_pct": 6.6,
+      "fleet_2050_ice_pct": 30.6,
+      "re_sufficiency_solar_2050_pct": 100.0,
+      "ev_demand_vs_re_potential": "COVERED"
+    },
+    "accelerated": {
+      "ev_electricity_demand_2050_twh": 19.0,
+      "re_needed_total_gw_2050": 8.57,
+      "co2_total_2050_mtco2eq": 13.685,
+      "co2_avoided_cumulative_mtco2eq": 3755.2,
+      "cumulative_capex_2050_bn_usd": 10.3,
+      "fleet_2050_total": 17256367,
+      "fleet_2050_bev_pct": 40.5,
+      "fleet_2050_hev_pct": 11.6,
+      "fleet_2050_phev_pct": 6.5,
+      "fleet_2050_ice_pct": 17.2,
+      "re_sufficiency_solar_2050_pct": 100.0,
+      "ev_demand_vs_re_potential": "COVERED"
+    },
+    "conservative": {
+      "ev_electricity_demand_2050_twh": 5.62,
+      "re_needed_total_gw_2050": 2.54,
+      "co2_total_2050_mtco2eq": 26.908,
+      "co2_avoided_cumulative_mtco2eq": 3607.3,
+      "cumulative_capex_2050_bn_usd": 2.8,
+      "fleet_2050_total": 17256367,
+      "fleet_2050_bev_pct": 11.7,
+      "fleet_2050_hev_pct": 15.8,
+      "fleet_2050_phev_pct": 5.9,
+      "fleet_2050_ice_pct": 43.7,
+      "re_sufficiency_solar_2050_pct": 100.0,
+      "ev_demand_vs_re_potential": "COVERED"
+    }
+  },
+  "charging_hubs": {
+    "total": 33,
+    "total_peak_power_mw": 16.5,
+    "total_capex_bn_usd": 0.02805
+  },
+  "renewable_potential_available_gw": {
+    "solar": 312.646,
+    "wind": 7.437,
+    "biomass": 39.002
+  }
+}

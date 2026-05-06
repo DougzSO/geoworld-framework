@@ -1,0 +1,5 @@
+parameter,S1,S1_conf,ST,ST_conf,dominant
+penetration_factor,0.5625,0.0562,0.5681,0.0485,True
+ef_thermal_gco2_kwh,0.3896,0.0482,0.3947,0.0345,True
+ef_lifecycle_gco2_kwh,0.0422,0.0177,0.0428,0.0041,False
+cf_renewable,0.0,0.0,0.0,0.0,False

@@ -1,0 +1,95 @@
+====================================================================
+  SUITABILITY REPORT — AHP (Saaty) + TOPSIS MCDA
+  South Africa (ZAF)
+  2026-04-10 14:04:46
+====================================================================
+
+--------------------------------------------------------------------
+  SOLAR PV
+--------------------------------------------------------------------
+    Total territorial pixels            : 1,094,423
+    Hard exclusions (pixels)            : 146,478  (13.4%)
+    Valid pixels (TOPSIS)               : 947,945  (86.6%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.579 ± 0.139
+      P10 / P50 / P90                   : 0.408 / 0.552 / 0.776
+      Score >= 0.6 (high suitability)   : 39.5%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0384  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      solar_resource                     0.3314  ( 33.1%)
+      grid_suitability                   0.2385  ( 23.9%)
+      terrain_score                      0.1620  ( 16.2%)
+      road_suitability                   0.1090  ( 10.9%)
+      river_solar                        0.0734  (  7.3%)
+      seismic_suitability                0.0498  (  5.0%)
+      pop_suitability                    0.0359  (  3.6%)
+
+    Weights JSON: ZAF_solar_weights.json
+
+--------------------------------------------------------------------
+  WIND ONSHORE
+--------------------------------------------------------------------
+    Total territorial pixels            : 1,094,423
+    Hard exclusions (pixels)            : 145,111  (13.3%)
+    Valid pixels (TOPSIS)               : 949,312  (86.7%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.465 ± 0.143
+      P10 / P50 / P90                   : 0.292 / 0.448 / 0.652
+      Score >= 0.6 (high suitability)   : 18.3%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0974  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      wind_resource                      0.3820  ( 38.2%)
+      grid_suitability                   0.2480  ( 24.8%)
+      terrain_score                      0.1582  ( 15.8%)
+      road_suitability                   0.0983  (  9.8%)
+      pop_suitability                    0.0614  (  6.1%)
+      seismic_suitability                0.0314  (  3.1%)
+      river_wind                         0.0208  (  2.1%)
+
+    Weights JSON: ZAF_wind_weights.json
+
+--------------------------------------------------------------------
+  BIOMASS / BIOENERGY
+--------------------------------------------------------------------
+    Total territorial pixels            : 1,094,423
+    Hard exclusions (pixels)            : 145,005  (13.2%)
+    Valid pixels (TOPSIS)               : 949,418  (86.8%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.627 ± 0.187
+      P10 / P50 / P90                   : 0.325 / 0.660 / 0.843
+      Score >= 0.6 (high suitability)   : 62.6%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0481  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      biomass_resource                   0.3076  ( 30.8%)
+      lc_biomass                         0.2255  ( 22.5%)
+      road_suitability                   0.1615  ( 16.2%)
+      river_biomass                      0.1111  ( 11.1%)
+      grid_suitability                   0.0792  (  7.9%)
+      pop_suitability                    0.0573  (  5.7%)
+      terrain_score                      0.0326  (  3.3%)
+      seismic_suitability                0.0252  (  2.5%)
+
+    Weights JSON: ZAF_biomass_weights.json
+
+====================================================================
+  TIMINGS BY STAGE
+--------------------------------------------------------------------
+    load_criteria           :    0.4s
+    solar                   :    5.5s
+    wind                    :    6.1s
+    biomass                 :    5.5s
+    comparison_map          :   16.4s
+    TOTAL                   : 34.2s
+====================================================================

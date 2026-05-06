@@ -1,0 +1,86 @@
+========================================================================
+GHG ABATEMENT SYNTHESIS REPORT — Phase 7
+Russia (RUS)
+Generated: 2026-04-10 17:19:04
+========================================================================
+
+==============================================================================
+EXECUTIVE SUMMARY
+==============================================================================
+MAC (Marginal Abatement Cost)      : 70.1 USD/tCO₂e
+Breakeven Carbon Price (BCP)       : 70.1 USD/tCO₂e
+CO₂ Avoided (annual)               : 53.80 MtCO₂e/yr
+Total Economic Value               : 0.00 Billion USD/yr
+Grid Substitution Volume           : 80.5 TWh (50.0%)
+Carbon Intensity Reduction         : 579 → 360 gCO₂/kWh
+==============================================================================
+
+SECTION 1 — THERMAL FLEET (BEFORE TRANSITION)
+------------------------------------------------------------
+  Fuel     Cap MW    CF   Gen GWh/yr   EF tCO₂/GWh  SRMC $/MWh   CO₂ MtCO₂/yr
+  ------------------------------------------------------------
+  Coal      9,017   55%       43,444           820        30.0         35.624
+  Gas      29,789   45%      117,427           490        44.0         57.539
+  Oil          21   50%           91           750        70.0          0.068
+  TOTAL    38,826            160,962                                       93.232
+
+SECTION 2 — RENEWABLE POTENTIAL (Balanced scenario, Phase 4+5)
+------------------------------------------------------------
+  Tech           Gen GWh/yr     GW  Share %   LCOE $/MWh   MAC $/tCO₂
+  ------------------------------------------------------------
+  Biomass             392,250   59.7     36.2         60.9         35.7
+  Wind Onshore        352,933  155.0     32.6         89.9         85.7
+  Solar PV            337,210  275.0     31.2         94.5         93.7
+
+SECTION 3 — MAC / SUBSTITUTION RESULTS
+------------------------------------------------------------
+  Carbon proxy applied                   : 0 USD/tCO₂e
+  SRMC thermal (gen-weighted)            : 40.2 USD/MWh
+  LRMC thermal (with carbon)             : 40.2 USD/MWh
+  Avg renewable LCOE                     : 80.8 USD/MWh
+  ► MAC (global, gen-weighted)           : 70.07 USD/tCO₂e
+  ► BCP (breakeven carbon price)         : 70.07 USD/tCO₂e
+    → EU ETS proxy at 0 USD/tCO₂ below breakeven
+  Substitution (limit applied)           : 80,481 GWh/yr (50.0% of thermal)
+    N/A
+  CO₂ avoided                            : 53.796 MtCO₂e/yr
+  TOTAL economic value created           : 0.000 Billion USD/yr
+
+SECTION 4 — CARBON INTENSITY (gCO₂eq/kWh)
+------------------------------------------------------------
+  Before transition (thermal mix)        : 579.2 gCO₂/kWh
+  After transition (post-subst mix)      : 360.0 gCO₂/kWh
+  Reduction                              : 37.8%
+  Renewables avg lifecycle               : 230.0 gCO₂/kWh
+
+SECTION 5 — CARBON FOOTPRINT BY SCOPE (GHG Protocol)
+------------------------------------------------------------
+  Scope 1 (direct thermal, after subst.) : 39.436 MtCO₂e/yr
+  Scope 2 (indirect — new renew/grid)    : 28.973 MtCO₂e/yr
+  Scope 3 (renew lifecycle: upstreams)   : 18.511 MtCO₂e/yr
+  Total Scope 1+2+3 (post-transition)    : 86.919 MtCO₂e/yr
+
+SECTION 6 — NET ZERO ANALYSIS (Referencing WHOLE national economy)
+------------------------------------------------------------
+  Country net-zero target year           : 2060
+  Current total CO₂ (all sectors, API)   : 0.0 MtCO₂e/yr
+
+  NDC type                               : absolute reduction target
+  NDC base year / base emissions         : 1990 / 3361.0 MtCO₂e/yr
+  NDC 2030 commitment                    : −30% vs 1990 baseline
+  NDC 2030 target (absolute cap)         : <= 2352.7 MtCO₂e/yr (all sectors)
+  Current total vs target gap            : 0.0 MtCO₂e/yr to close by 2030
+  Electricity transition contribution    : 35.29 MtCO₂e/yr net avoided
+    → covers nan% of the 2030 gap
+  Residual gap after this transition     : nan MtCO₂e/yr (to be closed by other sectors)
+  Source: net_zero_db.json / fallback
+
+SECTION 7 — EMISSION BALANCE DECOMPOSITION
+------------------------------------------------------------
+  Current national footprint (all sectors): +0.00 MtCO₂e/yr
+    of which modelled electricity sector  :  93.23 MtCO₂e/yr
+  − CO₂ avoided (thermal displacement)    : −53.796 MtCO₂e/yr
+  + Lifecycle CO₂ (new renewables built)  : +18.511 MtCO₂e/yr
+  + Residual thermal CO₂ kept for grid    : +39.436 MtCO₂e/yr
+  = Post-transition national proxy        :  0.00 MtCO₂e/yr
+========================================================================

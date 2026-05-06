@@ -1,0 +1,726 @@
+2026-04-10T14:03:18 | INFO     | geoworld.io.DataManager | Raw data root: D:\Douglas\DOUTORADO\database\raw
+2026-04-10T14:03:18 | INFO     | geoworld | Starting analysis: South Africa (ZAF)
+2026-04-10T14:03:18 | INFO     | geoworld.core.ConfigLoader | ----------------------------------------------------
+2026-04-10T14:03:18 | INFO     | geoworld.core.ConfigLoader |   South Africa (ZAF)
+2026-04-10T14:03:18 | INFO     | geoworld.core.ConfigLoader |   Solar  : LUF=0.05  thr=0.75  density=45.0 MW/km²
+2026-04-10T14:03:18 | INFO     | geoworld.core.ConfigLoader |   Wind   : LUF=0.030  thr=0.75  density=6.0 MW/km²
+2026-04-10T14:03:18 | INFO     | geoworld.core.ConfigLoader |   Biomass: col=0.25  thr=0.75  density=0.5 MW/km²
+2026-04-10T14:03:18 | INFO     | geoworld.core.ConfigLoader |   OWA    : default=balanced  scenarios=['optimistic', 'balanced', 'conservative']
+2026-04-10T14:03:18 | INFO     | geoworld.core.ConfigLoader |   Criteria: river=5.0 km  road=15.0 km  slope=12°
+2026-04-10T14:03:18 | INFO     | geoworld.core.ConfigLoader | ----------------------------------------------------
+2026-04-10T14:03:18 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T14:03:18 | INFO     | geoworld |   South Africa (ZAF)
+2026-04-10T14:03:18 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T14:03:18 | INFO     | geoworld |   Geometry : Mainland only
+2026-04-10T14:03:18 | INFO     | geoworld |   Resolution : Fixed 0.01 deg
+2026-04-10T14:03:18 | INFO     | geoworld |   Suitability optimistic offset : -0.10
+2026-04-10T14:03:18 | INFO     | geoworld |   Protected-area mode : Hard exclusion
+2026-04-10T14:03:18 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T14:03:24 | INFO     | geoworld | Land Cover: 29 tile(s) found.
+2026-04-10T14:03:24 | INFO     | geoworld.io.DataManager | Power plants found: 101
+2026-04-10T14:03:24 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T14:03:24 | INFO     | geoworld |   DATA AVAILABILITY
+2026-04-10T14:03:24 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T14:03:24 | INFO     | geoworld |   [  OK   ] Borders
+2026-04-10T14:03:24 | INFO     | geoworld |   [  OK   ] Land Cover
+2026-04-10T14:03:24 | INFO     | geoworld |   [  OK   ] Elevation
+2026-04-10T14:03:24 | INFO     | geoworld |   [  OK   ] Wind
+2026-04-10T14:03:24 | INFO     | geoworld |   [  OK   ] Solar
+2026-04-10T14:03:24 | INFO     | geoworld |   [  OK   ] Power Plants
+2026-04-10T14:03:24 | INFO     | geoworld |   [  OK   ] Population
+2026-04-10T14:03:24 | INFO     | geoworld |   [  OK   ] Roads
+2026-04-10T14:03:24 | INFO     | geoworld |   [  OK   ] Protected
+2026-04-10T14:03:24 | INFO     | geoworld |   [  OK   ] Lakes
+2026-04-10T14:03:24 | INFO     | geoworld | ----------------------------------------------------
+2026-04-10T14:03:24 | INFO     | geoworld.processors.DataAuditor | Auditoria: South Africa (ZAF)
+2026-04-10T14:03:24 | INFO     | geoworld.processors.DataAuditor |   [solar] iniciando...
+2026-04-10T14:03:26 | INFO     | geoworld.processors.DataAuditor |   [solar] concluído em 1.7s
+2026-04-10T14:03:26 | INFO     | geoworld.processors.DataAuditor |   [elevation] iniciando...
+2026-04-10T14:03:28 | INFO     | geoworld.processors.DataAuditor |   [elevation] concluído em 1.9s
+2026-04-10T14:03:28 | INFO     | geoworld.processors.DataAuditor |   [population] iniciando...
+2026-04-10T14:03:45 | INFO     | geoworld.processors.DataAuditor |   [population] concluído em 17.1s
+2026-04-10T14:03:45 | INFO     | geoworld.processors.DataAuditor |   [slope] iniciando...
+2026-04-10T14:03:47 | INFO     | geoworld.processors.DataAuditor |   [slope] concluído em 1.7s
+2026-04-10T14:03:47 | INFO     | geoworld.processors.DataAuditor |   [wind] iniciando...
+2026-04-10T14:03:50 | INFO     | geoworld.processors.DataAuditor |   [wind] concluído em 3.5s
+2026-04-10T14:03:50 | INFO     | geoworld.processors.DataAuditor |   [seismic] iniciando...
+2026-04-10T14:03:51 | INFO     | geoworld.processors.DataAuditor |   [seismic] concluído em 0.3s
+2026-04-10T14:03:51 | INFO     | geoworld.processors.DataAuditor |   [land_cover] iniciando...
+2026-04-10T14:03:57 | INFO     | geoworld.processors.DataAuditor |   [land_cover] concluído em 6.9s
+2026-04-10T14:03:57 | INFO     | geoworld.processors.DataAuditor |   [power_plants] iniciando...
+2026-04-10T14:03:57 | INFO     | geoworld.processors.DataAuditor |   [power_plants] concluído em 0.0s
+2026-04-10T14:03:57 | INFO     | geoworld.core.ConfigLoader | ----------------------------------------------------
+2026-04-10T14:03:57 | INFO     | geoworld.core.ConfigLoader |   South Africa (ZAF)
+2026-04-10T14:03:57 | INFO     | geoworld.core.ConfigLoader |   Solar  : LUF=0.05  thr=0.75  density=45.0 MW/km²
+2026-04-10T14:03:57 | INFO     | geoworld.core.ConfigLoader |   Wind   : LUF=0.030  thr=0.75  density=6.0 MW/km²
+2026-04-10T14:03:57 | INFO     | geoworld.core.ConfigLoader |   Biomass: col=0.25  thr=0.75  density=0.5 MW/km²
+2026-04-10T14:03:57 | INFO     | geoworld.core.ConfigLoader |   OWA    : default=balanced  scenarios=['optimistic', 'balanced', 'conservative']
+2026-04-10T14:03:57 | INFO     | geoworld.core.ConfigLoader |   Criteria: river=5.0 km  road=15.0 km  slope=12°
+2026-04-10T14:03:57 | INFO     | geoworld.core.ConfigLoader | ----------------------------------------------------
+2026-04-10T14:03:57 | INFO     | geoworld.processors.DataAuditor | Relatório salvo: D:\Douglas\DOUTORADO\geoworld_framework\outputs\reports\audit_ZAF_20260410_140324.txt
+2026-04-10T14:03:57 | INFO     | geoworld |   Phase 1 (Audit) completed in 33.2s
+2026-04-10T14:03:57 | INFO     | geoworld.processors.GridAligner |   Grid Extent: 1272×1645 px | res=0.01° | bounds=[16.450,-34.840,32.900,-22.120]
+2026-04-10T14:03:58 | INFO     | geoworld |   [elevation] iniciando...
+2026-04-10T14:03:58 | INFO     | geoworld.processors.GridAligner |     elevation: ⏩ cached.
+2026-04-10T14:03:58 | INFO     | geoworld |   [elevation] concluído em 0.1s
+2026-04-10T14:03:58 | INFO     | geoworld |   [slope] iniciando...
+2026-04-10T14:03:58 | INFO     | geoworld.processors.GridAligner |     slope: ⏩ cached.
+2026-04-10T14:03:58 | INFO     | geoworld |   [slope] concluído em 0.0s
+2026-04-10T14:03:58 | INFO     | geoworld |   [solar] iniciando...
+2026-04-10T14:03:58 | INFO     | geoworld.processors.GridAligner |     solar: ⏩ cached.
+2026-04-10T14:03:58 | INFO     | geoworld |   [solar] concluído em 0.0s
+2026-04-10T14:03:58 | INFO     | geoworld |   [wind] iniciando...
+2026-04-10T14:03:58 | INFO     | geoworld.processors.GridAligner |     wind: ⏩ cached.
+2026-04-10T14:03:58 | INFO     | geoworld |   [wind] concluído em 0.0s
+2026-04-10T14:03:58 | INFO     | geoworld |   [land_cover] iniciando...
+2026-04-10T14:04:00 | INFO     | geoworld |   [land_cover] concluído em 1.2s
+2026-04-10T14:04:00 | INFO     | geoworld |   [population] iniciando...
+2026-04-10T14:04:00 | INFO     | geoworld.processors.GridAligner |     population: ⏩ cached.
+2026-04-10T14:04:00 | INFO     | geoworld |   [population] concluído em 0.1s
+2026-04-10T14:04:00 | INFO     | geoworld |   [grid_distance] iniciando...
+2026-04-10T14:04:00 | INFO     | geoworld.processors.GridAligner |     grid: ⏩ cached.
+2026-04-10T14:04:00 | INFO     | geoworld |   [grid_distance] concluído em 0.0s
+2026-04-10T14:04:00 | INFO     | geoworld |   [roads] iniciando...
+2026-04-10T14:04:00 | INFO     | geoworld.processors.GridAligner |     roads: ⏩ cached.
+2026-04-10T14:04:00 | INFO     | geoworld |   [roads] concluído em 0.1s
+2026-04-10T14:04:00 | INFO     | geoworld |   [lakes] iniciando...
+2026-04-10T14:04:00 | INFO     | geoworld.processors.GridAligner |     lakes: ⏩ cached.
+2026-04-10T14:04:00 | INFO     | geoworld |   [lakes] concluído em 0.0s
+2026-04-10T14:04:00 | INFO     | geoworld |   [rivers] iniciando...
+2026-04-10T14:04:00 | INFO     | geoworld.processors.GridAligner |     rivers: ⏩ cached.
+2026-04-10T14:04:00 | INFO     | geoworld |   [rivers] concluído em 0.0s
+2026-04-10T14:04:00 | INFO     | geoworld |   [seismic] iniciando...
+2026-04-10T14:04:00 | INFO     | geoworld.processors.GridAligner |     seismic: ⏩ cached.
+2026-04-10T14:04:00 | INFO     | geoworld |   [seismic] concluído em 0.1s
+2026-04-10T14:04:00 | INFO     | geoworld.processors.GridAligner |   ✅ All geometries mapped to strictly congruent matrix shape=(1272, 1645)
+2026-04-10T14:04:00 | INFO     | geoworld |   Phase 2a (Grid Alignment) completed in 2.5s
+2026-04-10T14:04:00 | INFO     | geoworld.processors.CriteriaBuilder | 
+Phase 2b — Criteria Builder: ZAF
+2026-04-10T14:04:00 | INFO     | geoworld.processors.CriteriaBuilder |   Admin boundaries: 9 regions loaded
+2026-04-10T14:04:00 | INFO     | geoworld.processors.CriteriaBuilder |   [solar_resource] mathematical projection initiated...
+2026-04-10T14:04:00 | INFO     | geoworld.processors.CriteriaBuilder |   [solar_resource] resolved in 0.2s
+2026-04-10T14:04:00 | INFO     | geoworld.processors.CriteriaBuilder |   [wind_resource] mathematical projection initiated...
+2026-04-10T14:04:01 | INFO     | geoworld.processors.CriteriaBuilder |   [wind_resource] resolved in 0.2s
+2026-04-10T14:04:01 | INFO     | geoworld.processors.CriteriaBuilder |   [terrain_score] mathematical projection initiated...
+2026-04-10T14:04:01 | INFO     | geoworld.processors.CriteriaBuilder |   [terrain_score] resolved in 0.4s
+2026-04-10T14:04:01 | INFO     | geoworld.processors.CriteriaBuilder |   [slope_degrees] mathematical projection initiated...
+2026-04-10T14:04:01 | INFO     | geoworld.processors.CriteriaBuilder |   [slope_degrees] resolved in 0.2s
+2026-04-10T14:04:01 | INFO     | geoworld.processors.CriteriaBuilder |   [land_cover] mathematical projection initiated...
+2026-04-10T14:04:01 | INFO     | geoworld.processors.CriteriaBuilder |   [land_cover] resolved in 0.0s
+2026-04-10T14:04:01 | INFO     | geoworld.processors.CriteriaBuilder |   [biomass_resource] mathematical projection initiated...
+2026-04-10T14:04:02 | INFO     | geoworld.processors.CriteriaBuilder |   [biomass_resource] resolved in 0.2s
+2026-04-10T14:04:02 | INFO     | geoworld.processors.CriteriaBuilder |   [protected_areas] mathematical projection initiated...
+2026-04-10T14:04:17 | INFO     | geoworld.processors.CriteriaBuilder |   [protected_areas] resolved in 15.7s
+2026-04-10T14:04:17 | INFO     | geoworld.processors.CriteriaBuilder |   [pop_suitability] mathematical projection initiated...
+2026-04-10T14:04:17 | INFO     | geoworld.processors.CriteriaBuilder |   [pop_suitability] resolved in 0.2s
+2026-04-10T14:04:17 | INFO     | geoworld.processors.CriteriaBuilder |   [road_suitability] mathematical projection initiated...
+2026-04-10T14:04:18 | INFO     | geoworld.processors.CriteriaBuilder |   [road_suitability] resolved in 0.1s
+2026-04-10T14:04:18 | INFO     | geoworld.processors.CriteriaBuilder |   [lakes_exclusion] mathematical projection initiated...
+2026-04-10T14:04:18 | INFO     | geoworld.processors.CriteriaBuilder |   [lakes_exclusion] resolved in 0.1s
+2026-04-10T14:04:18 | INFO     | geoworld.processors.CriteriaBuilder |   [river_solar] mathematical projection initiated...
+2026-04-10T14:04:18 | INFO     | geoworld.processors.CriteriaBuilder |   [river_solar] resolved in 0.1s
+2026-04-10T14:04:18 | INFO     | geoworld.processors.CriteriaBuilder |   [river_wind] mathematical projection initiated...
+2026-04-10T14:04:18 | INFO     | geoworld.processors.CriteriaBuilder |   [river_wind] resolved in 0.1s
+2026-04-10T14:04:18 | INFO     | geoworld.processors.CriteriaBuilder |   [river_biomass] mathematical projection initiated...
+2026-04-10T14:04:18 | INFO     | geoworld.processors.CriteriaBuilder |   [river_biomass] resolved in 0.1s
+2026-04-10T14:04:18 | INFO     | geoworld.processors.CriteriaBuilder |   [seismic_suitability] mathematical projection initiated...
+2026-04-10T14:04:18 | INFO     | geoworld.processors.CriteriaBuilder |   [seismic_suitability] resolved in 0.2s
+2026-04-10T14:04:18 | INFO     | geoworld.processors.CriteriaBuilder |   [grid_suitability] mathematical projection initiated...
+2026-04-10T14:04:18 | INFO     | geoworld.processors.CriteriaBuilder |   [grid_suitability] resolved in 0.2s
+2026-04-10T14:04:18 | INFO     | geoworld.processors.CriteriaBuilder |   Computation: 18.3s | 15 maps queued for rendering
+2026-04-10T14:04:18 | INFO     | geoworld.processors.CriteriaBuilder |   Rendering 15 maps across 4 worker(s)...
+2026-04-10T14:04:46 | INFO     | geoworld.processors.CriteriaBuilder |   Render: 27.3s (parallel) | Phase total: 45.6s
+2026-04-10T14:04:46 | INFO     | geoworld.processors.CriteriaBuilder | 
+==============================================================
+  CRITERIA BUILDER — ZAF
+  Output: D:\Douglas\DOUTORADO\geoworld_framework\outputs\ZAF\criteria_builder
+==============================================================
+2026-04-10T14:04:46 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ solar_resource          : mean=0.622 | >=0.6:  59.5% | n=1,130,826
+2026-04-10T14:04:46 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ wind_resource           : mean=0.421 | >=0.6:  23.7% | n=1,130,825
+2026-04-10T14:04:46 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ terrain_score           : mean=0.613 | >=0.6:  51.7% | n=1,101,448
+2026-04-10T14:04:46 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ lc_biomass              : mean=0.646 | >=0.6:  56.7% | n=1,130,826
+2026-04-10T14:04:46 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ biomass_resource        : mean=0.613 | >=0.6:  60.8% | n=1,130,826
+2026-04-10T14:04:46 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ protected_areas         : mean=0.953 | >=0.6:  93.7% | n=1,130,826
+2026-04-10T14:04:46 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ pop_suitability         : mean=0.982 | >=0.6:  99.1% | n=1,124,879
+2026-04-10T14:04:46 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ road_suitability        : mean=0.742 | >=0.6:  78.7% | n=1,130,826
+2026-04-10T14:04:46 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ lakes_exclusion         : mean=0.989 | >=0.6:  98.9% | n=1,130,826
+2026-04-10T14:04:46 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ river_solar             : mean=0.734 | >=0.6:  73.4% | n=1,130,826
+2026-04-10T14:04:46 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ river_wind              : mean=0.734 | >=0.6:  73.4% | n=1,130,826
+2026-04-10T14:04:46 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ river_biomass           : mean=0.957 | >=0.6: 100.0% | n=1,130,826
+2026-04-10T14:04:46 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ seismic_suitability     : mean=0.684 | >=0.6:  70.3% | n=1,129,567
+2026-04-10T14:04:46 | INFO     | geoworld.processors.CriteriaBuilder |   ✅ grid_suitability        : mean=0.452 | >=0.6:  42.8% | n=1,130,826
+2026-04-10T14:04:46 | INFO     | geoworld.processors.CriteriaBuilder |   Total time: 46.0s
+==============================================================
+2026-04-10T14:04:46 | INFO     | geoworld |   Phase 2b (Criteria) completed in 46.1s
+2026-04-10T14:04:46 | INFO     | geoworld |   [load_criteria] iniciando...
+2026-04-10T14:04:47 | INFO     | geoworld |   [load_criteria] concluído em 0.4s
+2026-04-10T14:04:47 | INFO     | geoworld.processors.SuitabilityBuilder |   [suitability] Policy Active: ESA class 10 (Trees/Forest) blocked for Solar/Wind/Biomass.
+2026-04-10T14:04:47 | INFO     | geoworld.processors.SuitabilityBuilder | 
+  ──────────────────────────────────────────────────
+  Technology: Solar PV
+  ──────────────────────────────────────────────────
+2026-04-10T14:04:47 | INFO     | geoworld |   [solar] iniciando...
+2026-04-10T14:04:47 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar] AHP Saaty (subtle) — ✅ Consistent
+2026-04-10T14:04:47 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   λ_max=7.3039 | CI=0.0506 | CR=0.0384
+2026-04-10T14:04:47 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   solar_resource                : 0.3314  (33.1%)
+2026-04-10T14:04:47 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   grid_suitability              : 0.2385  (23.9%)
+2026-04-10T14:04:47 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   terrain_score                 : 0.1620  (16.2%)
+2026-04-10T14:04:47 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   road_suitability              : 0.1090  (10.9%)
+2026-04-10T14:04:47 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   river_solar                   : 0.0734  (7.3%)
+2026-04-10T14:04:47 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   seismic_suitability           : 0.0498  (5.0%)
+2026-04-10T14:04:47 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar]   pop_suitability               : 0.0359  (3.6%)
+2026-04-10T14:04:47 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar] AHP weights saved: ZAF_solar_weights.json
+2026-04-10T14:04:47 | INFO     | geoworld.processors.SuitabilityBuilder |   [solar] Pixels: total=1094423 | excluded=146478 (slope=5487, lc=82886) | valid=947945 (86.6%)
+2026-04-10T14:04:52 | INFO     | geoworld |   [solar] concluído em 5.5s
+2026-04-10T14:04:52 | INFO     | geoworld.processors.SuitabilityBuilder | 
+  ──────────────────────────────────────────────────
+  Technology: Wind Onshore
+  ──────────────────────────────────────────────────
+2026-04-10T14:04:52 | INFO     | geoworld |   [wind] iniciando...
+2026-04-10T14:04:52 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind] AHP Saaty (moderate) — ✅ Consistent
+2026-04-10T14:04:52 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   λ_max=7.7714 | CI=0.1286 | CR=0.0974
+2026-04-10T14:04:52 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   wind_resource                 : 0.3820  (38.2%)
+2026-04-10T14:04:52 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   grid_suitability              : 0.2480  (24.8%)
+2026-04-10T14:04:52 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   terrain_score                 : 0.1582  (15.8%)
+2026-04-10T14:04:52 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   road_suitability              : 0.0983  (9.8%)
+2026-04-10T14:04:52 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   pop_suitability               : 0.0614  (6.1%)
+2026-04-10T14:04:52 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   seismic_suitability           : 0.0314  (3.1%)
+2026-04-10T14:04:52 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind]   river_wind                    : 0.0208  (2.1%)
+2026-04-10T14:04:52 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind] AHP weights saved: ZAF_wind_weights.json
+2026-04-10T14:04:52 | INFO     | geoworld.processors.SuitabilityBuilder |   [wind] Pixels: total=1094423 | excluded=145111 (slope=938, lc=82886) | valid=949312 (86.7%)
+2026-04-10T14:04:58 | INFO     | geoworld |   [wind] concluído em 6.1s
+2026-04-10T14:04:58 | INFO     | geoworld.processors.SuitabilityBuilder | 
+  ──────────────────────────────────────────────────
+  Technology: Biomass / Bioenergy
+  ──────────────────────────────────────────────────
+2026-04-10T14:04:58 | INFO     | geoworld |   [biomass] iniciando...
+2026-04-10T14:04:58 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass] AHP Saaty (subtle) — ✅ Consistent
+2026-04-10T14:04:58 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   λ_max=8.4744 | CI=0.0678 | CR=0.0481
+2026-04-10T14:04:58 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   biomass_resource              : 0.3076  (30.8%)
+2026-04-10T14:04:58 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   lc_biomass                    : 0.2255  (22.5%)
+2026-04-10T14:04:58 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   road_suitability              : 0.1615  (16.2%)
+2026-04-10T14:04:58 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   river_biomass                 : 0.1111  (11.1%)
+2026-04-10T14:04:58 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   grid_suitability              : 0.0792  (7.9%)
+2026-04-10T14:04:58 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   pop_suitability               : 0.0573  (5.7%)
+2026-04-10T14:04:58 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   terrain_score                 : 0.0326  (3.3%)
+2026-04-10T14:04:58 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass]   seismic_suitability           : 0.0252  (2.5%)
+2026-04-10T14:04:58 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass] AHP weights saved: ZAF_biomass_weights.json
+2026-04-10T14:04:58 | INFO     | geoworld.processors.SuitabilityBuilder |   [biomass] Pixels: total=1094423 | excluded=145005 (slope=3, lc=82886) | valid=949418 (86.8%)
+2026-04-10T14:05:04 | INFO     | geoworld |   [biomass] concluído em 5.5s
+2026-04-10T14:05:04 | INFO     | geoworld |   [comparison_map] iniciando...
+2026-04-10T14:05:20 | INFO     | geoworld |   [comparison_map] concluído em 16.4s
+2026-04-10T14:05:20 | INFO     | geoworld.processors.SuitabilityBuilder | 
+====================================================================
+  SUITABILITY REPORT — AHP (Saaty) + TOPSIS MCDA
+  South Africa (ZAF)
+  2026-04-10 14:04:46
+====================================================================
+
+--------------------------------------------------------------------
+  SOLAR PV
+--------------------------------------------------------------------
+    Total territorial pixels            : 1,094,423
+    Hard exclusions (pixels)            : 146,478  (13.4%)
+    Valid pixels (TOPSIS)               : 947,945  (86.6%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.579 ± 0.139
+      P10 / P50 / P90                   : 0.408 / 0.552 / 0.776
+      Score >= 0.6 (high suitability)   : 39.5%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0384  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      solar_resource                     0.3314  ( 33.1%)
+      grid_suitability                   0.2385  ( 23.9%)
+      terrain_score                      0.1620  ( 16.2%)
+      road_suitability                   0.1090  ( 10.9%)
+      river_solar                        0.0734  (  7.3%)
+      seismic_suitability                0.0498  (  5.0%)
+      pop_suitability                    0.0359  (  3.6%)
+
+    Weights JSON: ZAF_solar_weights.json
+
+--------------------------------------------------------------------
+  WIND ONSHORE
+--------------------------------------------------------------------
+    Total territorial pixels            : 1,094,423
+    Hard exclusions (pixels)            : 145,111  (13.3%)
+    Valid pixels (TOPSIS)               : 949,312  (86.7%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.465 ± 0.143
+      P10 / P50 / P90                   : 0.292 / 0.448 / 0.652
+      Score >= 0.6 (high suitability)   : 18.3%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0974  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      wind_resource                      0.3820  ( 38.2%)
+      grid_suitability                   0.2480  ( 24.8%)
+      terrain_score                      0.1582  ( 15.8%)
+      road_suitability                   0.0983  (  9.8%)
+      pop_suitability                    0.0614  (  6.1%)
+      seismic_suitability                0.0314  (  3.1%)
+      river_wind                         0.0208  (  2.1%)
+
+    Weights JSON: ZAF_wind_weights.json
+
+--------------------------------------------------------------------
+  BIOMASS / BIOENERGY
+--------------------------------------------------------------------
+    Total territorial pixels            : 1,094,423
+    Hard exclusions (pixels)            : 145,005  (13.2%)
+    Valid pixels (TOPSIS)               : 949,418  (86.8%)
+
+    TOPSIS Statistics (valid pixels):
+      Mean ± Std                        : 0.627 ± 0.187
+      P10 / P50 / P90                   : 0.325 / 0.660 / 0.843
+      Score >= 0.6 (high suitability)   : 62.6%
+
+    AHP — Saaty Scale:
+      CR (Consistency Ratio)            : 0.0481  ✅ Consistent
+      Criterion                          Weight     (%)
+      ──────────────────────────────────────────────────
+      biomass_resource                   0.3076  ( 30.8%)
+      lc_biomass                         0.2255  ( 22.5%)
+      road_suitability                   0.1615  ( 16.2%)
+      river_biomass                      0.1111  ( 11.1%)
+      grid_suitability                   0.0792  (  7.9%)
+      pop_suitability                    0.0573  (  5.7%)
+      terrain_score                      0.0326  (  3.3%)
+      seismic_suitability                0.0252  (  2.5%)
+
+    Weights JSON: ZAF_biomass_weights.json
+
+====================================================================
+  TIMINGS BY STAGE
+--------------------------------------------------------------------
+    load_criteria           :    0.4s
+    solar                   :    5.5s
+    wind                    :    6.1s
+    biomass                 :    5.5s
+    comparison_map          :   16.4s
+    TOTAL                   : 34.2s
+====================================================================
+
+2026-04-10T14:05:20 | INFO     | geoworld |   Phase 3 (Suitability) completed in 34.2s
+2026-04-10T14:05:20 | INFO     | geoworld.processors.PotentialCalculator |   [params] solar=45.0 MW/km² lu=0.05 thr=0.75 | wind=6.0 MW/km² thr=0.75 | biomass=0.5 MW/km² thr=0.75
+2026-04-10T14:05:20 | INFO     | geoworld.processors.PotentialCalculator |   Admin boundaries: 9 regions active
+2026-04-10T14:05:20 | INFO     | geoworld.processors.PotentialCalculator | 
+  ──────────────────────────────────────────────────
+  Technology: Solar PV
+  ──────────────────────────────────────────────────
+2026-04-10T14:05:20 | INFO     | geoworld |   [solar] iniciando...
+2026-04-10T14:05:20 | INFO     | geoworld.processors.PotentialCalculator |   [solar] Grid: 1272x1645 px | lat_center=-28.48° | px_area=1.085 km²
+2026-04-10T14:05:20 | INFO     | geoworld.processors.PotentialCalculator |   [solar/optimistic] threshold=0.65 | area=323,363 km² | cap=727.57 GW | gen=1465.90 TWh/yr
+2026-04-10T14:05:21 | INFO     | geoworld.processors.PotentialCalculator |   [solar/balanced] threshold=0.75 | area=138,954 km² | cap=312.65 GW | gen=629.92 TWh/yr
+2026-04-10T14:05:22 | INFO     | geoworld.processors.PotentialCalculator |   [solar/conservative] threshold=0.85 | area=19,570 km² | cap=44.03 GW | gen=88.71 TWh/yr
+2026-04-10T14:05:28 | INFO     | geoworld |   [solar] concluído em 7.9s
+2026-04-10T14:05:28 | INFO     | geoworld.processors.PotentialCalculator | 
+  ──────────────────────────────────────────────────
+  Technology: Wind Onshore
+  ──────────────────────────────────────────────────
+2026-04-10T14:05:28 | INFO     | geoworld |   [wind] iniciando...
+2026-04-10T14:05:28 | INFO     | geoworld.processors.PotentialCalculator |   [wind] Grid: 1272x1645 px | lat_center=-28.48° | px_area=1.085 km²
+2026-04-10T14:05:28 | INFO     | geoworld.processors.PotentialCalculator |   [wind/optimistic] threshold=0.65 | area=102,656 km² | cap=18.48 GW | gen=61.51 TWh/yr
+2026-04-10T14:05:29 | INFO     | geoworld.processors.PotentialCalculator |   [wind/balanced] threshold=0.75 | area=41,314 km² | cap=7.44 GW | gen=24.75 TWh/yr
+2026-04-10T14:05:29 | INFO     | geoworld.processors.PotentialCalculator |   [wind/conservative] threshold=0.85 | area=7,488 km² | cap=1.35 GW | gen=4.49 TWh/yr
+2026-04-10T14:05:36 | INFO     | geoworld |   [wind] concluído em 7.5s
+2026-04-10T14:05:36 | INFO     | geoworld.processors.PotentialCalculator | 
+  ──────────────────────────────────────────────────
+  Technology: Biomass / Bioenergy
+  ──────────────────────────────────────────────────
+2026-04-10T14:05:36 | INFO     | geoworld |   [biomass] iniciando...
+2026-04-10T14:05:36 | INFO     | geoworld.processors.PotentialCalculator |   [biomass] Grid: 1272x1645 px | lat_center=-28.48° | px_area=1.085 km²
+2026-04-10T14:05:36 | INFO     | geoworld.processors.PotentialCalculator |   [biomass/optimistic] threshold=0.65 | area=535,199 km² | cap=80.28 GW | gen=478.21 TWh/yr
+2026-04-10T14:05:36 | INFO     | geoworld.processors.PotentialCalculator |   [biomass/balanced] threshold=0.75 | area=260,016 km² | cap=39.00 GW | gen=232.33 TWh/yr
+2026-04-10T14:05:37 | INFO     | geoworld.processors.PotentialCalculator |   [biomass/conservative] threshold=0.85 | area=94,923 km² | cap=14.24 GW | gen=84.82 TWh/yr
+2026-04-10T14:05:43 | INFO     | geoworld |   [biomass] concluído em 7.6s
+2026-04-10T14:05:43 | INFO     | geoworld |   [comparison_map] iniciando...
+2026-04-10T14:05:45 | INFO     | geoworld |   [comparison_map] concluído em 1.2s
+2026-04-10T14:05:45 | INFO     | geoworld |   [scenario_chart] iniciando...
+2026-04-10T14:05:45 | INFO     | geoworld |   [scenario_chart] concluído em 0.2s
+2026-04-10T14:05:45 | INFO     | geoworld.processors.PotentialCalculator | 
+========================================================================
+  POTENTIAL REPORT — Technical & Energy Potential
+  South Africa (ZAF)
+  2026-04-10 14:05:20
+========================================================================
+
+------------------------------------------------------------------------
+  SOLAR PV
+  Land Use: 5.0%  |  Density: 45.0 MW/km²  |  CF: 23.0%
+------------------------------------------------------------------------
+  Scenario         Thr   Area (km²)       GW     TWh/yr   Pixels
+  ------------------------------------------------------------
+  Optimistic      0.65      323,363   727.57    1465.90  298,295
+  Balanced        0.75      138,954   312.65     629.92  128,702
+  Conservative    0.85       19,570    44.03      88.71   18,108
+
+    Top 5 Districts (Balanced Scenario):
+    District                     MW       GWh/yr   Pixels
+    ------------------------------------------------------
+    NORTHERN CAPE           164,906      332,253   68,096
+    FREE STATE               79,247      159,666   32,479
+    NORTH WEST               43,872       88,393   17,694
+    WESTERN CAPE             16,292       32,824    6,957
+    EASTERN CAPE              7,127       14,359    2,994
+
+------------------------------------------------------------------------
+  WIND ONSHORE
+  Land Use: 3.0%  |  Density: 6.0 MW/km²  |  CF: 38.0%
+------------------------------------------------------------------------
+  Scenario         Thr   Area (km²)       GW     TWh/yr   Pixels
+  ------------------------------------------------------------
+  Optimistic      0.65      102,656    18.48      61.51   97,219
+  Balanced        0.75       41,314     7.44      24.75   39,260
+  Conservative    0.85        7,488     1.35       4.49    7,157
+
+    Top 5 Districts (Balanced Scenario):
+    District                     MW       GWh/yr   Pixels
+    ------------------------------------------------------
+    EASTERN CAPE              2,491        8,292   13,264
+    NORTHERN CAPE             2,093        6,966   10,893
+    WESTERN CAPE              1,934        6,437   10,407
+    KWAZULU-NATAL               560        1,864    2,861
+    FREE STATE                  298          991    1,527
+
+------------------------------------------------------------------------
+  BIOMASS / BIOENERGY
+  Land Use: 30.0%  |  Density: 0.5 MW/km²  |  CF: 68.0%
+------------------------------------------------------------------------
+  Scenario         Thr   Area (km²)       GW     TWh/yr   Pixels
+  ------------------------------------------------------------
+  Optimistic      0.65      535,199    80.28     478.21  496,397
+  Balanced        0.75      260,016    39.00     232.33  240,376
+  Conservative    0.85       94,923    14.24      84.81   87,752
+
+    Top 5 Districts (Balanced Scenario):
+    District                     MW       GWh/yr   Pixels
+    ------------------------------------------------------
+    FREE STATE               11,146       66,392   68,294
+    EASTERN CAPE              6,514       38,802   41,408
+    KWAZULU-NATAL             5,303       31,587   32,686
+    MPUMALANGA                4,958       29,532   29,884
+    NORTH WEST                4,490       26,743   27,106
+
+========================================================================
+  COMPARATIVE SUMMARY — BALANCED SCENARIO
+------------------------------------------------------------------------
+  Technology                 GW     TWh/yr     Area km²    CF%
+  ------------------------------------------------------------
+  Solar PV               312.65     629.92      138,954   23.0%
+  Wind Onshore             7.44      24.75       41,314   38.0%
+  Biomass / Bioenergy     39.00     232.33      260,016   68.0%
+  ------------------------------------------------------------
+  TOTAL                  359.09     887.00
+
+========================================================================
+  TIMINGS BY STAGE
+------------------------------------------------------------------------
+    solar                     :    7.9s
+    wind                      :    7.5s
+    biomass                   :    7.6s
+    comparison_map            :    1.2s
+    scenario_chart            :    0.2s
+    TOTAL                     : 24.6s
+========================================================================
+
+2026-04-10T14:05:45 | INFO     | geoworld |   Phase 4 (Potential) completed in 24.6s
+2026-04-10T14:05:45 | INFO     | geoworld.processors.LCOECalculator |   [LCOE Params] Bounded country parameters for ZAF.
+2026-04-10T14:05:45 | INFO     | geoworld.processors.LCOECalculator |   [pot_params] Anchoring physical constants: Solar LUF=0.05 | Wind CF=0.380
+2026-04-10T14:05:45 | INFO     | geoworld.processors.LCOECalculator |   Admin boundaries: 9 regions loaded
+2026-04-10T14:05:45 | INFO     | geoworld.processors.LCOECalculator | 
+  ──────────────────────────────────────────────────
+  Technology: Solar PV
+  ──────────────────────────────────────────────────
+2026-04-10T14:05:45 | INFO     | geoworld.processors.LCOECalculator |   [solar] financial projection initiated...
+2026-04-10T14:05:51 | INFO     | geoworld.processors.LCOECalculator |   [solar] resolved in 5.9s
+2026-04-10T14:05:51 | INFO     | geoworld.processors.LCOECalculator | 
+  ──────────────────────────────────────────────────
+  Technology: Wind Onshore
+  ──────────────────────────────────────────────────
+2026-04-10T14:05:51 | INFO     | geoworld.processors.LCOECalculator |   [wind] financial projection initiated...
+2026-04-10T14:05:57 | INFO     | geoworld.processors.LCOECalculator |   [wind] resolved in 5.8s
+2026-04-10T14:05:57 | INFO     | geoworld.processors.LCOECalculator | 
+  ──────────────────────────────────────────────────
+  Technology: Biomass / Bioenergy
+  ──────────────────────────────────────────────────
+2026-04-10T14:05:57 | INFO     | geoworld.processors.LCOECalculator |   [biomass] financial projection initiated...
+2026-04-10T14:06:03 | INFO     | geoworld.processors.LCOECalculator |   [biomass] resolved in 5.9s
+2026-04-10T14:06:03 | INFO     | geoworld.processors.LCOECalculator |   [comparison_map] financial projection initiated...
+2026-04-10T14:06:18 | INFO     | geoworld.processors.LCOECalculator |   [comparison_map] resolved in 15.7s
+2026-04-10T14:06:18 | INFO     | geoworld.processors.LCOECalculator | 
+========================================================================
+  LCOE REPORT — Levelized Cost of Energy (Phase 5)
+  South Africa (ZAF)
+  2026-04-10 14:05:45
+========================================================================
+
+------------------------------------------------------------------------
+  SOLAR PV
+------------------------------------------------------------------------
+  CAPEX: 950 USD/kW  |  OPEX: 13 USD/kW/yr  |  r: 11%  |  n: 25 yr
+  CRF: 0.1187  |  Base CF: 0.230
+
+  Metric                                    Value     Unit
+  --------------------------------------------------------
+  Base LCOE (National mean CF)               62.4  USD/MWh
+  Spatial mean LCOE                          63.2  USD/MWh
+  P10 — Cheapest 10%                         52.9  USD/MWh
+  P90 — Most expensive 10%                   72.0  USD/MWh
+
+  Available capacity by cost threshold:
+  Threshold (USD/MWh)        Available GW
+  ----------------------------------------
+  <=  40 USD/MWh               0.00 GW  (0.0%)
+  <=  50 USD/MWh               0.00 GW  (0.0%)
+  <=  60 USD/MWh             116.90 GW  (37.4%)
+  <=  70 USD/MWh             259.31 GW  (82.9%)
+  <=  80 USD/MWh             308.82 GW  (98.8%)
+  <= 100 USD/MWh             312.65 GW  (100.0%)
+  <= 120 USD/MWh             312.65 GW  (100.0%)
+
+------------------------------------------------------------------------
+  WIND ONSHORE
+------------------------------------------------------------------------
+  CAPEX: 1500 USD/kW  |  OPEX: 45 USD/kW/yr  |  r: 11%  |  n: 25 yr
+  CRF: 0.1187  |  Base CF: 0.380
+
+  Metric                                    Value     Unit
+  --------------------------------------------------------
+  Base LCOE (National mean CF)               67.0  USD/MWh
+  Spatial mean LCOE                          67.8  USD/MWh
+  P10 — Cheapest 10%                         60.6  USD/MWh
+  P90 — Most expensive 10%                   79.2  USD/MWh
+
+  Available capacity by cost threshold:
+  Threshold (USD/MWh)        Available GW
+  ----------------------------------------
+  <=  40 USD/MWh               0.00 GW  (0.0%)
+  <=  50 USD/MWh               0.00 GW  (0.0%)
+  <=  60 USD/MWh               0.00 GW  (0.0%)
+  <=  70 USD/MWh               4.64 GW  (62.4%)
+  <=  80 USD/MWh               6.83 GW  (91.8%)
+  <= 100 USD/MWh               7.44 GW  (100.0%)
+  <= 120 USD/MWh               7.44 GW  (100.0%)
+
+------------------------------------------------------------------------
+  BIOMASS / BIOENERGY
+------------------------------------------------------------------------
+  CAPEX: 2600 USD/kW  |  OPEX: 106 USD/kW/yr  |  r: 12%  |  n: 20 yr
+  CRF: 0.1297  |  Base CF: 0.680
+
+  Metric                                    Value     Unit
+  --------------------------------------------------------
+  Base LCOE (National mean CF)               74.4  USD/MWh
+  Spatial mean LCOE                          74.4  USD/MWh
+  P10 — Cheapest 10%                         74.4  USD/MWh
+  P90 — Most expensive 10%                   74.4  USD/MWh
+
+  Available capacity by cost threshold:
+  Threshold (USD/MWh)        Available GW
+  ----------------------------------------
+  <=  40 USD/MWh               0.00 GW  (0.0%)
+  <=  50 USD/MWh               0.00 GW  (0.0%)
+  <=  60 USD/MWh               0.00 GW  (0.0%)
+  <=  70 USD/MWh               0.00 GW  (0.0%)
+  <=  80 USD/MWh              39.00 GW  (100.0%)
+  <= 100 USD/MWh              39.00 GW  (100.0%)
+  <= 120 USD/MWh              39.00 GW  (100.0%)
+
+========================================================================
+  TIMINGS BY STAGE
+------------------------------------------------------------------------
+    solar                     :    5.9s
+    wind                      :    5.8s
+    biomass                   :    5.9s
+    comparison_map            :   15.7s
+========================================================================
+
+2026-04-10T14:06:18 | INFO     | geoworld |   Phase 5 (LCOE) completed in 33.5s
+2026-04-10T14:06:18 | INFO     | geoworld.processors.ResultsWriter |   [Recovery] Reconstructing Potential data from disk...
+2026-04-10T14:06:18 | INFO     | geoworld.processors.ResultsWriter |   [Recovery] Reconstructing LCOE data from disk...
+2026-04-10T14:06:18 | WARNING  | geoworld.processors.ResultsWriter |   [Recovery] LCOE TIF not found for solar
+2026-04-10T14:06:18 | WARNING  | geoworld.processors.ResultsWriter |   [Recovery] LCOE TIF not found for wind
+2026-04-10T14:06:18 | WARNING  | geoworld.processors.ResultsWriter |   [Recovery] LCOE TIF not found for biomass
+2026-04-10T14:06:18 | INFO     | geoworld.processors.ResultsWriter |   Admin: 9 districts loaded
+2026-04-10T14:06:19 | INFO     | geoworld.processors.ResultsWriter |   [solar] Suitability TIF loaded.
+2026-04-10T14:06:19 | INFO     | geoworld.processors.ResultsWriter |   [wind] Suitability TIF loaded.
+2026-04-10T14:06:19 | INFO     | geoworld.processors.ResultsWriter |   [biomass] Suitability TIF loaded.
+2026-04-10T14:06:19 | INFO     | geoworld |   [dominance_suitability] iniciando...
+2026-04-10T14:06:24 | INFO     | geoworld |   [dominance_suitability] concluído em 5.2s
+2026-04-10T14:06:24 | INFO     | geoworld |   [dominance_lcoe] iniciando...
+2026-04-10T14:06:29 | INFO     | geoworld |   [dominance_lcoe] concluído em 4.8s
+2026-04-10T14:06:29 | INFO     | geoworld |   [executive_dashboard] iniciando...
+2026-04-10T14:06:40 | INFO     | geoworld |   [executive_dashboard] concluído em 10.9s
+2026-04-10T14:06:40 | INFO     | geoworld |   [geotiff_export] iniciando...
+2026-04-10T14:06:40 | INFO     | geoworld.processors.ResultsWriter |   GIS: ZAF_solar_suitability.tif
+2026-04-10T14:06:40 | INFO     | geoworld.processors.ResultsWriter |   GIS: ZAF_wind_suitability.tif
+2026-04-10T14:06:40 | INFO     | geoworld.processors.ResultsWriter |   GIS: ZAF_biomass_suitability.tif
+2026-04-10T14:06:40 | INFO     | geoworld.processors.ResultsWriter |   GIS: ZAF_dominance_suitability.tif
+2026-04-10T14:06:40 | INFO     | geoworld.processors.ResultsWriter |   GIS: ZAF_dominance_lcoe.tif
+2026-04-10T14:06:40 | INFO     | geoworld |   [geotiff_export] concluído em 0.4s
+2026-04-10T14:06:40 | INFO     | geoworld.processors.ResultsWriter | 
+========================================================================
+  RESULTS SYNTHESIS REPORT — Phase 6
+  South Africa (ZAF)
+  2026-04-10 14:06:18
+========================================================================
+
+------------------------------------------------------------------------
+  SUITABILITY DOMINANCE — TOPSIS Score
+------------------------------------------------------------------------
+  Solar PV                    292,259 px  ( 30.8%)
+  Wind Onshore                 95,070 px  ( 10.0%)
+  Biomass / Bioenergy         562,089 px  ( 59.2%)
+
+------------------------------------------------------------------------
+  LCOE DOMINANCE — Cheapest Technology per Pixel
+------------------------------------------------------------------------
+  Solar PV                          0 px  (  0.0%)
+  Wind Onshore                      0 px  (  0.0%)
+  Biomass / Bioenergy               0 px  (  0.0%)
+
+------------------------------------------------------------------------
+  BALANCED SCENARIO — INTEGRATED SUMMARY
+------------------------------------------------------------------------
+  Technology                   GW    TWh/yr        km²     $/MWh
+  ──────────────────────────────────────────────────────────────
+  Solar PV                  312.6     629.9    134,788       0.0
+  Wind Onshore                7.4      24.8     41,116       0.0
+  Biomass / Bioenergy        39.0     232.3    251,742       0.0
+  ──────────────────────────────────────────────────────────────
+  TOTAL                     359.1     887.0
+
+------------------------------------------------------------------------
+  GeoTIFFs EXPORTED  →  results/gis/
+------------------------------------------------------------------------
+  ✓  ZAF_solar_suitability.tif
+  ✓  ZAF_wind_suitability.tif
+  ✓  ZAF_biomass_suitability.tif
+  ✓  ZAF_dominance_suitability.tif
+  ✓  ZAF_dominance_lcoe.tif
+
+========================================================================
+  TIMINGS
+------------------------------------------------------------------------
+    dominance_suitability           :    5.2s
+    dominance_lcoe                  :    4.8s
+    executive_dashboard             :   10.9s
+    geotiff_export                  :    0.4s
+    TOTAL                           :   21.7s
+========================================================================
+
+2026-04-10T14:06:40 | INFO     | geoworld |   Phase 6 (Results) completed in 21.7s
+2026-04-10T14:06:40 | INFO     | geoworld.processors.GHGAbatementCalculator | ==============================================================
+2026-04-10T14:06:40 | INFO     | geoworld.processors.GHGAbatementCalculator |   GHG ABATEMENT CALCULATOR — South Africa (ZAF)
+2026-04-10T14:06:40 | INFO     | geoworld.processors.GHGAbatementCalculator |   Saída: D:\Douglas\DOUTORADO\geoworld_framework\outputs\ZAF\abatement
+2026-04-10T14:06:40 | INFO     | geoworld.processors.GHGAbatementCalculator | ==============================================================
+2026-04-10T14:06:41 | INFO     | geoworld.processors.GHGAbatementCalculator | Net Zero DB carregado com sucesso — net_zero_db.json
+2026-04-10T14:06:42 | WARNING  | geoworld.processors.GHGAbatementCalculator | [ZAF] NDC gap appears zero (total_now_mt=0.0 <= target=435.6). OWID API data is fossils-only (missing large LULUCF emissions). National gap undetermined.
+2026-04-10T14:06:42 | INFO     | geoworld.processors.GHGAbatementCalculator | [ZAF] NDC Profile: Target Year 2050 | Type: absolute | Current Nat. Emissions: 0.0 Mt
+2026-04-10T14:06:44 | INFO     | geoworld.utils.plots_abatement | Geography map saved: ZAF_abatement_maps.png
+2026-04-10T14:06:45 | INFO     | geoworld.utils.plots_abatement | MACC curve saved: ZAF_macc_curve.png
+2026-04-10T14:06:45 | INFO     | geoworld.utils.plots_abatement | Substitution curves saved: ZAF_substitution_curves.png
+2026-04-10T14:06:45 | INFO     | geoworld.utils.plots_abatement | Carbon intensity chart saved: ZAF_carbon_intensity.png
+2026-04-10T14:06:46 | INFO     | geoworld.utils.plots_abatement | Net Zero analysis saved: ZAF_net_zero.png
+2026-04-10T14:06:46 | INFO     | geoworld.processors.GHGAbatementCalculator | [ZAF] MAC 51.0 USD/tCO₂e (needs 51.0 USD/tCO2) | Net Avoided: 63.33 MtCO₂/yr | Value: 0.66 B USD | Substituted: 80.9 TWh | NDC coverage: N/D
+2026-04-10T14:06:46 | INFO     | geoworld.processors.GHGAbatementCalculator | [ZAF] Phase 7 completed in 5.6s.
+2026-04-10T14:06:46 | INFO     | geoworld |   Phase 7 (Abatement) completed in 5.6s
+2026-04-10T14:06:46 | INFO     | geoworld.processors.SensitivityAnalyzer | ==============================================================
+2026-04-10T14:06:46 | INFO     | geoworld.processors.SensitivityAnalyzer |   SENSITIVITY ANALYZER — Phase 8 (ZAF)
+2026-04-10T14:06:46 | INFO     | geoworld.processors.SensitivityAnalyzer |   Output: D:\Douglas\DOUTORADO\geoworld_framework\outputs\ZAF\sensitivity
+2026-04-10T14:06:46 | INFO     | geoworld.processors.SensitivityAnalyzer | ==============================================================
+2026-04-10T14:06:46 | INFO     | geoworld.processors.SensitivityAnalyzer |   Reference grid: 1272×1645 pixels
+2026-04-10T14:06:46 | INFO     | geoworld.processors.SensitivityAnalyzer |   Technologies to analyze: ['solar', 'wind', 'biomass']
+2026-04-10T14:06:46 | INFO     | geoworld.processors.SensitivityAnalyzer |   [SA-5] GHG function built from Phase 7 abatement results.
+2026-04-10T14:06:46 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] Starting SA suite (7 criteria)...
+2026-04-10T14:06:46 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-1: OAT weight perturbation...
+2026-04-10T14:06:58 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-1 complete: rho_min=0.8876, most_sensitive=solar_resource
+2026-04-10T14:06:58 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-2: Monte Carlo AHP (1000 samples)...
+2026-04-10T14:07:46 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-2 complete: stable_fraction=4.3%
+2026-04-10T14:07:46 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-3: threshold sweep...
+2026-04-10T14:07:46 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-3 complete: 11 thresholds evaluated
+2026-04-10T14:07:46 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-4: LCOE Monte Carlo (10000 samples)...
+2026-04-10T14:07:46 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-4 complete: P50=$45.9/MWh, CI90=$10.0
+2026-04-10T14:07:46 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-6: potential parameter sensitivity...
+2026-04-10T14:07:47 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] SA-6 complete: base=312.6 GW
+2026-04-10T14:07:48 | INFO     | geoworld.processors.SensitivityAnalyzer |   [solar] Dashboard saved: ZAF_solar_dashboard.png
+2026-04-10T14:07:48 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] Starting SA suite (7 criteria)...
+2026-04-10T14:07:48 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-1: OAT weight perturbation...
+2026-04-10T14:07:59 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-1 complete: rho_min=0.8226, most_sensitive=wind_resource
+2026-04-10T14:07:59 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-2: Monte Carlo AHP (1000 samples)...
+2026-04-10T14:08:57 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-2 complete: stable_fraction=5.1%
+2026-04-10T14:08:57 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-3: threshold sweep...
+2026-04-10T14:08:57 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-3 complete: 11 thresholds evaluated
+2026-04-10T14:08:57 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-4: LCOE Monte Carlo (10000 samples)...
+2026-04-10T14:08:58 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-4 complete: P50=$61.2/MWh, CI90=$12.6
+2026-04-10T14:08:58 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-6: potential parameter sensitivity...
+2026-04-10T14:08:58 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] SA-6 complete: base=7.4 GW
+2026-04-10T14:08:59 | INFO     | geoworld.processors.SensitivityAnalyzer |   [wind] Dashboard saved: ZAF_wind_dashboard.png
+2026-04-10T14:08:59 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] Starting SA suite (8 criteria)...
+2026-04-10T14:08:59 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-1: OAT weight perturbation...
+2026-04-10T14:09:15 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-1 complete: rho_min=0.9704, most_sensitive=lc_biomass
+2026-04-10T14:09:15 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-2: Monte Carlo AHP (1000 samples)...
+2026-04-10T14:10:19 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-2 complete: stable_fraction=6.0%
+2026-04-10T14:10:19 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-3: threshold sweep...
+2026-04-10T14:10:19 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-3 complete: 11 thresholds evaluated
+2026-04-10T14:10:19 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-4: LCOE Monte Carlo (10000 samples)...
+2026-04-10T14:10:20 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-4 complete: P50=$55.6/MWh, CI90=$11.4
+2026-04-10T14:10:20 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-6: potential parameter sensitivity...
+2026-04-10T14:10:20 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] SA-6 complete: base=39.0 GW
+2026-04-10T14:10:21 | INFO     | geoworld.processors.SensitivityAnalyzer |   [biomass] Dashboard saved: ZAF_biomass_dashboard.png
+2026-04-10T14:10:21 | INFO     | geoworld.processors.SensitivityAnalyzer |   [SA-5] Sobol global sensitivity (GHG abatement)...
+2026-04-10T14:10:21 | INFO     | geoworld.processors.SensitivityAnalyzer |   [SA-5] Sobol complete: dominant=penetration_factor (ST=0.603)
+2026-04-10T14:10:21 | INFO     | geoworld.processors.SensitivityAnalyzer | [ZAF] Phase 8 completed in 215.3s.
+2026-04-10T14:10:21 | INFO     | geoworld.processors.SensitivityAnalyzer | [ZAF] Outputs: 13 CSVs, 22 plots
+2026-04-10T14:10:21 | INFO     | geoworld |   Phase 8 (Sensitivity) completed in 215.4s
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | Loaded transport parameters from: D:\Douglas\DOUTORADO\geoworld_framework\configs\transport_parameters.json
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | ============================================================
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   PHASE 9 — TRANSPORT DECARBONISATION
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   South Africa (ZAF)
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | ============================================================
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | ----------------------------------------------------
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   PARAMETERS IN USE
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | ----------------------------------------------------
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Projection horizon : 2025 – 2050
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Fleet size (2024)  : 12,500,000 vehicles
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Annual fleet growth: 2.2%
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Grid intensity (gCO2/kWh):
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2025 : 850
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2030 : 680
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2035 : 480
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2040 : 300
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2045 : 150
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2050 : 60
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Hub spacing radius : 100 km
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Biofuel blends     : B5 / E10
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Powertrain penetration (country-specific — reference, new sales):
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2025 : ICE 87% | HEV 8% | PHEV 2% | BEV 3% | FCEV 0%
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2035 : ICE 55% | HEV 20% | PHEV 8% | BEV 16% | FCEV 1%
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     2050 : ICE 12% | HEV 23% | PHEV 10% | BEV 53% | FCEV 2%
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | ============================================================
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [1/7] Building fleet size trajectory ...
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Fleet base (light vehicles): fleet_size_light_vehicles_2024 = 9,800,000
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [2/7] Calculating EV electricity demand & RE requirements ...
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [3/7] Computing GHG emission trajectories ...
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [4/7] Computing transport electrification costs ...
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     Using Phase-5 LCOEs — Solar: 55.0 USD/MWh | Wind: 48.0 USD/MWh | Biomass: 85.0 USD/MWh
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [5/7] Locating charging hubs from suitability rasters ...
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     Hub placement from: ZAF_solar_suitability.tif, ZAF_wind_suitability.tif (min suitability: 0.90)
+2026-04-10T14:10:21 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     Score weights — suitability: 0.50 | demand proximity: 0.35 | LCOE: 0.15
+2026-04-10T14:10:22 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     Solar: 2635 candidate pixels (score >= 0.90)
+2026-04-10T14:10:22 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     Wind: 1004 candidate pixels (score >= 0.90)
+2026-04-10T14:10:22 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |     Placed 33 charging hubs (spacing ≥ 100 km, score ≥ 0.90) — Solar: 15, Wind: 18, Biomass: 0.
+2026-04-10T14:10:22 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [6/7] Building summary ...
+2026-04-10T14:10:22 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   [7/7] Writing outputs & maps ...
+2026-04-10T14:10:28 | INFO     | geoworld.processors.TransportDecarbonizationCalculator | Phase 9 (Transport Decarbonisation) completed in 7.0s
+2026-04-10T14:10:28 | INFO     | geoworld.processors.TransportDecarbonizationCalculator |   Report : D:\Douglas\DOUTORADO\geoworld_framework\outputs\ZAF\transport\reports\ZAF_transport_decarbonization_report.txt
+2026-04-10T14:10:28 | INFO     | geoworld |   Phase 9 (Transport Decarbonisation) completed in 7.0s
+2026-04-10T14:10:28 | INFO     | geoworld | Pipeline completed for South Africa (ZAF).
+2026-04-10T14:10:28 | INFO     | geoworld | Result: COMPLETED
+2026-04-10T14:10:28 | INFO     | geoworld | Total elapsed time: 430.2s

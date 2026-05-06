@@ -1,0 +1,271 @@
+{
+  "_meta": {
+    "description": "GeoWorld Framework — Net Zero Baseline Database",
+    "version": "1.0",
+    "last_updated": "2026-03-12",
+    "sources": [
+      "IEA (2022) — CO2 Emissions from Fuel Combustion",
+      "UNFCCC NDC Registry (2024)",
+      "Climate Action Tracker (2024)",
+      "Global Carbon Project / Our World in Data (2024)"
+    ],
+    "notes": {
+      "total_co2_mt_2022": "IEA energy CO2 fallback. Superseded at runtime by OWID/GCP or World Bank API when available.",
+      "ndc_2030_pct": "Percentage reduction vs base_year (absolute target). Null when target is intensity-based or undefined.",
+      "ndc_2030_intensity_pct": "Percentage reduction in CO2/GDP vs base_year (intensity target). Used by CHN and IND.",
+      "net_zero_energy_year": "Sector-specific net-zero target for the energy system, where distinct from economy-wide target."
+    }
+  },
+  "PRT": {
+    "total_co2_mt_2022": 43.0,
+    "base_year": 1990,
+    "base_co2_mt": 60.0,
+    "ndc_2030_pct": 55.0,
+    "net_zero_year": 2045,
+    "net_zero_energy_year": 2050,
+    "source": "EU Reg. 2021/1119 (Climate Law); PT Lei n.o 98/2021 (Lei de Bases do Clima)"
+  },
+  "BRA": {
+    "total_co2_mt_2022": 420.0,
+    "base_year": 2005,
+    "base_co2_mt": 2776.0,
+    "ndc_2030_pct": 50.0,
+    "net_zero_year": 2050,
+    "net_zero_energy_year": 2050,
+    "source": "Brazil NDC Third Update (2022). MCTI/MRE"
+  },
+  "EGY": {
+    "total_co2_mt_2022": 250.0,
+    "base_year": 2015,
+    "base_co2_mt": 340.0,
+    "ndc_2030_pct": 33.0,
+    "net_zero_year": 2050,
+    "net_zero_energy_year": 2050,
+    "source": "Egypt Updated NDC (2022). Conditional on international support"
+  },
+  "CHN": {
+    "total_co2_mt_2022": 11470.0,
+    "base_year": 2005,
+    "base_co2_mt": 5100.0,
+    "ndc_2030_intensity_pct": 65.0,
+    "net_zero_year": 2060,
+    "net_zero_energy_year": 2060,
+    "source": "China Updated NDC (2021). Ministry of Ecology and Environment. Intensity-based target"
+  },
+  "AUS": {
+    "total_co2_mt_2022": 396.0,
+    "base_year": 2005,
+    "base_co2_mt": 621.0,
+    "ndc_2030_pct": 43.0,
+    "net_zero_year": 2050,
+    "net_zero_energy_year": 2050,
+    "source": "Australia Climate Change Act 2022 (Cth)"
+  },
+  "DEU": {
+    "total_co2_mt_2022": 674.0,
+    "base_year": 1990,
+    "base_co2_mt": 1251.0,
+    "ndc_2030_pct": 55.0,
+    "net_zero_year": 2045,
+    "net_zero_energy_year": 2035,
+    "source": "EU Reg. 2021/1119; Bundes-Klimaschutzgesetz (KSG, amended 2021)"
+  },
+  "ESP": {
+    "total_co2_mt_2022": 236.0,
+    "base_year": 1990,
+    "base_co2_mt": 287.0,
+    "ndc_2030_pct": 55.0,
+    "net_zero_year": 2050,
+    "net_zero_energy_year": 2050,
+    "source": "EU Reg. 2021/1119; Ley 7/2021 de Cambio Climatico y Transicion Energetica"
+  },
+  "FRA": {
+    "total_co2_mt_2022": 295.0,
+    "base_year": 1990,
+    "base_co2_mt": 547.0,
+    "ndc_2030_pct": 55.0,
+    "net_zero_year": 2050,
+    "net_zero_energy_year": 2050,
+    "source": "EU Reg. 2021/1119; Loi n.o 2019-1147 relative a l'energie et au climat"
+  },
+  "GBR": {
+    "total_co2_mt_2022": 333.0,
+    "base_year": 1990,
+    "base_co2_mt": 793.0,
+    "ndc_2030_pct": 68.0,
+    "net_zero_year": 2050,
+    "net_zero_energy_year": 2035,
+    "source": "UK NDC (2020); Climate Change Act 2008 (amended 2019)"
+  },
+  "ITA": {
+    "total_co2_mt_2022": 304.0,
+    "base_year": 1990,
+    "base_co2_mt": 516.0,
+    "ndc_2030_pct": 55.0,
+    "net_zero_year": 2050,
+    "net_zero_energy_year": 2050,
+    "source": "EU Reg. 2021/1119"
+  },
+  "USA": {
+    "total_co2_mt_2022": 4740.0,
+    "base_year": 2005,
+    "base_co2_mt": 6635.0,
+    "ndc_2030_pct": 52.0,
+    "net_zero_year": 2050,
+    "net_zero_energy_year": 2035,
+    "source": "US NDC (2021)"
+  },
+  "MEX": {
+    "total_co2_mt_2022": 367.0,
+    "base_year": 2013,
+    "base_co2_mt": 751.0,
+    "ndc_2030_pct": 35.0,
+    "net_zero_year": 2050,
+    "net_zero_energy_year": 2050,
+    "source": "Mexico Updated NDC (2022)"
+  },
+  "ARG": {
+    "total_co2_mt_2022": 192.0,
+    "base_year": 2007,
+    "base_co2_mt": 430.0,
+    "ndc_2030_pct": 19.0,
+    "net_zero_year": 2050,
+    "net_zero_energy_year": 2050,
+    "source": "Argentina NDC Second Update (2021)"
+  },
+  "CHL": {
+    "total_co2_mt_2022": 87.0,
+    "base_year": 2016,
+    "base_co2_mt": 132.0,
+    "ndc_2030_pct": 30.0,
+    "net_zero_year": 2050,
+    "net_zero_energy_year": 2050,
+    "source": "Chile NDC (2020); Ley Marco de Cambio Climatico (2022)"
+  },
+  "ZAF": {
+    "total_co2_mt_2022": 435.0,
+    "base_year": 2015,
+    "base_co2_mt": 605.0,
+    "ndc_2030_pct": 28.0,
+    "net_zero_year": 2050,
+    "net_zero_energy_year": 2050,
+    "source": "South Africa Updated NDC (2021). DFFE"
+  },
+  "NGA": {
+    "total_co2_mt_2022": 117.0,
+    "base_year": 2018,
+    "base_co2_mt": 310.0,
+    "ndc_2030_pct": 47.0,
+    "net_zero_year": 2060,
+    "net_zero_energy_year": 2060,
+    "source": "Nigeria Updated NDC (2021). Conditional on international support"
+  },
+  "MAR": {
+    "total_co2_mt_2022": 66.0,
+    "base_year": 2010,
+    "base_co2_mt": 94.0,
+    "ndc_2030_pct": 45.5,
+    "net_zero_year": 2050,
+    "net_zero_energy_year": 2050,
+    "source": "Morocco Updated NDC (2021). Conditional on international support"
+  },
+  "KEN": {
+    "total_co2_mt_2022": 22.0,
+    "base_year": 2015,
+    "base_co2_mt": 143.0,
+    "ndc_2030_pct": 32.0,
+    "net_zero_year": 2050,
+    "net_zero_energy_year": 2050,
+    "source": "Kenya Updated NDC (2020). Conditional on international support"
+  },
+  "IND": {
+    "total_co2_mt_2022": 2830.0,
+    "base_year": 2005,
+    "base_co2_mt": 1884.0,
+    "ndc_2030_intensity_pct": 45.0,
+    "net_zero_year": 2070,
+    "net_zero_energy_year": 2070,
+    "source": "India Updated NDC (2022). MoEFCC. Intensity-based target; net-zero 2070 (COP26)"
+  },
+  "IDN": {
+    "total_co2_mt_2022": 748.0,
+    "base_year": 2030,
+    "base_co2_mt": 2869.0,
+    "ndc_2030_pct": 29.0,
+    "net_zero_year": 2060,
+    "net_zero_energy_year": 2060,
+    "source": "Indonesia Enhanced NDC (2022)"
+  },
+  "SAU": {
+    "total_co2_mt_2022": 733.0,
+    "base_year": null,
+    "base_co2_mt": null,
+    "ndc_2030_pct": null,
+    "net_zero_year": 2060,
+    "net_zero_energy_year": 2060,
+    "source": "Saudi Green Initiative (2021); NDC (2021). No absolute base-year reduction target"
+  },
+  "TUR": {
+    "total_co2_mt_2022": 449.0,
+    "base_year": null,
+    "base_co2_mt": null,
+    "ndc_2030_pct": 21.0,
+    "net_zero_year": 2053,
+    "net_zero_energy_year": 2053,
+    "source": "Turkiye Updated NDC (2021); Net Zero 2053 declaration"
+  },
+  "IRN": {
+    "total_co2_mt_2022": 749.0,
+    "base_year": 2010,
+    "base_co2_mt": 795.0,
+    "ndc_2030_pct": 4.0,
+    "net_zero_year": null,
+    "net_zero_energy_year": null,
+    "source": "Iran INDC (2015). No update submitted; no net-zero declaration"
+  },
+  "JPN": {
+    "total_co2_mt_2022": 1060.0,
+    "base_year": 2013,
+    "base_co2_mt": 1409.0,
+    "ndc_2030_pct": 46.0,
+    "net_zero_year": 2050,
+    "net_zero_energy_year": 2050,
+    "source": "Japan Updated NDC (2021)"
+  },
+  "KOR": {
+    "total_co2_mt_2022": 598.0,
+    "base_year": 2018,
+    "base_co2_mt": 729.0,
+    "ndc_2030_pct": 40.0,
+    "net_zero_year": 2050,
+    "net_zero_energy_year": 2050,
+    "source": "South Korea Enhanced NDC (2021); Framework Act on Carbon Neutrality (2021)"
+  },
+  "RUS": {
+    "total_co2_mt_2022": 1750.0,
+    "base_year": 1990,
+    "base_co2_mt": 3361.0,
+    "ndc_2030_pct": 30.0,
+    "net_zero_year": 2060,
+    "net_zero_energy_year": 2060,
+    "source": "Russia NDC (2021). 30% below 1990 excl. LULUCF; net-zero 2060 (COP26)"
+  },
+  "ETH": {
+    "total_co2_mt_2022": 17.0,
+    "base_year": 2010,
+    "base_co2_mt": 150.0,
+    "ndc_2030_pct": 68.8,
+    "net_zero_year": 2050,
+    "net_zero_energy_year": 2050,
+    "source": "Ethiopia Updated NDC (2021). Conditional; 68.8% reduction vs BAU 2030"
+  },
+  "ARE": {
+    "total_co2_mt_2022": 180.0,
+    "base_year": null,
+    "base_co2_mt": null,
+    "ndc_2030_pct": null,
+    "net_zero_year": 2050,
+    "net_zero_energy_year": 2050,
+    "source": "UAE Net Zero 2050 Strategic Initiative (2021); NDC (2023). No absolute base-year reduction target"
+  }
+}
