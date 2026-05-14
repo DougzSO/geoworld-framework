@@ -56,7 +56,6 @@ geoworld_framework/
 │   │   ├── results_writer.py                  ← Phase 6: visual & technical synthesis
 │   │   ├── ghg_abatement_calculator.py        ← Phase 7: GHG abatement
 │   │   ├── sensitivity_analyzer.py            ← Phase 8: sensitivity analysis
-│   │   └── transport_decarbonization_calculator.py  ← Phase 9: transport decarbonization
 │   └── utils/
 │       ├── utils.py                           ← shared geospatial utilities
 │       ├── logging_utils.py                   ← centralized logging configuration
@@ -74,7 +73,6 @@ geoworld_framework/
     ├── lcoe/                                  ← LCOE per pixel (Phase 5)
     ├── ghg_abatement/                         ← GHG abatement results (Phase 7)
     ├── sensitivity/                           ← sensitivity analysis outputs (Phase 8)
-    ├── transport/                             ← transport decarbonization (Phase 9)
     └── reports/                               ← audit and synthesis reports
 ```
 
@@ -113,7 +111,6 @@ geoworld_framework/
 | 6 | `ResultsWriter` | Visual and technical synthesis | ~90s |
 | 7 | `GHGAbatementCalculator` | GHG abatement, MACC, carbon intensity | ~60s |
 | 8 | `SensitivityAnalyzer` | SA-1 to SA-6 sensitivity suite | ~300s |
-| 9 | `TransportDecarbonizationCalculator` | Transport sector decarbonization | ~60s |
 
 ### Development Flags (in `main.py`)
 
@@ -127,7 +124,6 @@ SKIP_LCOE       = False   # True skips Phase 5
 SKIP_RESULTS    = False   # True skips Phase 6
 SKIP_GHG        = False   # True skips Phase 7
 SKIP_SENSITIVITY= False   # True skips Phase 8
-SKIP_TRANSPORT  = False   # True skips Phase 9
 ```
 
 ---
