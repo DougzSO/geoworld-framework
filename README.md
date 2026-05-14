@@ -3,12 +3,9 @@
 ```markdown
 # GeoWorld Framework
 
-<p align="center">
-  <a href="https://doi.org/10.5281/zenodo.20184266"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20184266.svg" alt="DOI"></a>
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
-  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.8+-blue.svg" alt="Python 3.8+"></a>
-  <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black"></a>
-</p>
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20184266.svg)](https://doi.org/10.5281/zenodo.20184266)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
 **Automated renewable energy potential assessment pipeline (Solar, Wind, Biomass)
 for any country in the world.**
