@@ -3,10 +3,11 @@
 ```markdown
 # GeoWorld Framework
 
+# GeoWorld Framework
+
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20184266.svg)](https://doi.org/10.5281/zenodo.20184266)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 **Automated renewable energy potential assessment pipeline (Solar, Wind, Biomass)
 for any country in the world.**
