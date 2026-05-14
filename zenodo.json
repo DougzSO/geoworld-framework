@@ -1,0 +1,25 @@
+{
+  "title": "GeoWorld: Geospatial Framework for Renewable Energy Assessment",
+  "description": "Open-source Python pipeline implementing GIS-MCDA-AHP-TOPSIS for renewable energy suitability and potential mapping, LCOE calculation, thermal fleet replacement and GHG abatement",
+  "creators": [
+    {
+      "name": "Douglas Silva de Oliveira",
+      "affiliation": "Federal University of Minas Gerais (UFMG)",
+      "orcid": "0009-0003-6857-0122"
+    }
+  ],
+  "keywords": [
+    "renewable energy",
+    "GIS",
+    "MCDA",
+    "LCOE",
+    "GHG Abatement",
+    "AHP-TOPSIS",
+    "Multicriteria",
+    "thermal fleet replacement",
+    "climate policy"
+  ],
+  "license": "MIT",
+  "upload_type": "software",
+  "access_right": "open"
+}
