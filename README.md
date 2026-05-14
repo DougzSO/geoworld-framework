@@ -3,6 +3,8 @@
 ```markdown
 # GeoWorld Framework
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20184266.svg)](https://doi.org/10.5281/zenodo.20184266)
+
 **Automated renewable energy potential assessment pipeline (Solar, Wind, Biomass)
 for any country in the world.**
 
