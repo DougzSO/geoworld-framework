@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Silva de Oliveira"
+    given-names: "Douglas"
+    orcid: "https://orcid.org/0009-0003-6857-0122"
+title: "GeoWorld: Geospatial Framework for Renewable Energy Assessment, Thermal Fleet Replacement and GHG Abatement"
+version: 1.0.0
+date-released: 2024-01-15
+url: "https://github.com/DougzSO"
+repository-code: "https://github.com/DougzSO/geoworld-framework"
+keywords:
+  - renewable energy deployment
+  - thermal fleet replacement
+  - thecnical renewable potential
+  - MCDA-AHP-TOPSIS
+  - GIS
+  - LCOE
+  - GHG Abatement
+  - MAC curves
+  - spatial analysis
+license: MIT
