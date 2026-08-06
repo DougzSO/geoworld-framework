@@ -29,6 +29,7 @@ except ImportError:
 
 from src.core.constants import TECH_ORDER
 from src.core.schemas import CountryParams
+from src.utils.params_helpers import get_scenario_data
 
 logger = logging.getLogger(
     "geoworld.processors.TransportDecarbonizationCalculator"
@@ -195,11 +196,10 @@ class _PotentialView:
                 if sc_obj is None:
                     return 0.0
                 return float(sc_obj.capacity_gw)
-            # Plain dict path
+            # Plain dict path — shared with results_writer.py's adapter
             if isinstance(self._raw, dict):
-                return float(
-                    self._raw["techs"][tech]["scenarios"][scenario]["capacity_gw"]
-                )
+                sc = get_scenario_data(self._raw, tech, scenario)
+                return float(sc.get("capacity_gw", 0.0))
         except (KeyError, TypeError, AttributeError):
             pass
         return 0.0

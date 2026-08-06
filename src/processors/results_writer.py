@@ -69,6 +69,7 @@ from src.utils.data_recovery import (
 )
 from src.utils.geo_stats import build_pixel_area_array  # ← NOVO
 from src.utils.map_styling import GeoWorldStyler
+from src.utils.params_helpers import get_scenario_data
 from src.utils.reporting import (
     ReportSection,
     build_phase_report,
@@ -1419,7 +1420,7 @@ class ResultsWriter:
         summary_rows = []
         t_gw = t_twh = 0.0
         for tech in TECH_ORDER:
-            sc    = _get_scenario_data(potential_results, tech, "balanced")
+            sc    = get_scenario_data(potential_results, tech, "balanced")
             stats = (
                 lcoe_results.get("techs", {})
                 .get(tech, {})
@@ -1475,51 +1476,10 @@ class ResultsWriter:
             elapsed_total=results.get("elapsed_total", 0.0),
         )
 
-    # ─────────────────────────────────────────────────────────────────────
-    # Static utility
-    # ─────────────────────────────────────────────────────────────────────
-
-    @staticmethod
-    def _get_scenario_data(
-        potential_results: Dict, tech: str, scenario: str
-    ) -> Dict:
-        """
-        Extract scenario dict from potential_results regardless of
-        whether the data comes from a live run or disk recovery.
-        """
-        return _get_scenario_data(potential_results, tech, scenario)
-
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Module-level helpers (used internally; not part of the class API)
 # ═══════════════════════════════════════════════════════════════════════════
-
-def _get_scenario_data(
-    potential_results: Dict, tech: str, scenario: str
-) -> Dict:
-    """
-    Extract scenario dict from potential_results regardless of
-    whether the data comes from a live run or disk recovery.
-
-    Primary path: {"techs": {"solar": {"scenarios": {"balanced": {...}}}}}
-    Legacy path:  {"solar": {"scenarios": {"balanced": {...}}}}
-    """
-    sc = (
-        potential_results
-        .get("techs", {})
-        .get(tech, {})
-        .get("scenarios", {})
-        .get(scenario, {})
-    )
-    if sc:
-        return sc
-    return (
-        potential_results
-        .get(tech, {})
-        .get("scenarios", {})
-        .get(scenario, {})
-    ) or {}
-
 
 def _build_integrated_summary_section(
     data_rows: List[List[str]],

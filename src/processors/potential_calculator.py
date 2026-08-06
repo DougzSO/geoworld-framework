@@ -65,6 +65,7 @@ from PIL import Image as _PIL_Image
 from rasterio.transform import Affine
 
 from src.core.constants import (
+    FALLBACK_SUITABILITY_THRESHOLD,
     TECH_ORDER,
     build_tech_params,
 )
@@ -433,7 +434,7 @@ class PotentialCalculator:
         scenario_results: Dict[str, Dict] = {}
 
         for scenario in SCENARIOS:
-            threshold = params["thresholds"].get(scenario, 0.60)
+            threshold = params["thresholds"].get(scenario, FALLBACK_SUITABILITY_THRESHOLD)
             apt_mask  = np.isfinite(suit_arr) & (suit_arr >= threshold)
             n_apt     = int(apt_mask.sum())
 

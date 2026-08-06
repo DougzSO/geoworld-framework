@@ -231,6 +231,13 @@ HIGH_SUITABILITY_THRESHOLD: float = 0.75
 # Exclusion score assigned to pixels removed by hard constraints
 TOPSIS_EXCLUSION_SCORE: float = 0.0
 
+# Emergency fallback suitability threshold, used only when a technology's
+# "thresholds" dict from build_tech_params is missing or empty entirely
+# (not the normal per-scenario lookup — see DEFAULT_TECH_PARAMS below for
+# that). Shared by potential_calculator.py and lcoe_calculator.py so both
+# fall back to the same value instead of independently hardcoded literals.
+FALLBACK_SUITABILITY_THRESHOLD: float = 0.60
+
 # ===========================================================================
 # Default technology parameters (Tier 2 — global baseline)
 # ===========================================================================

@@ -44,6 +44,8 @@ from rasterio.transform import Affine
 
 from src.core.constants import (
     CF_ABS_CEILING,
+    DEFAULT_TECH_PARAMS,
+    FALLBACK_SUITABILITY_THRESHOLD,
     LCOE_BENCHMARK_USD_MWH,
     NODATA_FLOAT,
     TECH_ORDER,
@@ -547,7 +549,9 @@ class LCOECalculator:
 
         Precedence:
           1. pp["capacity_factor"]  — from build_tech_params / parameters.json
-          2. DEFAULT_LCOE_PARAMS hard-coded IRENA typical  (emergency only)
+          2. DEFAULT_TECH_PARAMS[tech]["capacity_factor"]  — Tier 2 global
+             baseline (constants.py), the same source build_tech_params()
+             itself falls back to (emergency only).
 
         settings.yaml is intentionally NOT in the lookup chain.
         """
@@ -557,11 +561,10 @@ class LCOECalculator:
 
         # Emergency fallback — should never be reached if parameters.json
         # is properly populated.
-        _irena_defaults = {"solar": 0.20, "wind": 0.30, "biomass": 0.73}
-        fallback = _irena_defaults.get(tech, 0.25)
+        fallback = DEFAULT_TECH_PARAMS.get(tech, {}).get("capacity_factor", 0.25)
         logger.warning(
             "  [%s] capacity_factor=0 from build_tech_params — "
-            "emergency fallback to IRENA default CF=%.3f. "
+            "emergency fallback to DEFAULT_TECH_PARAMS CF=%.3f. "
             "Check parameters.json for this country.",
             tech,
             fallback,
@@ -578,20 +581,22 @@ class LCOECalculator:
         pp["thresholds"] is a dict produced by build_tech_params:
           {"optimistic": 0.65, "balanced": 0.75, "conservative": 0.85}
 
-        Falls back to 0.60 only if the key is genuinely absent.
+        Falls back to FALLBACK_SUITABILITY_THRESHOLD only if the key is
+        genuinely absent.
         """
         thresholds = pp.get("thresholds", {})
         if not thresholds:
             logger.warning(
-                "  pot_params has no 'thresholds' key — using fallback 0.60. "
-                "Check build_tech_params output."
+                "  pot_params has no 'thresholds' key — using fallback %.2f. "
+                "Check build_tech_params output.",
+                FALLBACK_SUITABILITY_THRESHOLD,
             )
-            return 0.60
+            return FALLBACK_SUITABILITY_THRESHOLD
 
         thr = thresholds.get(scenario)
         if thr is None:
             # Try first available scenario
-            thr = next(iter(thresholds.values()), 0.60)
+            thr = next(iter(thresholds.values()), FALLBACK_SUITABILITY_THRESHOLD)
             logger.warning(
                 "  Threshold for scenario '%s' not found in %s — "
                 "using %.2f.",

@@ -28,3 +28,34 @@ def extract_params_dict(country_params: Any) -> Dict[str, Any]:
     if isinstance(country_params, dict):
         return country_params
     return {}
+
+
+def get_scenario_data(
+    potential_results: Dict[str, Any], tech: str, scenario: str
+) -> Dict[str, Any]:
+    """
+    Extract the scenario dict for (tech, scenario) from a Phase 4
+    potential_results dict, regardless of shape.
+
+    Primary path: {"techs": {tech: {"scenarios": {scenario: {...}}}}}
+    Legacy path:  {tech: {"scenarios": {scenario: {...}}}}
+
+    Returns {} if not found at either path. Accepts a plain dict only —
+    callers holding a PotentialResult Pydantic model should index its
+    .techs attribute directly, or pass model.model_dump().
+    """
+    sc = (
+        potential_results
+        .get("techs", {})
+        .get(tech, {})
+        .get("scenarios", {})
+        .get(scenario, {})
+    )
+    if sc:
+        return sc
+    return (
+        potential_results
+        .get(tech, {})
+        .get("scenarios", {})
+        .get(scenario, {})
+    ) or {}
