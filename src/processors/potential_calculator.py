@@ -81,6 +81,7 @@ from src.utils.geo_stats import (
 )
 from src.utils.map_styling import GeoWorldStyler
 from src.core.schemas import PotentialResult
+from src.utils.raster_io import find_suitability_tif
 from src.utils.timing import timer as _timer
 
 logger = logging.getLogger("geoworld.processors.PotentialCalculator")
@@ -188,10 +189,15 @@ class PotentialCalculator:
         ref_tif:   Optional[Path]  = None
 
         for tech in TECH_ORDER:
-            tif_path = suitability_dir / f"{country_code}_{tech}_suitability.tif"
-            if not tif_path.exists():
+            # BLOCKER-006: centralized resolver (raster_io.find_suitability_tif).
+            # allow_owa_fallback=False preserves this phase's prior strict
+            # TOPSIS-or-nothing behavior — Phase 4 has never used OWA.
+            tif_path = find_suitability_tif(
+                suitability_dir, tech, country_code, allow_owa_fallback=False
+            )
+            if tif_path is None:
                 logger.warning(
-                    "  Suitability TIF missing for %s: %s", tech, tif_path
+                    "  Suitability TIF missing for %s in %s", tech, suitability_dir
                 )
                 continue
             tif_paths[tech] = tif_path

@@ -66,6 +66,7 @@ from src.utils.economics import (
 )
 from src.utils.geo_stats import build_pixel_area_array, zonal_stats_raster
 from src.utils.map_styling import GeoWorldStyler
+from src.utils.raster_io import find_suitability_tif
 from src.utils.reporting import ReportSection, build_phase_report
 from src.utils.timing import timer
 from src.utils.utils import safe_raster_open
@@ -373,54 +374,6 @@ class LCOECalculator:
     # Suitability / Resource TIF resolution
     # ─────────────────────────────────────────────────────────────────────
 
-    def _find_suitability_tif(
-        self,
-        suitability_dir: Path,
-        tech: str,
-        country_code: str,
-    ) -> Optional[Path]:
-        """
-        Locate the suitability TIF for *tech*.
-
-        ✅ FIX (Grupo C): Priority order changed to prefer TOPSIS over OWA.
-
-        Phase 3 produces:
-          - TOPSIS (primary): {CODE}_{tech}_suitability.tif
-          - OWA per scenario: {CODE}_{tech}_suitability_owa_{scenario}.tif
-
-        We prefer TOPSIS to match Phase 4 behavior. OWA is only used
-        as fallback (backward compatibility).
-
-        Candidates (in order):
-          1. TOPSIS: {CODE}_{tech}_suitability.tif
-          2. OWA balanced: {CODE}_{tech}_suitability_owa_balanced.tif
-          3. Lower-case variants
-          4. Glob fallback
-        """
-        candidates: List[Path] = [
-            # Primary: TOPSIS, matching Phase 4 behavior
-            suitability_dir / f"{country_code}_{tech}_suitability.tif",
-            # Secondary: OWA balanced fallback
-            suitability_dir / f"{country_code}_{tech}_suitability_owa_balanced.tif",
-            # Lower-case country code variants
-            suitability_dir / f"{country_code.lower()}_{tech}_suitability.tif",
-            suitability_dir
-            / f"{country_code.lower()}_{tech}_suitability_owa_balanced.tif",
-        ]
-
-        for path in candidates:
-            if path.exists():
-                logger.debug("  [%s] suitability TIF: %s", tech, path.name)
-                return path
-
-        # Glob fallback
-        matches = sorted(suitability_dir.glob(f"*{tech}*suitability*.tif"))
-        if matches:
-            logger.debug("  [%s] suitability TIF (glob): %s", tech, matches[0].name)
-            return matches[0]
-
-        return None
-
     def _find_resource_tif(
         self,
         criteria_dir: Path,
@@ -635,7 +588,7 @@ class LCOECalculator:
         ref_suit: Optional[Path] = None
 
         for tech in TECH_ORDER:
-            sp = self._find_suitability_tif(suitability_dir, tech, country_code)
+            sp = find_suitability_tif(suitability_dir, tech, country_code)
             if sp is not None:
                 suit_paths[tech] = sp
                 if ref_suit is None:

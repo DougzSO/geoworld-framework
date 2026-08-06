@@ -12,8 +12,12 @@ Produces:
 Parameter architecture:
   - parameters.json → única fonte de CF, LUF, density, threshold
   - settings.yaml   → apenas infra, paths, offsets de cenário
-  - Suitability TIFs lidos com o mesmo padrão de Phase 5:
-      {CODE}_{tech}_suitability_owa_balanced.tif
+  - Suitability TIF discovery centralized in raster_io.find_suitability_tif
+    (BLOCKER-006) — TOPSIS is the primary surface, tried first; OWA
+    balanced is only a fallback. Previously this phase's own TIF lookup
+    tried OWA balanced first, silently overriding TOPSIS whenever an OWA
+    file existed (which Phase 3 always writes) — see docs/memory/
+    09-decisions.md (D4).
 
 Refactoring notes (Phase 6 → utils):
   - Data recovery    → src.utils.data_recovery
@@ -69,6 +73,7 @@ from src.utils.data_recovery import (
 )
 from src.utils.map_styling import GeoWorldStyler
 from src.utils.params_helpers import get_scenario_data
+from src.utils.raster_io import find_suitability_tif
 from src.utils.reporting import (
     ReportSection,
     build_phase_report,
@@ -103,52 +108,6 @@ class ResultsWriter:
         )
         self.styler = GeoWorldStyler(self.viz_cfg, global_dpi=pipeline_dpi)
         self.panels = DashboardPanels(self.styler)
-
-    # ─────────────────────────────────────────────────────────────────────
-    # TIF discovery — suitability (mirrors Phase 5 logic exactly)
-    # ─────────────────────────────────────────────────────────────────────
-
-    @staticmethod
-    def _find_suitability_tif(
-        suitability_dir: Path,
-        tech: str,
-        country_code: str,
-        scenario: str = _DEFAULT_OWA_SCENARIO,
-    ) -> Optional[Path]:
-        """
-        Locate the OWA suitability TIF produced by Phase 3.
-
-        Naming convention (Phase 3):
-          {CODE}_{tech}_suitability_owa_{scenario}.tif
-          e.g. PRT_solar_suitability_owa_balanced.tif
-
-        Falls back to legacy flat name for backward compat.
-        """
-        candidates: List[Path] = [
-            suitability_dir / f"{country_code}_{tech}_suitability_owa_{scenario}.tif",
-            suitability_dir / f"{country_code}_{tech}_suitability.tif",
-            suitability_dir / f"{country_code.lower()}_{tech}_suitability_owa_{scenario}.tif",
-            suitability_dir / f"{country_code.lower()}_{tech}_suitability.tif",
-        ]
-        for path in candidates:
-            if path.exists():
-                logger.debug("  [%s] suitability TIF: %s", tech, path.name)
-                return path
-
-        matches = sorted(
-            suitability_dir.glob(f"*{tech}*suitability*{scenario}*.tif")
-        )
-        if not matches:
-            matches = sorted(
-                suitability_dir.glob(f"*{tech}*suitability*.tif")
-            )
-        if matches:
-            logger.debug(
-                "  [%s] suitability TIF (glob): %s", tech, matches[0].name
-            )
-            return matches[0]
-
-        return None
 
     # ─────────────────────────────────────────────────────────────────────
     # TIF discovery — LCOE
@@ -459,7 +418,7 @@ class ResultsWriter:
         ref_suit: Optional[Path] = None
 
         for tech in TECH_ORDER:
-            sp = self._find_suitability_tif(
+            sp = find_suitability_tif(
                 suitability_dir, tech, country_code, _DEFAULT_OWA_SCENARIO
             )
             if sp is not None:

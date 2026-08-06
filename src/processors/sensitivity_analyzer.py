@@ -64,6 +64,7 @@ import pandas as pd
 import rasterio
 
 from src.core.schemas import CountryParams
+from src.utils.raster_io import find_suitability_tif
 from src.utils.reporting import ReportSection, build_phase_report
 
 logger = logging.getLogger("geoworld.processors.SensitivityAnalyzer")
@@ -1387,35 +1388,16 @@ class SensitivityAnalyzer:
                 weights_by_tech[tech] = wf
 
         for tech in ("solar", "wind", "biomass"):
-            # 1. Localizar TIF de suitability (recursivo, nome exato).
-            #
-            # FIX (suit_tif_glob): a versão anterior usava
-            # rglob(f"*{tech}_suitability*.tif"), um wildcard que também casa
-            # com os GeoTIFFs OWA gerados pela Phase 3
-            # ({code}_{tech}_suitability_owa_{scenario}.tif) — mesma classe
-            # de bug que BUG_02 corrigiu para os ficheiros de pesos, mas que
-            # não tinha sido replicada aqui. next() sobre um glob ambíguo
-            # devolve o primeiro resultado pela ordem de iteração do
-            # filesystem (não garantidamente alfabética), podendo silenciosamente
-            # carregar um raster OWA em vez do TOPSIS esperado.
-            #
-            # Tries the exact expected filename first
-            # ({country_code}_{tech}_suitability.tif); falls back to a
-            # stem-exact rglob match for layouts where the file lives in an
-            # unexpected subdirectory.
-            expected_name = f"{country_code}_{tech}_suitability.tif"
-            suit_tif = next(
-                (p for p in suitability_dir.rglob(expected_name)),
-                None,
+            # 1. Localizar TIF de suitability — resolver centralizado
+            # (raster_io.find_suitability_tif, BLOCKER-006), que tenta o
+            # nome exato do TOPSIS primeiro e cai para um rglob por stem
+            # exato (nunca um wildcard `*suitability*` ambíguo que também
+            # casaria com os GeoTIFFs OWA — mesma classe de bug que BUG_02
+            # corrigiu para os ficheiros de pesos). allow_owa_fallback=False
+            # porque este carregamento de pesos nunca usou OWA.
+            suit_tif = find_suitability_tif(
+                suitability_dir, tech, country_code, allow_owa_fallback=False
             )
-            if suit_tif is None:
-                suit_tif = next(
-                    (
-                        p for p in suitability_dir.rglob("*.tif")
-                        if p.stem == f"{country_code}_{tech}_suitability"
-                    ),
-                    None,
-                )
             if suit_tif is None:
                 logger.debug("[%s] Suitability TIF not found.", tech)
                 continue
@@ -1788,14 +1770,14 @@ class SensitivityAnalyzer:
                 try:
                     from src.utils.utils import compute_pixel_area_geodesic as _paf
 
-                    suit_tif = (
-                        self.outputs_dir / country_code / "suitability" / "tif"
-                        / f"{country_code}_{tech}_suitability.tif"
+                    suit_tif = find_suitability_tif(
+                        self.outputs_dir / country_code / "suitability" / "tif",
+                        tech, country_code, allow_owa_fallback=False,
                     )
-                    if not suit_tif.exists():
+                    if suit_tif is None:
                         logger.warning(
-                            "[%s] SA-3: Suitability TIF not found at %s — skipping.",
-                            tech, suit_tif,
+                            "[%s] SA-3: Suitability TIF not found — skipping.",
+                            tech,
                         )
                     else:
                         logger.info(
@@ -1875,14 +1857,14 @@ class SensitivityAnalyzer:
                 try:
                     from src.utils.utils import compute_pixel_area_geodesic as _paf
 
-                    suit_tif = (
-                        self.outputs_dir / country_code / "suitability" / "tif"
-                        / f"{country_code}_{tech}_suitability.tif"
+                    suit_tif = find_suitability_tif(
+                        self.outputs_dir / country_code / "suitability" / "tif",
+                        tech, country_code, allow_owa_fallback=False,
                     )
-                    if not suit_tif.exists():
+                    if suit_tif is None:
                         logger.warning(
-                            "[%s] SA-6: Suitability TIF not found at %s — skipping.",
-                            tech, suit_tif,
+                            "[%s] SA-6: Suitability TIF not found — skipping.",
+                            tech,
                         )
                     else:
                         logger.info(

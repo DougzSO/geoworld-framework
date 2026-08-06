@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import rasterio
@@ -16,6 +16,83 @@ from rasterio.transform import Affine
 
 
 logger = logging.getLogger("geoworld.utils.raster_io")
+
+
+def find_suitability_tif(
+    suitability_dir: Path,
+    tech: str,
+    country_code: str,
+    scenario: str = "balanced",
+    allow_owa_fallback: bool = True,
+) -> Optional[Path]:
+    """
+    Locate the Phase 3 suitability GeoTIFF for *tech* (single source of
+    truth for TOPSIS-vs-OWA raster discovery — BLOCKER-006).
+
+    Phase 3 produces two surfaces per technology:
+      - TOPSIS (primary):   {CODE}_{tech}_suitability.tif
+      - OWA, per scenario:  {CODE}_{tech}_suitability_owa_{scenario}.tif
+
+    TOPSIS is the primary suitability surface end-to-end (D4,
+    docs/memory/09-decisions.md); OWA is a secondary/comparative surface
+    and must never silently take precedence. This function always tries
+    TOPSIS first, regardless of *allow_owa_fallback*.
+
+    Args:
+        suitability_dir:    Phase 3 output directory (tif subfolder).
+        tech:                Technology key ("solar", "wind", "biomass").
+        country_code:        ISO-3166 alpha-3 code.
+        scenario:            OWA scenario to fall back to, if enabled.
+        allow_owa_fallback:  If False, only TOPSIS candidates are tried
+            (caller wants a strict TOPSIS-or-nothing lookup, e.g. Phase 4
+            and sensitivity threshold/parameter sweeps, which have never
+            used OWA and should keep failing closed if TOPSIS is absent).
+
+    Returns:
+        Path to the resolved TIF, or None if nothing matched.
+    """
+    candidates: List[Path] = [
+        suitability_dir / f"{country_code}_{tech}_suitability.tif",
+        suitability_dir / f"{country_code.lower()}_{tech}_suitability.tif",
+    ]
+    if allow_owa_fallback:
+        candidates += [
+            suitability_dir / f"{country_code}_{tech}_suitability_owa_{scenario}.tif",
+            suitability_dir
+            / f"{country_code.lower()}_{tech}_suitability_owa_{scenario}.tif",
+        ]
+
+    for path in candidates:
+        if path.exists():
+            logger.debug("  [%s] suitability TIF: %s", tech, path.name)
+            return path
+
+    # Recursive, exact-stem fallback for unexpected subfolder layouts.
+    # Uses an exact stem match rather than a `*suitability*.tif` wildcard,
+    # which would also match OWA files and could silently return one via
+    # filesystem iteration order (the precedence bug BLOCKER-006 fixes).
+    topsis_stem = f"{country_code}_{tech}_suitability"
+    match = next(
+        (p for p in suitability_dir.rglob("*.tif") if p.stem == topsis_stem),
+        None,
+    )
+    if match is not None:
+        logger.debug("  [%s] suitability TIF (stem match): %s", tech, match.name)
+        return match
+
+    if allow_owa_fallback:
+        owa_stem = f"{country_code}_{tech}_suitability_owa_{scenario}"
+        match = next(
+            (p for p in suitability_dir.rglob("*.tif") if p.stem == owa_stem),
+            None,
+        )
+        if match is not None:
+            logger.debug(
+                "  [%s] suitability TIF (OWA stem match): %s", tech, match.name
+            )
+            return match
+
+    return None
 
 
 def get_raster_meta(path: Union[str, Path]) -> Tuple[Tuple[int, int], str]:
