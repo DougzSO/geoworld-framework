@@ -23,7 +23,8 @@ Refactoring notes (Phase 6 → utils):
     · Raster I/O (load, validate, dominance compute, GeoTIFF export)
     · Map rendering (_draw_dominance_on_ax, _plot_dominance_map)
     · LCOE stats enrichment (_enrich_lcoe_stats)
-    · Supply curve TIF reconstruction (_recover_supply_curve_from_tif)
+    · Supply curve recovery (_recover_supply_curve — reads Phase 5's
+      persisted Parquet directly, see BLOCKER-001)
     · Orchestration (run)
 
 Pixel area calculation (FIX dup_geo_area):
@@ -353,78 +354,20 @@ class ResultsWriter:
         return lcoe_results
 
     # ─────────────────────────────────────────────────────────────────────
-    # Supply curve recovery — Parquet/CSV first, then TIF reconstruction
+    # Supply curve recovery — Parquet/CSV, written by Phase 5 (BLOCKER-001)
     # ─────────────────────────────────────────────────────────────────────
 
     def _recover_supply_curve(
         self, tech: str, country_code: str
     ) -> Optional[pd.DataFrame]:
         """
-        Recover supply curve with two-tier fallback:
-          1. Parquet/CSV via data_recovery (preferred — exact data)
-          2. TIF reconstruction (proportional proxy — shape preserved)
+        Recover the real supply curve persisted by Phase 5 (Parquet,
+        CSV fallback — see recover_supply_curve_from_disk).
 
-        Returns None if neither source is available.
+        Returns None if Phase 5 has not run for this technology.
         """
-        # Tier 1: serialised supply curve
         lcoe_base = self.outputs_dir / country_code / "lcoe"
-        sc = recover_supply_curve_from_disk(lcoe_base, country_code, tech)
-        if sc is not None:
-            return sc
-
-        # Tier 2: reconstruct from LCOE TIF (unit capacity proxy)
-        return self._recover_supply_curve_from_tif(tech, country_code)
-
-    def _recover_supply_curve_from_tif(
-        self, tech: str, country_code: str
-    ) -> Optional[pd.DataFrame]:
-        """
-        Reconstruct a minimal supply curve DataFrame from the LCOE TIF.
-
-        The full supply curve DataFrame is not always serialised by Phase 5.
-        When unavailable, rebuilds on the fly so _draw_supply_curves_on_ax
-        has data to plot.
-
-        NOTE: Uses unit capacity (1 MW per pixel) as a proportional proxy;
-        absolute GW totals differ from Phase 5, but curve shape is preserved.
-
-        Returns None if the TIF cannot be found or read.
-        """
-        tif_path = self._find_lcoe_tif(tech, country_code)
-        if tif_path is None or not tif_path.exists():
-            return None
-
-        try:
-            with rasterio.open(str(tif_path)) as src:
-                arr = src.read(1).astype(np.float32)
-                nd  = src.nodata
-                if nd is not None:
-                    arr[arr == float(nd)] = np.nan
-                arr[arr <= 0] = np.nan
-        except Exception as exc:
-            logger.warning(
-                "  [%s] Cannot read LCOE TIF for supply curve: %s",
-                tech, exc,
-            )
-            return None
-
-        lcoe_vals = arr[np.isfinite(arr)]
-        if lcoe_vals.size == 0:
-            return None
-
-        order  = np.argsort(lcoe_vals)
-        cum_gw = (np.arange(1, lcoe_vals.size + 1) / 1000.0).astype(np.float32)
-
-        sc = pd.DataFrame({
-            "lcoe_usd_mwh":    lcoe_vals[order].astype(np.float32),
-            "cum_capacity_gw": cum_gw,
-        })
-
-        if len(sc) > 5000:
-            idx = np.linspace(0, len(sc) - 1, 5000, dtype=int)
-            sc  = sc.iloc[idx].reset_index(drop=True)
-
-        return sc
+        return recover_supply_curve_from_disk(lcoe_base, country_code, tech)
 
     # ─────────────────────────────────────────────────────────────────────
     # ✅ NOVO: Área integrada (usa TIF do Phase 4 + build_pixel_area_array)

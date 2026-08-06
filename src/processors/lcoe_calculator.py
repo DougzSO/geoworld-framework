@@ -1182,6 +1182,15 @@ class LCOECalculator:
                     encoding="utf-8",
                 )
 
+        # Full-resolution supply curve (BLOCKER-001) — persisted so
+        # downstream phases read the real merit-order curve instead of
+        # reconstructing a unit-capacity proxy from the LCOE TIF.
+        if not supply_curve.empty:
+            supply_curve.to_parquet(
+                out_data / f"{country_code}_{tech}_supply_curve.parquet",
+                index=False,
+            )
+
         # Plots
         self._plot_lcoe_map(
             lcoe_map,
