@@ -38,9 +38,15 @@ Format: **Context**, **Decision**, **Consequences**, **Related files**, **Status
 
 **Context.** Phase 3 produces both; Phase 4 needs exactly one apt-pixel mask per run.
 **Decision.** TOPSIS output is the default input to Phase 4 (`potential_calculator.py`). OWA outputs exist per scenario but selecting them (`use_owa=True`) is implemented and explicitly reserved for future use, not wired into the orchestrator.
+
+The non-integration of OWA into potential/LCOE calculation is deliberate, not an implementation gap. Formal weight-uncertainty analysis is already covered by Phase 8 (SA-1: OAT perturbation; SA-2: Monte Carlo Dirichlet sampling, fixed seed=42, reproducible), which captures weight sensitivity continuously and with statistical grounding. Running OWA with 3 fixed scenarios through the full pipeline would duplicate that analysis with a cruder method, at ~4x processing time and disk cost, without clear scientific gain. TOPSIS remains the primary score because it is an established method in renewable energy siting literature (Hwang & Yoon, 1981) and is already in use for every country processed to date. OWA remains available for comparative visual inspection, preserving the information without making it part of the "official" result.
+
 **Consequences.** Current pipeline runs only reflect the TOPSIS-based apt-pixel definition end-to-end; OWA scenario outputs on disk are informational/comparative only unless someone wires the flag through. Anyone changing this should update this decision entry and `03-pipeline.md`.
-**Related files.** `src/processors/potential_calculator.py`, `src/processors/suitability_builder.py`.
-**Status.** Active (TOPSIS path); the OWA-driven alternative is **In migration** / not yet activated.
+
+BLOCKER-006 (fixed) hardened this decision at the implementation level: TOPSIS-vs-OWA raster discovery across all read call sites is now centralized in `src/utils/raster_io.py::find_suitability_tif()`, with TOPSIS tried first, always, explicitly. Previously `results_writer.py` (Phase 6) had its own, independently-implemented lookup that tried the OWA-balanced file *before* TOPSIS — since Phase 3 always writes the OWA-balanced GeoTIFF unconditionally, that candidate matched on every run, meaning Phase 6's suitability-dominance map (and its printed pixel-count summary) had been silently built from OWA, not TOPSIS, contradicting this decision in practice despite the code/docs stating otherwise. See validation results in the BLOCKER-006 commit for the before/after numeric impact.
+
+**Related files.** `src/processors/potential_calculator.py`, `src/processors/suitability_builder.py`, `src/processors/sensitivity_analyzer.py`, `src/processors/lcoe_calculator.py`, `src/processors/results_writer.py`, `src/utils/raster_io.py`.
+**Status.** Active (TOPSIS path); the OWA-driven alternative is **In migration** / not yet activated. Raster-discovery precedence bug fixed (BLOCKER-006).
 
 ---
 

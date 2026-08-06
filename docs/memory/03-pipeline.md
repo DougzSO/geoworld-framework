@@ -39,6 +39,10 @@ Phase 3 produces two families of suitability rasters per technology, and downstr
 - **TOPSIS** (`{ISO3}_{tech}_suitability.tif`) — single scalar closeness-to-ideal score; the **primary** surface used by Phase 4 onward.
 - **OWA**, three scenario variants (`_owa_optimistic` / `_owa_balanced` / `_owa_conservative`) — secondary, scenario-based; available for scenario analysis but Phase 4's `use_owa=True` path is implemented and **not yet wired into the orchestrator** (per `potential_calculator.py`'s own docstring — "reserved for future scenario-specific runs").
 
+This non-integration is a deliberate decision (see `09-decisions.md`, D4), not an implementation gap: formal weight-uncertainty analysis is already covered by Phase 8 (SA-1 OAT perturbation, SA-2 Monte Carlo Dirichlet sampling, fixed seed=42), which captures weight sensitivity continuously and with statistical grounding — running OWA's 3 fixed scenarios through the full pipeline would duplicate that analysis more crudely, at ~4x processing time and disk cost. TOPSIS remains primary because it is an established method in the renewable-siting literature (Hwang & Yoon, 1981) and already in use for every country processed to date; OWA stays available for comparative visual inspection without being part of the "official" result.
+
+Every read call site that needs to locate a Phase 3 suitability TIF goes through `src/utils/raster_io.py::find_suitability_tif()` (BLOCKER-006), which always tries TOPSIS first — centralizing what used to be duplicated, independently-implemented lookup logic per phase (one copy, in Phase 6, had inverted the precedence and tried OWA-balanced first).
+
 ## Hard exclusions applied before MCDA (Phase 3)
 
 - Slope threshold + per-technology offset (solar +5°, wind +10°, biomass +20°) from `src/utils/exclusion.py`.
