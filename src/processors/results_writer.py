@@ -26,11 +26,11 @@ Refactoring notes (Phase 6 → utils):
       persisted Parquet directly, see BLOCKER-001)
     · Orchestration (run)
 
-Pixel area calculation (FIX dup_geo_area):
-  - Phase 4 exports suitable-pixel TIFFs to outputs/{CODE}/potential/tifs/
-  - Phase 6 reads those TIFFs and uses build_pixel_area_array() to compute
-    areas exactly as Phase 4 did — no Helmert fallback.
-  - All three area calculation functions now consolidated in geo_stats.py.
+Pixel area (BLOCKER-003):
+  - Phase 4 writes the real geodesic area_km2 directly into its zonal CSV
+    (area_km2_sum, from build_pixel_area_array() — see geo_stats.py).
+  - Phase 6 reads that value via get_scenario_data() instead of
+    re-deriving it from the suitable-pixel TIF.
 """
 
 from __future__ import annotations
@@ -67,7 +67,6 @@ from src.utils.data_recovery import (
     recover_abatement_from_disk,
     recover_supply_curve_from_disk,
 )
-from src.utils.geo_stats import build_pixel_area_array  # ← NOVO
 from src.utils.map_styling import GeoWorldStyler
 from src.utils.params_helpers import get_scenario_data
 from src.utils.reporting import (
@@ -189,28 +188,6 @@ class ResultsWriter:
         return None
 
     # ─────────────────────────────────────────────────────────────────────
-    # NEW: TIF discovery — suitable-pixel masks (Phase 4 export)
-    # ─────────────────────────────────────────────────────────────────────
-
-    def _find_suitable_tif(
-        self, tech: str, country_code: str, scenario: str = "balanced"
-    ) -> Optional[Path]:
-        """
-        Locate the suitable-pixel mask TIF exported by Phase 4.
-
-        Phase 4 writes to:
-          outputs/{CODE}/potential/tifs/{CODE}_{tech}_suitable_{scenario}.tif
-
-        Returns None if not found (Phase 4 pre-refactor did not export these).
-        """
-        tif_dir = self.outputs_dir / country_code / "potential" / "tifs"
-        path = tif_dir / f"{country_code}_{tech}_suitable_{scenario}.tif"
-        if path.exists():
-            logger.debug("  [%s] suitable TIF: %s", tech, path.name)
-            return path
-        return None
-
-    # ─────────────────────────────────────────────────────────────────────
     # Data recovery — delegates to utils, handles format variants
     # ─────────────────────────────────────────────────────────────────────
 
@@ -303,59 +280,6 @@ class ResultsWriter:
         return recover_supply_curve_from_disk(lcoe_base, country_code, tech)
 
     # ─────────────────────────────────────────────────────────────────────
-    # ✅ NOVO: Área integrada (usa TIF do Phase 4 + build_pixel_area_array)
-    # ─────────────────────────────────────────────────────────────────────
-
-    def _compute_integrated_area(
-    self,
-    tech: str,
-    country_code: str,
-    scenario: str,
-    transform: Affine,
-    ) -> float:
-        """
-        Compute total suitable area (km²) for a given tech/scenario using:
-        1. Suitable-pixel TIF from Phase 4 (apt_mask)
-        2. build_pixel_area_array() from geo_stats.py (same as Phase 4)
-
-        Returns 0.0 if the TIF is not found (Phase 4 pre-refactor).
-
-        This replaces the old _mean_pixel_area_from_tif() + Helmert fallback.
-        """
-        tif_path = self._find_suitable_tif(tech, country_code, scenario)
-        if tif_path is None:
-            logger.debug(
-                "  [%s/%s] suitable TIF not found — area=0.0",
-                tech, scenario
-            )
-            return 0.0
-
-        try:
-            with rasterio.open(str(tif_path)) as src:
-                arr = src.read(1)  # uint8: 255=suitable, 0=NoData
-                H, W = src.height, src.width
-                
-                # ✅ FIX: pixels suitable são aqueles com valor 255
-                apt_mask = (arr == 255)
-                
-        except Exception as exc:
-            logger.warning(
-                "  [%s/%s] Cannot read suitable TIF: %s — area=0.0",
-                tech, scenario, exc
-            )
-            return 0.0
-
-        # ✅ FIX (dup_geo_area): usar SEMPRE build_pixel_area_array() canônico
-        area_arr = build_pixel_area_array(transform, H, W)
-        total_area_km2 = float(area_arr[apt_mask].sum())
-
-        logger.debug(
-            "  [%s/%s] area=%.1f km² (from TIF + geodesic)",
-            tech, scenario, total_area_km2
-        )
-        return total_area_km2
-
-    # ─────────────────────────────────────────────────────────────────────
     # Execution root
     # ─────────────────────────────────────────────────────────────────────
 
@@ -385,7 +309,7 @@ class ResultsWriter:
         with rasterio.open(str(ref_suit)) as src:
             expected_crs   = str(src.crs)
             expected_shape = (src.height, src.width)
-            transform_ref  = src.transform  # ← salvar para _compute_integrated_area
+            transform_ref  = src.transform
 
         # ── 3. Validate and log suitability TIFs ─────────────────────────
         self._validate_and_log_suitability(
@@ -496,12 +420,11 @@ class ResultsWriter:
             (datetime.now() - started_at).total_seconds(), 1
         )
 
-        # ── 12. Text report (COM ÁREA INTEGRADA) ──────────────────────────
+        # ── 12. Text report ─────────────────────────────────────────────
         report = self._format_report(
             results, country_name, country_code,
             potential_results, lcoe_results,
             dom_suit, dom_lcoe,
-            transform_ref,  # ← NOVO: passar transform para cálculo de área
         )
         logger.info("\n%s", report)
         (
@@ -1266,7 +1189,6 @@ class ResultsWriter:
         lcoe_results: Dict,
         dom_suit: np.ndarray,
         dom_lcoe: np.ndarray,
-        transform: Affine,  # ← NOVO
     ) -> str:
         total_s = max(int((dom_suit > 0).sum()), 1)
         total_l = max(int((dom_lcoe > 0).sum()), 1)
@@ -1291,7 +1213,7 @@ class ResultsWriter:
             for i, tech in enumerate(TECH_ORDER)
         ]
 
-        # ── Section 3: integrated summary (COM ÁREA CORRIGIDA) ───────────
+        # ── Section 3: integrated summary ─────────────────────────────────
         summary_rows = []
         t_gw = t_twh = 0.0
         for tech in TECH_ORDER:
@@ -1304,8 +1226,9 @@ class ResultsWriter:
             gw   = sc.get("capacity_gw",    0.0)
             twh  = sc.get("generation_twh", sc.get("gen_twh", 0.0))
 
-            # ✅ FIX (dup_geo_area): área calculada IGUAL à Fase 4
-            area = self._compute_integrated_area(tech, code, "balanced", transform)
+            # area_km2 (BLOCKER-003): read directly from Phase 4's real,
+            # persisted value instead of re-deriving from the suitable TIF.
+            area = sc.get("area_km2", 0.0)
 
             lce  = stats.get("mean",        0.0)
             t_gw  += gw

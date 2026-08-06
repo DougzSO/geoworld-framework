@@ -520,6 +520,18 @@ class PotentialCalculator:
                     * params["hours_year"]
                     / 1_000.0
                 )
+                # Real geodesic area per region (BLOCKER-003), merged in so
+                # downstream recovery can sum area_km2_sum instead of
+                # re-deriving area from the suitable-pixel TIF.
+                area_zonal_df = zonal_stats_raster(
+                    area_arr, apt_mask,
+                    self._admin_gdf, transform, crs, "area_km2",
+                )
+                if not area_zonal_df.empty:
+                    zonal_df = zonal_df.merge(
+                        area_zonal_df[["admin_name", "area_km2_sum"]],
+                        on="admin_name", how="left",
+                    )
                 csv_name = f"{country_code}_{tech}_{scenario}_zonal.csv"
                 zonal_df.to_csv(
                     str(out_data / csv_name), index=False, encoding="utf-8"

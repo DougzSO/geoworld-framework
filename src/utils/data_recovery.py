@@ -18,11 +18,9 @@ Used by:
   - results_writer.py (Phase 6)
   - sensitivity_analyzer.py (loading suitability results)
 
-FIX (dup_geo_area):
-  - _mean_pixel_area_from_tif() REMOVED — replaced by direct TIF reads
-    in _extract_area() using build_pixel_area_array()
-  - Phase 6 now reads suitable-pixel TIFFs exported by Phase 4
-  - Zero Helmert fallback warnings
+Area (BLOCKER-003):
+  - _extract_area() reads the real area_km2_sum column Phase 4 now
+    writes directly into its zonal CSV — no TIF re-derivation.
 """
 
 from __future__ import annotations
@@ -36,7 +34,6 @@ import pandas as pd
 import rasterio
 
 from src.core.constants import TECH_ORDER
-from src.utils.geo_stats import build_pixel_area_array
 
 logger = logging.getLogger("geoworld.utils.data_recovery")
 
@@ -64,7 +61,9 @@ def recover_potential_from_disk(
         scenarios:      Scenarios to recover; defaults to the three
                         standard scenarios if *None*.
         resolution_deg: **DEPRECATED** — kept for API compatibility,
-                        not used (area comes from TIF now).
+                        not used (area comes from the zonal CSV's
+                        area_km2_sum column, written by Phase 4 --
+                        BLOCKER-003).
 
     Returns:
         Dict with keys ``country_code`` and ``techs`` (nested by
@@ -81,8 +80,6 @@ def recover_potential_from_disk(
     data_dir = base_dir / "data"
     if not data_dir.exists():
         data_dir = base_dir
-
-    tifs_dir = base_dir / "tifs"  # ← NOVO: pasta de suitable-pixel TIFs
 
     techs_data: Dict[str, Dict] = {}
     missing_files: List[str] = []
@@ -112,14 +109,11 @@ def recover_potential_from_disk(
 
                 capacity_gw    = _extract_capacity(df)
                 generation_twh = _extract_generation(df)
-                
-                # ✅ FIX: área agora vem do TIF de suitable-pixel (Phase 4)
-                area_km2 = _extract_area_from_suitable_tif(
-                    tifs_dir=tifs_dir,
-                    country_code=country_code,
-                    tech=tech,
-                    scenario=scenario,
-                )
+
+                # BLOCKER-003: area_km2 is now a real column written by
+                # Phase 4 (area_km2_sum, summed across admin regions --
+                # additive, same pattern as capacity/generation).
+                area_km2 = _extract_area(df)
 
                 scenarios_data[scenario] = {
                     "capacity_gw":    capacity_gw,
@@ -206,64 +200,31 @@ def _extract_generation(df: pd.DataFrame) -> float:
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# ✅ NOVO: Área via TIF de suitable-pixel (substitui _mean_pixel_area_from_tif)
+# Area (BLOCKER-003) — real column written by Phase 4, no TIF re-derivation
 # ═══════════════════════════════════════════════════════════════════════
 
-def _extract_area_from_suitable_tif(
-    tifs_dir: Path,
-    country_code: str,
-    tech: str,
-    scenario: str,
-) -> float:
+def _extract_area(df: pd.DataFrame) -> float:
     """
-    Calcula área total a partir do TIF de suitable-pixel exportado pela Fase 4.
+    Extract total suitable area (km²) from CSV columns (flexible matching).
 
-    Usa build_pixel_area_array() para calcular área geodésica exata
-    (mesma função usada na Fase 4).
-
-    Args:
-        tifs_dir:     Diretório ``potential/tifs/``
-        country_code: Código ISO do país
-        tech:         Tecnologia (solar, wind, biomass)
-        scenario:     Cenário (optimistic, balanced, conservative)
-
-    Returns:
-        Área total em km² (0.0 se TIF não existir)
+    Real geodesic area, written directly by Phase 4 as area_km2_sum
+    (summed per admin region — additive, same recovery pattern as
+    capacity/generation). Returns 0.0 with a warning if the column is
+    absent (e.g. a zonal CSV from before this column existed), rather
+    than raising — area is supplementary, not essential, to recovery.
     """
-    tif_path = tifs_dir / f"{country_code}_{tech}_suitable_{scenario}.tif"
+    cols = set(df.columns)
 
-    if not tif_path.exists():
-        logger.debug(
-            "  [%s/%s] suitable TIF not found: %s — area=0.0",
-            tech, scenario, tif_path
-        )
-        return 0.0
+    for col_name in ("area_km2_sum", "area_km2"):
+        if col_name in cols:
+            return float(df[col_name].sum())
 
-    try:
-        with rasterio.open(str(tif_path)) as src:
-            arr = src.read(1)  # uint8: 255=suitable, 0=NoData
-            H, W = src.height, src.width
-            transform = src.transform
-            
-            # ✅ Pixels suitable são aqueles com valor 255
-            apt_mask = (arr == 255)
-
-        # ✅ FIX (dup_geo_area): usar SEMPRE build_pixel_area_array()
-        area_arr = build_pixel_area_array(transform, H, W)
-        total_area_km2 = float(area_arr[apt_mask].sum())
-
-        logger.debug(
-            "  [%s/%s] area=%.1f km² (from TIF + geodesic)",
-            tech, scenario, total_area_km2
-        )
-        return total_area_km2
-
-    except Exception as exc:
-        logger.warning(
-            "  [%s/%s] Cannot read suitable TIF: %s — area=0.0",
-            tech, scenario, exc
-        )
-        return 0.0
+    logger.warning(
+        "  No area_km2 column found in CSV (columns: %s) — area=0.0. "
+        "Re-run Phase 4 to populate it.",
+        list(cols),
+    )
+    return 0.0
 
 
 # ═══════════════════════════════════════════════════════════════════════
