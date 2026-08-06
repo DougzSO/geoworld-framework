@@ -289,30 +289,39 @@ def recover_lcoe_from_disk(
                 except Exception as exc:
                     logger.warning("  [%s] TIF parse failed: %s", tech, exc)
 
-        # BLOCKER-002: zonal CSV rows are per-admin-region MEANS, not raw
-        # pixels — p25/median/p75 derived from it describe the spread
-        # across regions, not the true pixel-level LCOE distribution.
-        # When the CSV won Priority 1, overlay real pixel-level quartiles
-        # from the TIF when one is available. mean/p10/p90/n_pixels are
-        # left as the CSV provided them (separate, out-of-scope concern).
+        # BLOCKER-002 (extended): zonal CSV rows are per-admin-region
+        # MEANS, not raw pixels — every distributional statistic derived
+        # from it (mean, p10, p25, median, p75, p90, n_pixels) describes
+        # the spread/count across regions, not the true pixel-level LCOE
+        # distribution. mean is directly printed in the Phase 6 text
+        # report's integrated-summary table (e.g. solar showed 48.7
+        # USD/MWh via CSV vs. 43.8 from Phase 5's live pixel-level
+        # computation), so this is not a display-only concern.
+        # When the CSV won Priority 1, overlay the complete pixel-level
+        # stats dict from the TIF when one is available.
         if stats.get("source") == "csv_zonal":
             tif_path = _find_lcoe_tif(tif_dir, country_code, tech)
             if tif_path and tif_path.exists():
                 try:
                     tif_stats, _ = _parse_lcoe_tif(tif_path, tech)
-                    stats["p25"]    = tif_stats["p25"]
-                    stats["median"] = tif_stats["median"]
-                    stats["p75"]    = tif_stats["p75"]
-                    stats["quartile_source"] = "tif_pixel_level"
+                    for key in (
+                        "mean", "p10", "p25", "median", "p75", "p90",
+                        "n_pixels",
+                    ):
+                        stats[key] = tif_stats[key]
+                    stats["stats_source"] = "tif_pixel_level"
                     logger.debug(
-                        "  [%s] Pixel-level quartiles overlaid on CSV "
-                        "stats: p25=%.1f median=%.1f p75=%.1f",
-                        tech, stats["p25"], stats["median"], stats["p75"],
+                        "  [%s] Pixel-level stats overlaid on CSV: "
+                        "mean=%.1f p10=%.1f p25=%.1f median=%.1f "
+                        "p75=%.1f p90=%.1f n=%d",
+                        tech, stats["mean"], stats["p10"], stats["p25"],
+                        stats["median"], stats["p75"], stats["p90"],
+                        stats["n_pixels"],
                     )
                 except Exception as exc:
                     logger.warning(
-                        "  [%s] Pixel-level quartile overlay failed, "
-                        "keeping region-level CSV quartiles: %s",
+                        "  [%s] Pixel-level stats overlay failed, "
+                        "keeping region-level CSV stats: %s",
                         tech, exc,
                     )
 
