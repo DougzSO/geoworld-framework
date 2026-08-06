@@ -175,6 +175,7 @@ def _build_ghg_function_from_abatement(
     ef_thermal   = float(abat_result.get("ci_before", 450.0))
     ef_renewable = 50.0
     penetration  = 0.75
+    cf_base      = 0.25
     subst_gwh    = co2_avoided * 1e6 / max(ef_thermal, 1.0)
 
     def ghg_function(
@@ -183,11 +184,21 @@ def _build_ghg_function_from_abatement(
         ef_lifecycle_gco2_kwh: float,
         penetration_factor: float,
     ) -> float:
-        gwh_sub = (
+        # Target substitution implied by the perturbed penetration factor,
+        # relative to the Phase 7 baseline penetration.
+        target_gwh_sub = (
             subst_gwh
             * min(max(penetration_factor, 0.0), 1.0)
             / max(penetration, 1e-6)
         )
+        # Renewable generation = capacity x CF x hours: for a fixed fleet of
+        # installed capacity (implied by the Phase 7 baseline), deliverable
+        # GWh scales linearly with cf_renewable. This mirrors the ceiling
+        # ghg_abatement_calculator.py applies via renew_total_gwh in
+        # calc_macc()/_derive_subst_gwh(), which is itself built from Phase
+        # 4's capacity-factor-dependent generation figures.
+        available_gwh_sub = subst_gwh * max(cf_renewable, 1e-6) / cf_base
+        gwh_sub = min(target_gwh_sub, available_gwh_sub)
         return max(
             0.0,
             (gwh_sub * ef_thermal_gco2_kwh / 1e6)
@@ -196,7 +207,7 @@ def _build_ghg_function_from_abatement(
 
     base_params: Dict[str, Any] = {
         "ef_thermal_gco2_kwh":   {"value": ef_thermal,   "range": 0.15},
-        "cf_renewable":          {"value": 0.25,          "range": 0.20},
+        "cf_renewable":          {"value": cf_base,       "range": 0.20},
         "ef_lifecycle_gco2_kwh": {"value": ef_renewable,  "range": 0.50},
         "penetration_factor":    {"value": penetration,   "range": 0.20},
     }
