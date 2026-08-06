@@ -763,14 +763,19 @@ class LCOEStats(BaseModel):
 
     Dois formatos possíveis dependendo de lcoe_valid.size > 0:
 
-    Caminho sucesso (8 chaves)
-        base_lcoe, mean, p10, p90, n_pixels, crf, base_cf, source.
+    Caminho sucesso (11 chaves)
+        base_lcoe, mean, p10, p25, median, p75, p90, n_pixels, crf,
+        base_cf, source.
 
     Caminho degenerado (todos os pixels NaN — 3 chaves)
         Apenas crf, base_cf, source.
 
     Campos de distribuição são Optional para forçar consumidores a tratar
     o caso degenerado explicitamente.
+
+    p25/median/p75 (BLOCKER-002): computed directly from the same
+    lcoe_valid pixel population as mean/p10/p90 — not approximated from
+    p10/p90 interpolation or derived from a coarser population.
     """
     crf:      float
     base_cf:  float
@@ -779,6 +784,9 @@ class LCOEStats(BaseModel):
     base_lcoe: Optional[float] = None
     mean:      Optional[float] = None
     p10:       Optional[float] = None
+    p25:       Optional[float] = None
+    median:    Optional[float] = None
+    p75:       Optional[float] = None
     p90:       Optional[float] = None
     n_pixels:  Optional[int]   = None
 

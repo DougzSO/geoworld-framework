@@ -328,6 +328,33 @@ def recover_lcoe_from_disk(
                 except Exception as exc:
                     logger.warning("  [%s] TIF parse failed: %s", tech, exc)
 
+        # BLOCKER-002: zonal CSV rows are per-admin-region MEANS, not raw
+        # pixels — p25/median/p75 derived from it describe the spread
+        # across regions, not the true pixel-level LCOE distribution.
+        # When the CSV won Priority 1, overlay real pixel-level quartiles
+        # from the TIF when one is available. mean/p10/p90/n_pixels are
+        # left as the CSV provided them (separate, out-of-scope concern).
+        if stats.get("source") == "csv_zonal":
+            tif_path = _find_lcoe_tif(tif_dir, country_code, tech)
+            if tif_path and tif_path.exists():
+                try:
+                    tif_stats, _ = _parse_lcoe_tif(tif_path, tech)
+                    stats["p25"]    = tif_stats["p25"]
+                    stats["median"] = tif_stats["median"]
+                    stats["p75"]    = tif_stats["p75"]
+                    stats["quartile_source"] = "tif_pixel_level"
+                    logger.debug(
+                        "  [%s] Pixel-level quartiles overlaid on CSV "
+                        "stats: p25=%.1f median=%.1f p75=%.1f",
+                        tech, stats["p25"], stats["median"], stats["p75"],
+                    )
+                except Exception as exc:
+                    logger.warning(
+                        "  [%s] Pixel-level quartile overlay failed, "
+                        "keeping region-level CSV quartiles: %s",
+                        tech, exc,
+                    )
+
         if stats:
             techs_stats[tech] = {"stats": stats}
         if arr is not None:

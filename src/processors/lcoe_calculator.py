@@ -1122,6 +1122,9 @@ class LCOECalculator:
                 else 0.0,
                 "mean": float(np.mean(lcoe_valid)),
                 "p10": float(np.percentile(lcoe_valid, 10)),
+                "p25": float(np.percentile(lcoe_valid, 25)),
+                "median": float(np.percentile(lcoe_valid, 50)),
+                "p75": float(np.percentile(lcoe_valid, 75)),
                 "p90": float(np.percentile(lcoe_valid, 90)),
                 "n_pixels": int(lcoe_valid.size),
                 "crf": round(crf, 4),
@@ -1129,10 +1132,14 @@ class LCOECalculator:
                 "source": source_label,
             }
             logger.info(
-                "  [%s] LCOE: mean=%.1f | p10=%.1f | p90=%.1f | n=%d",
+                "  [%s] LCOE: mean=%.1f | p10=%.1f | p25=%.1f | "
+                "median=%.1f | p75=%.1f | p90=%.1f | n=%d",
                 tech,
                 stats["mean"],
                 stats["p10"],
+                stats["p25"],
+                stats["median"],
+                stats["p75"],
                 stats["p90"],
                 stats["n_pixels"],
             )

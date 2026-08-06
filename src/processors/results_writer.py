@@ -22,7 +22,6 @@ Refactoring notes (Phase 6 → utils):
   This module retains only:
     · Raster I/O (load, validate, dominance compute, GeoTIFF export)
     · Map rendering (_draw_dominance_on_ax, _plot_dominance_map)
-    · LCOE stats enrichment (_enrich_lcoe_stats)
     · Supply curve recovery (_recover_supply_curve — reads Phase 5's
       persisted Parquet directly, see BLOCKER-001)
     · Orchestration (run)
@@ -288,72 +287,6 @@ class ResultsWriter:
         return {"available": False}
 
     # ─────────────────────────────────────────────────────────────────────
-    # LCOE stats enrichment (not in data_recovery — Phase 6-specific)
-    # ─────────────────────────────────────────────────────────────────────
-
-    def _enrich_lcoe_stats(
-        self, lcoe_results: Dict, country_code: str
-    ) -> Dict:
-        """
-        Ensure stats dict has p25 / median / p75 keys.
-
-        When LCOE results come directly from LCOECalculator.run() the
-        stats dict only has p10, p90, mean (the calculator does not
-        compute quartiles).  We fill in the missing keys by reading the
-        LCOE TIF produced by Phase 5, or by estimating from p10/p90.
-        """
-        for tech in TECH_ORDER:
-            stats = (
-                lcoe_results.get("techs", {})
-                .get(tech, {})
-                .get("stats", {})
-            )
-            if not stats:
-                continue
-
-            if all(k in stats for k in ("p25", "median", "p75")):
-                continue
-
-            # ── Try to derive from TIF ─────────────────────────────────
-            tif_path = self._find_lcoe_tif(tech, country_code)
-            if tif_path and tif_path.exists():
-                try:
-                    with rasterio.open(str(tif_path)) as src:
-                        arr = src.read(1).astype(np.float32)
-                        nd  = src.nodata
-                        if nd is not None:
-                            arr[arr == float(nd)] = np.nan
-                        arr[arr <= 0] = np.nan
-                    valid_v = arr[np.isfinite(arr)]
-                    if valid_v.size > 0:
-                        stats["p25"]    = round(float(np.percentile(valid_v, 25)), 2)
-                        stats["median"] = round(float(np.percentile(valid_v, 50)), 2)
-                        stats["p75"]    = round(float(np.percentile(valid_v, 75)), 2)
-                        logger.debug(
-                            "  [%s] quartiles injected from TIF: "
-                            "p25=%.1f median=%.1f p75=%.1f",
-                            tech,
-                            stats["p25"], stats["median"], stats["p75"],
-                        )
-                        continue
-                except Exception as exc:
-                    logger.debug(
-                        "  [%s] quartile TIF read failed: %s", tech, exc
-                    )
-
-            # ── Fallback: linear interpolation from p10/p90 ────────────
-            p10 = stats.get("p10", stats.get("mean", 0.0))
-            p90 = stats.get("p90", stats.get("mean", 0.0))
-            stats["p25"]    = round(p10 + (p90 - p10) * 0.25, 2)
-            stats["median"] = round(p10 + (p90 - p10) * 0.50, 2)
-            stats["p75"]    = round(p10 + (p90 - p10) * 0.75, 2)
-            logger.debug(
-                "  [%s] quartiles estimated from p10/p90 interpolation.", tech
-            )
-
-        return lcoe_results
-
-    # ─────────────────────────────────────────────────────────────────────
     # Supply curve recovery — Parquet/CSV, written by Phase 5 (BLOCKER-001)
     # ─────────────────────────────────────────────────────────────────────
 
@@ -472,7 +405,6 @@ class ResultsWriter:
         lcoe_results      = self._normalize_lcoe(lcoe_dir, country_code)
         abatement_results = self._normalize_abatement(abatement_dir, country_code)
 
-        lcoe_results = self._enrich_lcoe_stats(lcoe_results, country_code)
         self._recover_missing_supply_curves(lcoe_results, country_code)
 
         # ── 6. Admin boundaries ───────────────────────────────────────────
