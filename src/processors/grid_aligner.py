@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import json
 import logging
-import time
 import math
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -28,6 +27,13 @@ from dataclasses import dataclass
 
 import geopandas as gpd
 import numpy as np
+# ✅ Item 5: `pandas` was used in _align_plants (pd.DataFrame type hint
+# and DataFrame operations) but was never imported. Added here at the
+# top-level alongside the other third-party imports.
+import pandas as pd
+# ✅ Item 11: `rasterio` was imported twice — once here at the top and
+# once inline inside `_mosaic_land_cover`. The inline duplicate has been
+# removed; this single top-level import covers the entire module.
 import rasterio
 import scipy.ndimage as ndimage
 from rasterio.enums import Resampling
@@ -289,55 +295,100 @@ def _combine_wind_layers(
     """
     Aggregate multiple wind height models using AHP-derived weights.
 
-    Maps available wind rasters to height keys (200m, 100m, 50m).
-    If all three heights are present, uses AHP matrix weights. Falls
-    back to uniform weights if only a subset is available or if the
-    consistency ratio exceeds 0.10.
+    Handles flexible naming conventions by attempting to extract height
+    from filename or using positional ordering as fallback.
 
     Args:
-        wind_paths: List of wind raster paths at various heights
-        out_path: Output path for combined wind raster
+        wind_paths: List of wind raster paths (50m, 100m, 200m variants)
+        out_path: Output path for the aggregated wind raster
         grid: Target GridContext
 
     Returns:
-        Path to the combined wind output raster
+        Path to the aggregated wind raster
     """
+    if not wind_paths:
+        raise ValueError("No wind raster paths provided")
+
     mapped: Dict[str, Path] = {}
+
+    # Attempt to map each file by its height key present in the filename.
     for p in wind_paths:
-        name = p.name.lower()
-        for key in WIND_HEIGHT_KEYS:
-            if key in name:
+        name_lower = p.name.lower()
+        matched = False
+
+        for key in WIND_HEIGHT_KEYS:  # ['200m', '100m', '50m']
+            if key in name_lower:
                 mapped[key] = p
+                matched = True
+                logger.info("    Wind layer '%s' → %s", p.name, key)
                 break
-        else:
-            if WIND_HEIGHT_KEYS[1] not in mapped:
-                mapped[WIND_HEIGHT_KEYS[1]] = p
 
-    present = [k for k in WIND_HEIGHT_KEYS if k in mapped]
+        if not matched:
+            # Fallback: treat the first unidentified file as 100m.
+            if len(mapped) == 0:
+                mapped["100m"] = p
+                logger.warning(
+                    "    Wind layer '%s' unidentified → "
+                    "defaulting to 100m.",
+                    p.name,
+                )
+            else:
+                # Subsequent unidentified files are discarded.
+                logger.warning(
+                    "    Wind layer '%s' discarded "
+                    "(filename does not contain a standard height key).",
+                    p.name,
+                )
 
+    if not mapped:
+        raise ValueError("No wind files were successfully mapped.")
+
+    present = list(mapped.keys())
+
+    # AHP weighting: use full matrix only when all three heights present.
     if len(present) == 3:
         matrix = np.array(WIND_AHP_MATRIX, dtype=np.float64)
         w_arr, rc = _compute_ahp_weights(matrix)
         weight_map = dict(zip(WIND_HEIGHT_KEYS, w_arr))
         if rc > 0.10:
             logger.warning(
-                "  RC=%.3f > 0.10 — Falling back to uniform weights.",
+                "    RC=%.3f > 0.10 — falling back to uniform weights.",
                 rc,
             )
-            weight_map = {k: 1 / len(present) for k in present}
+            weight_map = {k: 1.0 / len(present) for k in present}
     else:
         weight_map = {k: 1.0 / len(present) for k in present}
 
-    combined = np.zeros((grid.height, grid.width), dtype=np.float64)
-    weight_acc = np.zeros(
-        (grid.height, grid.width), dtype=np.float64
+    logger.info(
+        "    Combining %d wind layers: %s",
+        len(present),
+        ", ".join(present),
     )
 
+    combined = np.zeros((grid.height, grid.width), dtype=np.float64)
+    weight_acc = np.zeros((grid.height, grid.width), dtype=np.float64)
+
     for key in present:
+        logger.info("    Reprojecting %s...", key)
         layer = np.full(
             (grid.height, grid.width), NODATA_FLOAT, dtype=np.float32
         )
+
         with safe_raster_open(mapped[key]) as src:
+            src_data = src.read(1)
+            src_valid = (
+                (src_data != src.nodata) & np.isfinite(src_data)
+                if src.nodata is not None
+                else np.isfinite(src_data)
+            )
+
+            logger.info(
+                "      Source file: min=%.2f, max=%.2f, valid=%.1f%%",
+                np.nanmin(src_data[src_valid]) if src_valid.any() else 0,
+                np.nanmax(src_data[src_valid]) if src_valid.any() else 0,
+                100.0 * src_valid.sum() / src_data.size,
+            )
+
             reproject(
                 source=rasterio.band(src, 1),
                 destination=layer,
@@ -349,21 +400,40 @@ def _combine_wind_layers(
                 src_nodata=src.nodata,
                 dst_nodata=NODATA_FLOAT,
             )
+
         valid = (
-            (layer != NODATA_FLOAT)
-            & np.isfinite(layer)
-            & (layer >= 0)
+            (layer != NODATA_FLOAT) & np.isfinite(layer) & (layer >= 0)
         )
+
+        logger.info(
+            "      After reprojection: valid=%.1f%%, min=%.2f, max=%.2f",
+            100.0 * valid.sum() / layer.size,
+            np.nanmin(layer[valid]) if valid.any() else 0,
+            np.nanmax(layer[valid]) if valid.any() else 0,
+        )
+
         w = weight_map[key]
         combined[valid] += layer[valid].astype(np.float64) * w
         weight_acc[valid] += w
 
+    # Normalize by accumulated weight to handle missing layers per pixel.
     result = np.full(
         (grid.height, grid.width), NODATA_FLOAT, dtype=np.float32
     )
     has = weight_acc > 0
     result[has] = (combined[has] / weight_acc[has]).astype(np.float32)
     result[~grid.country_mask] = NODATA_FLOAT
+
+    logger.info(
+        "    Final result: valid=%.1f%%, min=%.2f, max=%.2f",
+        100.0 * (result != NODATA_FLOAT).sum() / result.size,
+        np.nanmin(result[result != NODATA_FLOAT])
+        if (result != NODATA_FLOAT).any()
+        else 0,
+        np.nanmax(result[result != NODATA_FLOAT])
+        if (result != NODATA_FLOAT).any()
+        else 0,
+    )
 
     profile = dict(
         driver="GTiff",
@@ -406,6 +476,8 @@ def _mosaic_land_cover(
     Returns:
         Path to mosaicked land cover raster, or None if no tiles used
     """
+    # ✅ Item 11: Removed the duplicate `import rasterio` that was here.
+    # The single top-level import at module level is sufficient.
     lc_out = np.zeros((grid.height, grid.width), dtype=np.uint8)
     bounds_main = tuple(
         float(b) for b in mainland_geometry.total_bounds
@@ -728,6 +800,85 @@ def _align_rivers(
     return out_path
 
 
+def _align_plants(
+    plants_df: pd.DataFrame,
+    out_path: Path,
+    mainland_geometry: gpd.GeoDataFrame,
+    grid: GridContext,
+) -> Optional[Path]:
+    """
+    Rasterize power plant locations as a binary mask (1 = plant pixel).
+
+    Args:
+        plants_df: DataFrame with 'latitude' and 'longitude' columns.
+        out_path: Output path for the raster.
+        mainland_geometry: Country GeoDataFrame for clipping.
+        grid: Target GridContext.
+
+    Returns:
+        Path to output raster, or None if no plants found.
+    """
+    if plants_df is None or plants_df.empty:
+        logger.info("    [plants] No plants data available.")
+        return None
+
+    df = plants_df.copy()
+    df.columns = [c.strip().lower() for c in df.columns]
+    lat_col = next(
+        (c for c in ["latitude", "lat"] if c in df.columns), None
+    )
+    lon_col = next(
+        (c for c in ["longitude", "lon", "long"] if c in df.columns), None
+    )
+
+    if lat_col is None or lon_col is None:
+        logger.warning("    [plants] Missing lat/lon columns.")
+        return None
+
+    gdf = gpd.GeoDataFrame(
+        df,
+        geometry=gpd.points_from_xy(df[lon_col], df[lat_col]),
+        crs="EPSG:4326",
+    )
+    gdf = gdf[gdf.intersects(mainland_geometry.unary_union)]
+
+    if gdf.empty:
+        logger.info("    [plants] No plants intersect country geometry.")
+        return None
+
+    logger.info("    [plants] %d plants rasterized.", len(gdf))
+
+    shapes = [(mapping(g), 1) for g in gdf.geometry]
+    plant_mask = rasterize(
+        shapes=shapes,
+        out_shape=(grid.height, grid.width),
+        transform=grid.transform,
+        fill=0,
+        all_touched=True,
+        dtype=np.uint8,
+    )
+    plant_mask[~grid.country_mask] = NODATA_UINT8
+
+    profile = dict(
+        driver="GTiff",
+        dtype="uint8",
+        width=grid.width,
+        height=grid.height,
+        count=1,
+        crs=grid.crs,
+        transform=grid.transform,
+        nodata=NODATA_UINT8,
+        compress="lzw",
+        tiled=True,
+        blockxsize=256,
+        blockysize=256,
+    )
+    with safe_raster_write(out_path, **profile) as dst:
+        dst.write(plant_mask, 1)
+
+    return out_path
+
+
 # ===========================================================================
 # MASTER CLASS ORCHESTRATION
 # ===========================================================================
@@ -797,8 +948,7 @@ class GridAligner:
             minx, miny, maxx, maxy = mainland_gdf.total_bounds
             lat_mid_rad = math.radians((miny + maxy) / 2.0)
             lat_km = (
-                111132.92
-                - 559.82 * math.cos(2 * lat_mid_rad)
+                111132.92 - 559.82 * math.cos(2 * lat_mid_rad)
             ) / 1000.0
             lon_km = (
                 111412.84 * math.cos(lat_mid_rad)
@@ -832,24 +982,22 @@ class GridAligner:
         def _exists(p: Optional[Path]) -> bool:
             return bool(p and Path(p).exists())
 
-        def _execute_or_load(
-            label: str,
-            fn,
-            condition: bool = True,
-        ):
+        def _execute_or_load(label: str, fn, condition: bool = True):
             p = _path(label)
             if p.exists():
                 with safe_raster_open(p) as _src:
-                    if (
-                        (_src.height, _src.width)
-                        == (grid.height, grid.width)
+                    if (_src.height, _src.width) == (
+                        grid.height, grid.width
                     ):
-                        logger.info(
-                            "    %s: cached.", label
-                        )
+                        logger.info("    %s: cached.", label)
                         return p
                 p.unlink()
-            return fn() if condition else None
+            if condition:
+                result = fn()
+                if result is None:
+                    logger.info("    %s: no data generated.", label)
+                return result
+            return None
 
         with _timer("elevation", timings), gdal_quiet():
             aligned["elevation"] = _execute_or_load(
@@ -980,6 +1128,18 @@ class GridAligner:
                 _exists(kwargs.get("seismic_path")),
             )
 
+        with _timer("plants", timings):
+            aligned["plants"] = _execute_or_load(
+                "plants",
+                lambda: _align_plants(
+                    kwargs.get("plants_df"),
+                    _path("plants"),
+                    mainland_gdf,
+                    grid,
+                ),
+                kwargs.get("plants_df") is not None,
+            )
+
         self._save_grid_metadata(country_code, out_dir, grid)
         self._verify_alignment(aligned, grid)
         return aligned
@@ -1039,8 +1199,10 @@ class GridAligner:
                         grid.height, grid.width
                     ):
                         raise RuntimeError(
-                            f"Topology mismatch: {name} failed "
-                            f"grid harmonization."
+                            f"Topology mismatch: '{name}' failed "
+                            "grid harmonization — "
+                            f"expected ({grid.height}, {grid.width}), "
+                            f"got ({src.height}, {src.width})."
                         )
         logger.info(
             "  All geometries mapped to congruent matrix "

@@ -1,0 +1,45 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Bash(git status*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(git show*)",
+      "Bash(git branch*)",
+      "Bash(git remote -v)",
+      "Bash(ls*)",
+      "Bash(dir*)",
+      "Bash(pwd)",
+      "Bash(find * -name *)",
+      "Bash(wc -l*)",
+      "Bash(python --version)",
+      "Bash(python3 --version)",
+      "Bash(./.venv/Scripts/python.exe --version)",
+      "Bash(./.venv/Scripts/python.exe -m pip list*)",
+      "Bash(./.venv/Scripts/python.exe -m pip freeze*)",
+      "Bash(pip list*)",
+      "Bash(pip freeze*)"
+    ],
+    "ask": [
+      "Bash(git push*)",
+      "Bash(git commit*)",
+      "Bash(git reset*)",
+      "Bash(git clean*)",
+      "Bash(git checkout*)",
+      "Bash(git rebase*)",
+      "Bash(rm *)",
+      "Bash(Remove-Item*)",
+      "Bash(pip install*)",
+      "Bash(pip uninstall*)",
+      "Bash(python main.py*)",
+      "Bash(*--force*)"
+    ],
+    "deny": [
+      "Bash(git push --force*)",
+      "Bash(git push -f*)"
+    ]
+  }
+}

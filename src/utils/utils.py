@@ -20,7 +20,7 @@ from __future__ import annotations
 import logging
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union, Dict
 
 import geopandas as gpd
 import numpy as np
@@ -28,6 +28,7 @@ import rasterio
 from rasterio.warp import Resampling, reproject
 
 from src.core.constants import NODATA_FLOAT
+from src.utils.geo_stats import build_pixel_area_array as _build_pixel_area_array
 
 logger = logging.getLogger("geoworld.utils")
 
@@ -292,46 +293,68 @@ def compute_pixel_area_geodesic(
     width: int,
     height: int,
 ) -> np.ndarray:
-    """
-    Compute per-pixel area (km²) using the WGS84 ellipsoid formulas.
+    """Per-pixel area (km²) array — delegates to geo_stats canonical impl.
 
-    Accounts for latitude-dependent pixel dimensions by computing
-    degree-to-km conversion coefficients at each row's midpoint latitude.
+    Deprecated:
+        Import :func:`src.utils.geo_stats.build_pixel_area_array` directly.
+        This wrapper exists only for backward compatibility with call sites
+        that import from ``src.utils.utils``.
 
     Args:
         transform: Affine transform of the raster grid.
-        width: Number of columns in the raster grid.
-        height: Number of rows in the raster grid.
+        width:     Number of columns in the raster grid.
+        height:    Number of rows in the raster grid.
 
     Returns:
-        2D float32 array of shape (height, width) with pixel areas in km².
+        Float64 array of shape (height, width) with pixel areas in km².
     """
-    res_x = abs(transform.a)
-    res_y = abs(transform.e)
+    return _build_pixel_area_array(transform, height, width)
 
-    rows = np.arange(height)
-    y_coords = transform.f + rows * transform.e
-    lat_mid = y_coords + (transform.e / 2.0)
-    lat_rad = np.radians(lat_mid)
+def collect_directory_files(
+    directory: Path,
+    patterns: Optional[list] = None,
+) -> Dict[str, str]:
+    """
+    Scan a directory and return a mapping of relative paths to absolute paths.
+    
+    Args:
+        directory: Directory to scan
+        patterns: List of glob patterns (default: ['*.tif', '*.json', '*.pkl'])
+        
+    Returns:
+        Dict mapping relative_path -> absolute_path
+    """
+    directory = Path(directory)
+    if not directory.exists():
+        return {}
+    
+    if patterns is None:
+        patterns = ['*.tif', '*.json', '*.pkl', '*.csv', '*.txt']
+    
+    files = {}
+    for pattern in patterns:
+        for file_path in directory.rglob(pattern):
+            if file_path.is_file():
+                rel_path = str(file_path.relative_to(directory))
+                files[rel_path] = str(file_path)
+    
+    return files
 
-    # WGS84 ellipsoid: km per degree of latitude and longitude
-    lat_km = (
-        111132.92
-        - 559.82 * np.cos(2 * lat_rad)
-        + 1.175 * np.cos(4 * lat_rad)
-        - 0.0023 * np.cos(6 * lat_rad)
-    ) / 1000.0
 
-    lon_km = (
-        111412.84 * np.cos(lat_rad)
-        - 93.50 * np.cos(3 * lat_rad)
-        + 0.118 * np.cos(5 * lat_rad)
-    ) / 1000.0
-
-    dx_km = res_x * lon_km
-    dy_km = res_y * lat_km
-
-    return np.tile(
-        (dx_km * dy_km).reshape(-1, 1),
-        (1, width)
-    ).astype(np.float32)
+def ensure_output_dirs(base_dir: Path, subdirs: list) -> Dict[str, Path]:
+    """
+    Create multiple subdirectories safely.
+    
+    Args:
+        base_dir: Base output directory
+        subdirs: List of subdirectory names to create
+        
+    Returns:
+        Dict mapping subfolder_name -> Path
+    """
+    resolved = {}
+    for sub in subdirs:
+        p = Path(base_dir) / sub
+        p.mkdir(parents=True, exist_ok=True)
+        resolved[sub] = p
+    return resolved

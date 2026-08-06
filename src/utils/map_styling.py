@@ -1140,6 +1140,192 @@ class GeoWorldStyler:
         )
         cbar.ax.tick_params(labelsize=12.5)
         return cbar
+    
+    # map_styling.py — adição após add_colorbar(), antes de create_comparison_via_pil()
+
+    # ══════════════════════════════════════════════
+    # RENDER RASTER MAP (DUP_22 — unified plot choreography)
+    # ══════════════════════════════════════════════
+
+    def render_raster_map(
+        self,
+        # ── Raster data ──
+        score: np.ndarray,
+        transform: Any,
+        crs: str,
+        # ── Geographic context ──
+        mainland_gdf: gpd.GeoDataFrame,
+        context_gdf: Optional[gpd.GeoDataFrame] = None,
+        # ── Raster visualisation ──
+        cmap_name: str = "viridis",
+        vmin: float = 0.0,
+        vmax: float = 1.0,
+        exclude_mask: Optional[np.ndarray] = None,
+        exclude_color: Tuple[int, int, int, int] = (170, 170, 170, 191),
+        cmap_reverse: bool = False,
+        cmap_vmin_frac: float = 0.08,
+        cmap_vmax_frac: float = 1.0,
+        # ── Titles ──
+        title_main: str = "",
+        title_sub: str = "",
+        # ── Footer ──
+        stats_text: str = "",
+        params_text: str = "",
+        # ── Colorbar ──
+        cbar_label: str = "Score",
+        # ── Admin labels ──
+        admin_gdf: Optional[gpd.GeoDataFrame] = None,
+        # ── Output ──
+        out_path: Optional[Path] = None,
+        right_in_override: Optional[float] = None,
+        border_linewidth: float = 1.5,
+    ) -> plt.Figure:
+        """
+        Render a complete raster map with basemap, colorbar, titles, footer.
+
+        Encapsulates the full plot choreography that was duplicated across
+        suitability_builder.py, potential_calculator.py, and other modules:
+
+            create_figure → draw_basemap → (exclude overlay) → imshow →
+            add_decorations → add_colorbar → draw_admin_labels →
+            add_standard_title → add_standard_footer → save
+
+        DUP_22 (fix): This method unifies raster map rendering. Modules that
+        need to plot a raster with a basemap should use this method instead
+        of orchestrating the atomic methods manually.
+
+        Args:
+            score:            2D float32 score array.
+            transform:        Affine geotransform (rasterio.Affine or compatible).
+            crs:              CRS string (e.g. "EPSG:4326").
+            mainland_gdf:     GeoDataFrame of the main country.
+            context_gdf:      Optional neighbouring countries GeoDataFrame.
+            cmap_name:        Colormap name (e.g. "YlOrRd", "Blues", "YlGn").
+            vmin/vmax:        Colormap limits.
+            exclude_mask:     Boolean mask for exclusion overlay (grey pixels).
+            exclude_color:    RGBA tuple for excluded pixels.
+            cmap_reverse:     If True, reverse the colormap.
+            cmap_vmin_frac:   Start fraction of colormap (0–1).
+            cmap_vmax_frac:   End fraction of colormap (0–1).
+            title_main:       Primary title.
+            title_sub:        Subtitle.
+            stats_text:       Statistics string for the footer.
+            params_text:      Parameters string for the footer.
+            cbar_label:       Colorbar label.
+            admin_gdf:        Administrative boundaries GeoDataFrame.
+            out_path:         Output path for PNG. If None, figure is not saved.
+            right_in_override: Override for right margin (inches).
+            border_linewidth: Line width for country border.
+
+        Returns:
+            Matplotlib Figure (closed if *out_path* was provided).
+        """
+        h, w = score.shape
+
+        # ── Compute geographic extent ─────────────────────────────────
+        try:
+            # rasterio.Affine or plain tuple/list
+            if hasattr(transform, 'c'):
+                r_minx = transform.c
+                r_maxy = transform.f
+                r_a = transform.a
+                r_e = transform.e
+            else:
+                # Assume 6-tuple (a, b, c, d, e, f)
+                r_minx = transform[2]
+                r_maxy = transform[5]
+                r_a = transform[0]
+                r_e = transform[4]
+
+            extent = [
+                r_minx,
+                r_minx + r_a * w,
+                r_maxy + r_e * h,
+                r_maxy,
+            ]
+        except Exception:
+            extent = [0.0, float(w), 0.0, float(h)]
+
+        # ── Bounds from mainland_gdf ──────────────────────────────────
+        v_minx, v_miny, v_maxx, v_maxy = mainland_gdf.total_bounds
+
+        # ── Downsample if raster exceeds max display pixels ────────────
+        max_display_px = self.layout.get("max_raster_display_px", 1200)
+        if max(h, w) > max_display_px and _PIL_Image is not None:
+            scale = max_display_px / max(h, w)
+            score_pil = _PIL_Image.fromarray(
+                np.where(np.isfinite(score), score, -9999.0).astype(np.float32)
+            ).resize(
+                (max(1, int(w * scale)), max(1, int(h * scale))),
+                _PIL_Image.NEAREST,
+            )
+            score = np.array(score_pil, dtype=np.float32)
+            score[score == -9999.0] = np.nan
+
+        # ── Create figure ─────────────────────────────────────────────
+        fig, ax = self.create_figure(
+            v_minx, v_maxx, v_miny, v_maxy,
+            right_in_override=right_in_override,
+        )
+        self.draw_basemap(
+            ax, crs, mainland_gdf, context_gdf, admin_gdf,
+            extent=extent, border_linewidth=border_linewidth,
+        )
+
+        # ── Exclusion overlay (grey) ──────────────────────────────────
+        if exclude_mask is not None:
+            excl_rgba = np.zeros((*score.shape, 4), dtype=np.uint8)
+            excl_rgba[exclude_mask, :3] = exclude_color[:3]
+            excl_rgba[exclude_mask, 3] = exclude_color[3]
+            ax.imshow(
+                excl_rgba, extent=extent, origin="upper",
+                zorder=2, interpolation="nearest", aspect="auto",
+            )
+
+        # ── Colormap ──────────────────────────────────────────────────
+        cmap = self.make_cmap(
+            cmap_name,
+            reverse=cmap_reverse,
+            bad="none",
+            under="#AAAAAA",
+            vmin_frac=cmap_vmin_frac,
+            vmax_frac=cmap_vmax_frac,
+        )
+
+        # ── Raster imshow ─────────────────────────────────────────────
+        im = ax.imshow(
+            np.where(np.isfinite(score), score, np.nan),
+            extent=extent, origin="upper", cmap=cmap,
+            vmin=vmin, vmax=vmax, zorder=3,
+            interpolation="bilinear", aspect="auto",
+        )
+
+        # ── Decorations ───────────────────────────────────────────────
+        self.add_decorations(ax, v_minx, v_maxx, v_miny, v_maxy)
+        self.add_colorbar(fig, im, cbar_label, extend="neither")
+
+        if admin_gdf is not None:
+            self.draw_admin_labels(
+                ax, admin_gdf, v_minx, v_maxx, v_miny, v_maxy,
+            )
+
+        # ── Titles ────────────────────────────────────────────────────
+        if title_main:
+            self.add_standard_title(fig, title_main=title_main, title_sub=title_sub)
+
+        # ── Footer ────────────────────────────────────────────────────
+        self.add_standard_footer(
+            fig,
+            params_text=params_text,
+            stats_text=stats_text,
+            crs_metadata=f"CRS: {crs or 'EPSG:4326'}",
+        )
+
+        # ── Save ──────────────────────────────────────────────────────
+        if out_path is not None:
+            self.save(fig, out_path)
+
+        return fig
 
     # ══════════════════════════════════════════════
     # TRIPLE COMPARISON VIA PIL

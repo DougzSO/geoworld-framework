@@ -4,17 +4,25 @@ config_loader.py
 Centralized configuration loader for the GeoWorld Framework.
 
 Reads ``settings.yaml`` (infrastructure / operational defaults) and
-``parameters.json`` (per-country scientific parameters) and exposes a
-validated, flat dictionary for each country via :meth:`get_country`.
+``parameters.json`` (per-country scientific parameters).  Returns a
+validated, typed ``CountryParams`` contract for each country.
 
-Credentials are sourced exclusively from ``.env`` via ``python-dotenv``.
+Credentials are sourced exclusively from ``.env`` via python-dotenv.
+
+Configuration source precedence (highest → lowest)
+---------------------------------------------------
+  1. parameters.json  — country-specific block
+  2. parameters.json  — abatement_defaults.default  (abatement only)
+  3. settings.yaml    — potential.technologies       (tech fallbacks)
+  4. constants.py     — DEFAULT_TECH_PARAMS          (last resort)
 
 Public API
 ----------
-    cfg = ConfigLoader(Path("."))
-    info   = cfg.get_country_by_name("Portugal")
-    params = cfg.get_country("PRT")
-    ls     = cfg.land_suitability
+  cfg = ConfigLoader(Path("."))
+  info   = cfg.get_country_by_name("Portugal")   # → {"country_code", "country_name"}
+  params = cfg.get_country("PRT")                 # → CountryParams
+  ls     = cfg.land_suitability                   # → Dict[int, Dict[str, float]]
+  lcoe   = cfg.get_lcoe_params("PRT")             # → {"solar": LCOETechParams, ...}
 """
 
 from __future__ import annotations
@@ -28,6 +36,16 @@ from typing import Any, Dict, Optional, Tuple
 import yaml
 from dotenv import load_dotenv
 
+from src.core.schemas import (
+    AbatementParams,
+    BiomassParams,
+    CountryParams,
+    LCOETechParams,
+    OWAParams,
+    SolarParams,
+    TechParams,
+)
+
 logger = logging.getLogger("geoworld.core.ConfigLoader")
 
 
@@ -35,106 +53,21 @@ logger = logging.getLogger("geoworld.core.ConfigLoader")
 # Exception
 # ===========================================================================
 
+
 class ConfigError(Exception):
     """Raised when a required parameter is missing or fails validation."""
 
 
 # ===========================================================================
-# Validation helpers
+# Internal helpers
 # ===========================================================================
-
-_LUF_LIMITS = {"solar": 0.25, "wind": 0.10, "biomass": 0.50}
-
-
-def _validate_land_use_factor(
-    value: float,
-    tech: str,
-    country: str,
-) -> None:
-    """
-    Validate that land-use factor stays within physically plausible bounds.
-    
-    Args:
-        value: Land-use factor to validate
-        tech: Technology name (solar, wind, biomass)
-        country: Country code for error reporting
-        
-    Raises:
-        ConfigError: If value exceeds technology-specific maximum
-    """
-    cap = _LUF_LIMITS.get(tech, 0.50)
-    if value > cap:
-        raise ConfigError(
-            f"[{country}] {tech}_land_use_factor={value} exceeds "
-            f"maximum {cap}. Check parameters.json."
-        )
-
-
-def _validate_owa_weights(
-    weights: Tuple[float, ...],
-    scenario: str,
-    country: str,
-) -> None:
-    """
-    Validate OWA weights sum to 1.0 and are in non-increasing order.
-    
-    Args:
-        weights: Tuple of OWA weight values
-        scenario: Scenario name for error reporting
-        country: Country code for error reporting
-        
-    Raises:
-        ConfigError: If weights don't sum to 1.0 or are not non-increasing
-    """
-    total = sum(weights)
-    if abs(total - 1.0) > 0.01:
-        raise ConfigError(
-            f"[{country}/OWA/{scenario}] Weights sum to {total:.3f}, "
-            f"expected 1.0."
-        )
-    if not all(weights[i] >= weights[i + 1] for i in range(len(weights) - 1)):
-        raise ConfigError(
-            f"[{country}/OWA/{scenario}] Weights must be non-increasing. "
-            f"Got: {weights}"
-        )
-
-
-def _validate_biomass_yields(
-    yields: Dict[int, float],
-    country: str
-) -> None:
-    """
-    Validate that wetland and mangrove classes have zero biomass yield.
-    
-    ESA classes 90 (wetland) and 95 (mangroves) must have zero yield
-    as these ecosystems should not be exploited for biomass.
-    
-    Args:
-        yields: Dictionary mapping ESA class to yield (t/ha/yr)
-        country: Country code for error reporting
-        
-    Raises:
-        ConfigError: If wetland or mangrove classes have non-zero yield
-    """
-    for cls, name in {90: "Herbaceous wetland", 95: "Mangroves"}.items():
-        val = yields.get(cls, 0.0)
-        if val > 0:
-            raise ConfigError(
-                f"[{country}] Biomass yield for class {cls} ({name}) = "
-                f"{val} t/ha/yr. Must be 0.0."
-            )
 
 
 def _deep_merge(base: dict, override: dict) -> dict:
     """
-    Recursively merge override dictionary into base dictionary.
-    
-    Args:
-        base: Base dictionary
-        override: Dictionary with values to override/add
-        
-    Returns:
-        New dictionary with merged values (does not modify inputs)
+    Recursively merge *override* into *base* without mutating either.
+
+    Keys starting with ``_`` in *override* are ignored (internal markers).
     """
     result = dict(base)
     for k, v in override.items():
@@ -151,31 +84,34 @@ def _deep_merge(base: dict, override: dict) -> dict:
 # ConfigLoader
 # ===========================================================================
 
+
 class ConfigLoader:
     """
     Single source of truth for all pipeline configuration.
 
     Loads ``settings.yaml`` (infrastructure) and ``parameters.json``
-    (per-country science) and returns a flat parameter dictionary for
-    each country that is consumed by all downstream processors.
-    
-    Attributes:
-        base_dir: Root directory of the framework
+    (per-country science) and returns a typed ``CountryParams`` for each
+    country via :meth:`get_country`.
+
+    Attributes
+    ----------
+    base_dir  Root directory of the framework (contains ``configs/``).
     """
 
-    def __init__(self, base_dir: Path):
+    def __init__(self, base_dir: Path) -> None:
         """
-        Initialize configuration loader.
-        
+        Initialize the loader and read both configuration files.
+
         Args:
-            base_dir: Root directory containing configs/ folder
-            
+            base_dir: Directory containing the ``configs/`` folder.
+
         Raises:
-            FileNotFoundError: If settings.yaml or parameters.json missing
+            FileNotFoundError: If ``settings.yaml`` or ``parameters.json``
+                               are absent.
         """
         self.base_dir = Path(base_dir)
         self._settings: Dict[str, Any] = {}
-        self._params: Dict[str, Any] = {}
+        self._params:   Dict[str, Any] = {}
 
         self._yaml_path = self.base_dir / "configs" / "settings.yaml"
         self._json_path = self.base_dir / "configs" / "parameters.json"
@@ -183,15 +119,13 @@ class ConfigLoader:
         load_dotenv(self.base_dir / ".env")
         self._load_yaml()
         self._load_json()
-        logger.info("ConfigLoader initialized.")
+        logger.info("ConfigLoader initialized from %s", self.base_dir)
+
+    # ------------------------------------------------------------------
+    # File loading
+    # ------------------------------------------------------------------
 
     def _load_yaml(self) -> None:
-        """
-        Load settings.yaml from configs directory.
-        
-        Raises:
-            FileNotFoundError: If settings.yaml does not exist
-        """
         if not self._yaml_path.exists():
             raise FileNotFoundError(
                 f"settings.yaml not found: {self._yaml_path}"
@@ -201,12 +135,6 @@ class ConfigLoader:
         logger.debug("settings.yaml loaded.")
 
     def _load_json(self) -> None:
-        """
-        Load parameters.json from configs directory.
-        
-        Raises:
-            FileNotFoundError: If parameters.json does not exist
-        """
         if not self._json_path.exists():
             raise FileNotFoundError(
                 f"parameters.json not found: {self._json_path}"
@@ -216,28 +144,29 @@ class ConfigLoader:
         n = len(self._params.get("countries", {}))
         logger.debug("parameters.json loaded — %d countries.", n)
 
-    def get_country_by_name(self, identifier: str) -> Dict[str, Any]:
+    # ------------------------------------------------------------------
+    # Country resolution
+    # ------------------------------------------------------------------
+
+    def get_country_by_name(self, identifier: str) -> Dict[str, str]:
         """
-        Resolve a country name or ISO code to metadata dictionary.
-        
+        Resolve a country name or ISO-3166 code to a metadata dict.
+
         Args:
-            identifier: Country name (case-insensitive) or ISO-3166 code
-            
+            identifier: Case-insensitive country name or ISO-3 code.
+
         Returns:
-            Dictionary with keys 'country_code' and 'country_name'
-            
+            ``{"country_code": str, "country_name": str}``
+
         Raises:
-            ConfigError: If no match is found in parameters.json
+            ConfigError: If no match is found.
         """
         countries = self._params.get("countries", {})
-        ident_up = identifier.upper().strip()
-        ident_low = identifier.lower().strip()
+        upper = identifier.upper().strip()
+        lower = identifier.lower().strip()
 
         for code, data in countries.items():
-            if (
-                code.upper() == ident_up
-                or data.get("name", "").lower() == ident_low
-            ):
+            if code.upper() == upper or data.get("name", "").lower() == lower:
                 return {
                     "country_code": code.upper(),
                     "country_name": data["name"],
@@ -245,194 +174,281 @@ class ConfigLoader:
 
         raise ConfigError(
             f"Country '{identifier}' not found. "
-            f"Available: {list(countries.keys())}"
+            f"Available: {sorted(countries)}"
         )
 
-    def get_country(self, code: str) -> Dict[str, Any]:
-        """
-        Return a validated, flat parameter dictionary for a country.
+    # ------------------------------------------------------------------
+    # Primary builder
+    # ------------------------------------------------------------------
 
-        The flat key scheme is kept stable so that downstream processors
-        (CriteriaBuilder, SuitabilityBuilder, PotentialCalculator,
-        LCOECalculator, GHGAbatementCalculator) need no adaptation.
-        
+    def get_country(self, code: str) -> CountryParams:
+        """
+        Return a validated, typed ``CountryParams`` for the given code.
+
+        Alias resolution is performed here (once) so downstream modules
+        never need to know raw JSON key names:
+          - biomass ``collection_factor``  → ``land_use_factor``
+          - wind ``capacity_density_mw_km2`` → ``power_density_mw_km2``
+
         Args:
-            code: ISO-3166-alpha-3 country code
-            
+            code: ISO-3166-alpha-3 country code.
+
         Returns:
-            Flat dictionary with all validated parameters
-            
+            Immutable ``CountryParams`` instance.
+
         Raises:
-            ConfigError: If country not found or validation fails
+            ConfigError: If the country is absent or data fails validation.
         """
         code = code.upper().strip()
         countries = self._params.get("countries", {})
         if code not in countries:
             raise ConfigError(
-                f"Country '{code}' not found. "
-                f"Available: {list(countries.keys())}"
+                f"Country '{code}' not found. Available: {sorted(countries)}"
             )
 
-        c = countries[code]
-        s, w, b = c["solar"], c["wind"], c["biomass"]
-        owa_raw = c["owa"]
+        c        = countries[code]
+        raw_sol  = c["solar"]
+        raw_wind = c["wind"]
+        raw_bio  = c["biomass"]
+        raw_owa  = c["owa"]
 
-        # Validation
-        _validate_land_use_factor(float(s["land_use_factor"]), "solar", code)
-        _validate_land_use_factor(float(w["land_use_factor"]), "wind", code)
-        _validate_land_use_factor(
-            float(b["collection_factor"]), "biomass", code
+        solar   = self._build_solar(raw_sol)
+        wind    = self._build_wind(raw_wind)
+        biomass = self._build_biomass(raw_bio)
+        owa     = self._build_owa(raw_owa, code)
+
+        lcoe_solar, lcoe_wind, lcoe_biomass = self._build_lcoe_trio(
+            code, c.get("lcoe", {})
+        )
+        abatement = self._build_abatement(c.get("abatement", {}))
+        criteria  = self._build_criteria_defaults()
+
+        pipeline_cfg = self._settings.get("pipeline", {})
+        use_mainland = bool(
+            c.get("use_mainland_only",
+                  pipeline_cfg.get("use_mainland_only", True))
         )
 
-        owa: Dict[str, Tuple[float, ...]] = {}
-        for scenario in ("optimistic", "balanced", "conservative"):
-            weights = tuple(float(x) for x in owa_raw[scenario])
-            _validate_owa_weights(weights, scenario, code)
-            owa[scenario] = weights
+        params = CountryParams(
+            country_code=code,
+            country_name=c["name"],
+            solar=solar,
+            wind=wind,
+            biomass=biomass,
+            owa=owa,
+            lcoe_solar=lcoe_solar,
+            lcoe_wind=lcoe_wind,
+            lcoe_biomass=lcoe_biomass,
+            abatement=abatement,
+            slope_threshold_deg=int(c["slope_threshold_deg"]),
+            protected_as_exclusion=bool(c.get("protected_as_exclusion", True)),
+            forest_as_exclusion=bool(c.get("forest_as_exclusion", True)),
+            use_mainland_only=use_mainland,
+            river_max_dist_km=criteria["river_max_dist_km"],
+            river_safety_buffer_km=criteria["river_safety_buffer_km"],
+            river_max_dist_biomass_km=criteria["river_max_dist_biomass_km"],
+            road_max_dist_km=criteria["road_max_dist_km"],
+            pop_density_threshold=criteria["pop_density_threshold"],
+            land_suitability=self.land_suitability,
+        )
 
-        yields = {
-            int(k): float(v) for k, v in b["yield_by_land_cover"].items()
+        self._log_summary(params)
+        return params
+
+    # ------------------------------------------------------------------
+    # Sub-builders (private)
+    # ------------------------------------------------------------------
+
+    def _build_solar(self, raw: Dict[str, Any]) -> SolarParams:
+        """Build SolarParams from raw JSON block, applying CF from nested key."""
+        return SolarParams(
+            land_use_factor=float(raw["land_use_factor"]),
+            power_density_mw_km2=float(raw["power_density_mw_km2"]),
+            threshold=float(raw["threshold"]),
+            capacity_factor=float(raw.get("capacity_factor", 0.0)),
+            pvout_weight=float(raw.get("pvout_weight", 1.0)),
+            ghi_weight=float(raw.get("ghi_weight", 0.0)),
+            dni_weight=float(raw.get("dni_weight", 0.0)),
+        )
+
+    def _build_wind(self, raw: Dict[str, Any]) -> TechParams:
+        """
+        Build wind TechParams resolving the capacity_density alias.
+
+        JSON uses ``capacity_density_mw_km2``; the canonical pipeline
+        name is ``power_density_mw_km2`` (consistent with solar/biomass).
+        """
+        density = float(
+            raw.get("capacity_density_mw_km2",
+                    raw.get("power_density_mw_km2", 6.5))
+        )
+        return TechParams(
+            land_use_factor=float(raw["land_use_factor"]),
+            power_density_mw_km2=density,
+            threshold=float(raw["threshold"]),
+            capacity_factor=float(raw.get("capacity_factor", 0.0)),
+        )
+
+    def _build_biomass(self, raw: Dict[str, Any]) -> BiomassParams:
+        """
+        Build BiomassParams resolving the collection_factor alias.
+
+        JSON uses ``collection_factor``; it maps to both
+        ``land_use_factor`` (TechParams base) and ``collection_factor``
+        (BiomassParams explicit field) so both access patterns work.
+        """
+        luf = float(
+            raw.get("collection_factor",
+                    raw.get("land_use_factor", 0.30))
+        )
+        yields: Dict[str, float] = {
+            str(k): float(v)
+            for k, v in raw.get("yield_by_land_cover", {}).items()
         }
-        _validate_biomass_yields(yields, code)
-
-        # Build flat result
-        result: Dict[str, Any] = {
-            # Identity
-            "country_code": code,
-            "country_name": c["name"],
-
-            # Solar
-            "solar_land_use_factor": float(s["land_use_factor"]),
-            "solar_pvout_weight": float(s.get("pvout_weight", 1.0)),
-            "solar_ghi_weight": float(s.get("ghi_weight", 0.0)),
-            "solar_dni_weight": float(s.get("dni_weight", 0.0)),
-            "solar_threshold": float(s["threshold"]),
-            "solar_power_density_mw_km2": float(s["power_density_mw_km2"]),
-
-            # Wind
-            "wind_land_use_factor": float(w["land_use_factor"]),
-            "wind_capacity_density_mw_km2": float(
-                w["capacity_density_mw_km2"]
-            ),
-            "wind_threshold": float(w["threshold"]),
-
-            # Biomass
-            "biomass_collection_factor": float(b["collection_factor"]),
-            "biomass_power_density_mw_km2": float(
-                b["power_density_mw_km2"]
-            ),
-            "biomass_threshold": float(b["threshold"]),
-            "biomass_yield_by_land_cover": b["yield_by_land_cover"],
-
-            # Terrain
-            "slope_threshold_deg": int(c["slope_threshold_deg"]),
-            "protected_as_exclusion": bool(
-                c.get("protected_as_exclusion", True)
-            ),
-            "forest_as_exclusion": bool(c.get("forest_as_exclusion", True)),
-
-            # OWA — string-serialized for backward compatibility
-            "owa_default_scenario": owa_raw["default_scenario"],
-            "owa_scenario_optimistic": ",".join(
-                str(x) for x in owa_raw["optimistic"]
-            ),
-            "owa_scenario_balanced": ",".join(
-                str(x) for x in owa_raw["balanced"]
-            ),
-            "owa_scenario_conservative": ",".join(
-                str(x) for x in owa_raw["conservative"]
-            ),
-
-            # Parsed objects
-            "_owa_weights": owa,
-            "_biomass_yields": yields,
-            "_land_suitability": self.land_suitability,
-        }
-
-        # LCOE (per-country overrides)
-        result["lcoe_country_params"] = c.get("lcoe", {})
-
-        # Criteria defaults from settings.yaml
-        criteria = self._settings.get("criteria_defaults", {})
-        rivers = criteria.get("rivers", {})
-        roads = criteria.get("roads", {})
-        pop = criteria.get("population", {})
-
-        result["river_max_dist_km"] = float(rivers.get("max_dist_km", 5.0))
-        result["river_safety_buffer_km"] = float(
-            rivers.get("safety_buffer_km", 0.5)
-        )
-        result["river_max_dist_biomass_km"] = float(
-            rivers.get("max_dist_biomass_km", 30.0)
-        )
-        result["road_max_dist_km"] = float(roads.get("max_dist_km", 15.0))
-        result["pop_density_threshold"] = float(
-            pop.get("density_threshold", 300.0)
+        return BiomassParams(
+            land_use_factor=luf,
+            power_density_mw_km2=float(raw["power_density_mw_km2"]),
+            threshold=float(raw["threshold"]),
+            capacity_factor=float(raw.get("capacity_factor", 0.0)),
+            collection_factor=luf,
+            yield_by_land_cover=yields,
         )
 
-        # Abatement (deep merge: defaults ← country)
-        abatement_defaults = (
+    def _build_owa(self, raw: Dict[str, Any], code: str) -> OWAParams:
+        """Build and validate OWAParams from raw JSON block."""
+        try:
+            return OWAParams(
+                default_scenario=raw.get("default_scenario", "balanced"),
+                optimistic=tuple(float(x) for x in raw["optimistic"]),
+                balanced=tuple(float(x) for x in raw["balanced"]),
+                conservative=tuple(float(x) for x in raw["conservative"]),
+            )
+        except Exception as exc:
+            raise ConfigError(
+                f"[{code}] Invalid OWA configuration: {exc}"
+            ) from exc
+
+    def _build_lcoe_trio(
+        self,
+        code: str,
+        country_lcoe: Dict[str, Any],
+    ) -> Tuple[LCOETechParams, LCOETechParams, LCOETechParams]:
+        """
+        Build LCOE params for all three technologies.
+
+        Merge order: settings.yaml defaults ← country-specific overrides.
+        """
+        yaml_base = self._settings.get("lcoe", {}).get("technologies", {})
+
+        def _merge(tech: str) -> LCOETechParams:
+            base = dict(yaml_base.get(tech, {}))
+            patch = {
+                k: v
+                for k, v in country_lcoe.get(tech, {}).items()
+                if not k.startswith("_")
+            }
+            base.update(patch)
+            try:
+                return LCOETechParams(
+                    capex_usd_kw=float(base["capex_usd_kw"]),
+                    opex_usd_kw_yr=float(base["opex_usd_kw_yr"]),
+                    lifetime_years=int(base["lifetime_years"]),
+                    discount_rate=float(base["discount_rate"]),
+                )
+            except (KeyError, TypeError) as exc:
+                raise ConfigError(
+                    f"[{code}] Missing LCOE parameter for {tech}: {exc}"
+                ) from exc
+
+        return _merge("solar"), _merge("wind"), _merge("biomass")
+
+    def _build_abatement(
+        self, country_abatement: Dict[str, Any]
+    ) -> AbatementParams:
+        """
+        Build AbatementParams by deep-merging global defaults with
+        country-specific overrides.
+        """
+        defaults = (
             self._params.get("abatement_defaults", {}).get("default", {})
         )
-        country_abatement = c.get("abatement", {})
-        merged = _deep_merge(abatement_defaults, country_abatement)
+        merged = _deep_merge(defaults, country_abatement)
 
-        result["abatement_carbon_price_usd_tco2e"] = float(
-            merged.get("carbon_price_usd_tco2e", 75.0)
-        )
-        result["abatement_penetration_factor"] = float(
-            merged.get("penetration_factor", 0.6)
-        )
-        result["abatement_lcoe_threshold_usd_mwh"] = float(
-            merged.get("lcoe_threshold_usd_mwh", 60.0)
-        )
-        result["abatement_thermal_types"] = merged.get(
-            "thermal_types", ["coal", "gas", "oil"]
-        )
-        result["abatement_emission_factors"] = merged.get(
-            "thermal_emission_factors_tco2e_gwh",
-            {"coal": 820.0, "gas": 490.0, "oil": 750.0},
-        )
-        result["abatement_thermal_cf"] = merged.get(
-            "thermal_cf", {"coal": 0.55, "gas": 0.45, "oil": 0.50}
-        )
-        result["abatement_thermal_marginal_cost"] = merged.get(
-            "thermal_marginal_cost",
-            {"coal": 35.0, "gas": 48.0, "oil": 90.0}
-        )
-        result["abatement_thermal_capacity_mw"] = merged.get(
-            "thermal_capacity_mw", {}
+        return AbatementParams(
+            carbon_price_usd_tco2e=float(
+                merged.get("carbon_price_usd_tco2e", 75.0)
+            ),
+            penetration_factor=float(
+                merged.get("penetration_factor", 0.60)
+            ),
+            existing_renewable_share=float(
+                merged.get("existing_renewable_share", 0.0)
+            ),
+            grid_total_gwh=float(
+                merged.get("grid_total_gwh", 0.0)
+            ),
+            lcoe_threshold_usd_mwh=float(
+                merged.get("lcoe_threshold_usd_mwh", 60.0)
+            ),
+            thermal_types=list(
+                merged.get("thermal_types", ["coal", "gas", "oil"])
+            ),
+            emission_factors=dict(
+                merged.get(
+                    "thermal_emission_factors_tco2e_gwh",
+                    {"coal": 820.0, "gas": 490.0, "oil": 750.0},
+                )
+            ),
+            thermal_cf=dict(
+                merged.get(
+                    "thermal_cf",
+                    {"coal": 0.55, "gas": 0.45, "oil": 0.35},
+                )
+            ),
+            thermal_marginal_cost=dict(
+                merged.get(
+                    "thermal_marginal_cost",
+                    {"coal": 35.0, "gas": 48.0, "oil": 90.0},
+                )
+            ),
+            thermal_capacity_mw=dict(
+                merged.get("thermal_capacity_mw", {})
+            ),
         )
 
-        # Geometry
-        pipeline_cfg = self._settings.get("pipeline", {})
-        global_mainland = bool(pipeline_cfg.get("use_mainland_only", True))
-        result["use_mainland_only"] = bool(
-            c.get("use_mainland_only", global_mainland)
-        )
+    def _build_criteria_defaults(self) -> Dict[str, float]:
+        """Extract infrastructure-level criteria defaults from settings.yaml."""
+        criteria = self._settings.get("criteria_defaults", {})
+        rivers = criteria.get("rivers", {})
+        roads  = criteria.get("roads", {})
+        pop    = criteria.get("population", {})
+        return {
+            "river_max_dist_km":         float(rivers.get("max_dist_km", 5.0)),
+            "river_safety_buffer_km":    float(rivers.get("safety_buffer_km", 0.5)),
+            "river_max_dist_biomass_km": float(rivers.get("max_dist_biomass_km", 30.0)),
+            "road_max_dist_km":          float(roads.get("max_dist_km", 15.0)),
+            "pop_density_threshold":     float(pop.get("density_threshold", 300.0)),
+        }
 
-        # Capacity factors
-        for tech in ("solar", "wind", "biomass"):
-            result[f"{tech}_capacity_factor"] = self.get_capacity_factor(
-                code, tech
-            )
-
-        self._log_summary(code, result, owa)
-        return result
+    # ------------------------------------------------------------------
+    # Properties — read-only access to settings sections
+    # ------------------------------------------------------------------
 
     @property
     def land_suitability(self) -> Dict[int, Dict[str, float]]:
         """
-        Land-cover suitability scores keyed by ESA WorldCover class.
-        
-        Returns:
-            Dictionary mapping ESA class ID to technology suitability scores
+        ESA WorldCover suitability scores keyed by class ID.
+
+        Returns
+        -------
+        Dict[int, Dict[str, float]]
+            ``{esa_class: {"solar": float, "wind": float, "biomass": float}}``
         """
         raw = self._params.get("land_suitability", {})
         return {
             int(k): {
-                "solar": float(v["solar"]),
-                "wind": float(v["wind"]),
+                "solar":   float(v["solar"]),
+                "wind":    float(v["wind"]),
                 "biomass": float(v["biomass"]),
             }
             for k, v in raw.items()
@@ -440,12 +456,7 @@ class ConfigLoader:
 
     @property
     def raw_path(self) -> Path:
-        """
-        Path to raw data directory.
-        
-        Returns:
-            Path from GEOWORLD_RAW_DATA env var, or default from settings
-        """
+        """Raw data directory (env ``GEOWORLD_RAW_DATA`` → settings.yaml → default)."""
         override = os.getenv("GEOWORLD_RAW_DATA")
         if override:
             return Path(override)
@@ -455,24 +466,14 @@ class ConfigLoader:
 
     @property
     def processed_path(self) -> Path:
-        """
-        Path to processed data directory.
-        
-        Returns:
-            Path from settings.yaml or default 'data/processed'
-        """
+        """Processed data directory from settings.yaml."""
         return self.base_dir / self._settings.get("paths", {}).get(
             "processed_data", "data/processed"
         )
 
     @property
     def logs_path(self) -> Path:
-        """
-        Path to logs directory, created if it doesn't exist.
-        
-        Returns:
-            Path from settings.yaml or default 'outputs/logs'
-        """
+        """Logs directory — created on first access."""
         p = self.base_dir / self._settings.get("paths", {}).get(
             "logs_dir", "outputs/logs"
         )
@@ -481,32 +482,17 @@ class ConfigLoader:
 
     @property
     def system(self) -> Dict[str, Any]:
-        """
-        Full settings.yaml dictionary.
-        
-        Returns:
-            Complete system settings
-        """
+        """Full settings.yaml dictionary."""
         return self._settings
 
     @property
     def geospatial(self) -> Dict[str, Any]:
-        """
-        Geospatial configuration section from settings.yaml.
-        
-        Returns:
-            Geospatial settings dictionary
-        """
+        """``geospatial`` section of settings.yaml."""
         return self._settings.get("geospatial", {})
 
     @property
     def credentials(self) -> Dict[str, str]:
-        """
-        API credentials loaded from environment variables.
-        
-        Returns:
-            Dictionary with credential keys and values
-        """
+        """API credentials from environment variables."""
         return {
             "terrascope_username": os.getenv("TERRASCOPE_USERNAME", ""),
             "terrascope_password": os.getenv("TERRASCOPE_PASSWORD", ""),
@@ -514,129 +500,97 @@ class ConfigLoader:
 
     @property
     def visualization(self) -> Dict[str, Any]:
-        """
-        Visualization configuration from settings.yaml.
-        
-        Returns:
-            Visualization settings dictionary
-        """
+        """``visualization`` section of settings.yaml."""
         return self._settings.get("visualization", {})
 
-    def get_lcoe_params(self, code: str) -> Dict[str, Dict]:
-        """
-        Get merged LCOE parameters (settings.yaml ← parameters.json).
+    # ------------------------------------------------------------------
+    # Convenience accessors
+    # ------------------------------------------------------------------
 
-        Keys prefixed with ``_`` in the country override are stripped.
-        
+    def get_lcoe_params(self, code: str) -> Dict[str, LCOETechParams]:
+        """
+        Return merged LCOETechParams for all technologies.
+
         Args:
-            code: ISO-3166-alpha-3 country code
-            
+            code: ISO-3166-alpha-3 country code.
+
         Returns:
-            Dictionary with LCOE parameters per technology
+            ``{"solar": LCOETechParams, "wind": LCOETechParams,
+               "biomass": LCOETechParams}``
         """
         code = code.upper().strip()
-        yaml_lcoe = self._settings.get("lcoe", {}).get("technologies", {})
         country_lcoe = (
             self._params.get("countries", {}).get(code, {}).get("lcoe", {})
         )
-        merged: Dict[str, Dict] = {}
-        for tech in ("solar", "wind", "biomass"):
-            base = dict(yaml_lcoe.get(tech, {}))
-            patch = {
-                k: v
-                for k, v in country_lcoe.get(tech, {}).items()
-                if not k.startswith("_")
-            }
-            base.update(patch)
-            merged[tech] = base
-        return merged
+        solar, wind, biomass = self._build_lcoe_trio(code, country_lcoe)
+        return {"solar": solar, "wind": wind, "biomass": biomass}
 
-    def get_capacity_factor(
-        self,
-        code: str,
-        tech: str
-    ) -> Optional[float]:
+    def get_capacity_factor(self, code: str, tech: str) -> Optional[float]:
         """
-        Get capacity factor for a country/technology pair.
+        Return the country-specific capacity factor or ``None``.
 
-        Precedence:
-          1. Country-specific value from parameters.json
-          2. None — calling module applies its own default
-        
+        Precedence: parameters.json country block → ``None``.
+        Returning ``None`` signals that the calling module should apply
+        its own technology default.
+
         Args:
-            code: ISO-3166-alpha-3 country code
-            tech: Technology name (solar, wind, biomass)
-            
+            code: ISO-3166-alpha-3 country code.
+            tech: Technology name (``solar``, ``wind``, ``biomass``).
+
         Returns:
-            Capacity factor if defined in parameters, None otherwise
+            ``float`` if defined; ``None`` otherwise.
         """
         code = code.upper().strip()
         tech = tech.lower().strip()
-        country_cf = (
+        raw  = (
             self._params.get("countries", {})
             .get(code, {})
             .get(tech, {})
             .get("capacity_factor")
         )
-        if country_cf is not None:
-            cf = float(country_cf)
-            logger.debug(
-                "[%s/%s] capacity_factor=%.3f (country)", code, tech, cf
-            )
+        if raw is not None:
+            cf = float(raw)
+            logger.debug("[%s/%s] capacity_factor=%.3f (country)", code, tech, cf)
             return cf
-        logger.debug(
-            "[%s/%s] No country CF; module default applies.", code, tech
-        )
+        logger.debug("[%s/%s] No country CF — module default applies.", code, tech)
         return None
 
-    def _log_summary(
-        self,
-        code: str,
-        p: Dict,
-        owa: Dict
-    ) -> None:
-        """
-        Log a concise summary of loaded country parameters.
-        
-        Args:
-            code: Country ISO code
-            p: Flat parameter dictionary
-            owa: OWA weights dictionary
-        """
-        sep = "-" * 52
-        criteria = self._settings.get("criteria_defaults", {})
-        rivers = criteria.get("rivers", {})
-        roads = criteria.get("roads", {})
+    # ------------------------------------------------------------------
+    # Logging
+    # ------------------------------------------------------------------
 
+    def _log_summary(self, p: CountryParams) -> None:
+        """Emit a concise, reproducible parameter summary after loading."""
+        sep = "-" * 52
         logger.info(sep)
-        logger.info("  %s (%s)", p["country_name"], code)
+        logger.info("  %s (%s)", p.country_name, p.country_code)
         logger.info(
-            "  Solar  : LUF=%.2f  thr=%.2f  density=%.1f MW/km²",
-            p["solar_land_use_factor"],
-            p["solar_threshold"],
-            p["solar_power_density_mw_km2"],
+            "  Solar  : LUF=%.2f  thr=%.2f  CF=%.3f  density=%.1f MW/km²",
+            p.solar.land_use_factor, p.solar.threshold,
+            p.solar.capacity_factor, p.solar.power_density_mw_km2,
         )
         logger.info(
-            "  Wind   : LUF=%.3f  thr=%.2f  density=%.1f MW/km²",
-            p["wind_land_use_factor"],
-            p["wind_threshold"],
-            p["wind_capacity_density_mw_km2"],
+            "  Wind   : LUF=%.3f  thr=%.2f  CF=%.3f  density=%.1f MW/km²",
+            p.wind.land_use_factor, p.wind.threshold,
+            p.wind.capacity_factor, p.wind.power_density_mw_km2,
         )
         logger.info(
-            "  Biomass: col=%.2f  thr=%.2f  density=%.1f MW/km²",
-            p["biomass_collection_factor"],
-            p["biomass_threshold"],
-            p["biomass_power_density_mw_km2"],
+            "  Biomass: LUF=%.2f  thr=%.2f  CF=%.3f  density=%.1f MW/km²",
+            p.biomass.land_use_factor, p.biomass.threshold,
+            p.biomass.capacity_factor, p.biomass.power_density_mw_km2,
         )
         logger.info(
-            "  OWA    : default=%s  scenarios=%s",
-            p["owa_default_scenario"],
-            list(owa.keys()),
+            "  OWA    : default=%s", p.owa.default_scenario,
+        )
+        logger.info(
+            "  Abatement: carbon_price=%.1f USD/tCO2e  "
+            "penetration=%.0f%%  existing_renew=%.0f%%",
+            p.abatement.carbon_price_usd_tco2e,
+            p.abatement.penetration_factor * 100,
+            p.abatement.existing_renewable_share * 100,
         )
         logger.info(
             "  Criteria: river=%.1f km  road=%.1f km  slope=%d°",
-            rivers.get("max_dist_km", 5.0),
-            roads.get("max_dist_km", 15.0),
-            p["slope_threshold_deg"],
+            p.river_max_dist_km, p.road_max_dist_km, p.slope_threshold_deg,
         )
         logger.info(sep)

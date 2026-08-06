@@ -1,0 +1,47 @@
+# 07 — Configuration
+
+## Files
+
+| File | Lines | Governs |
+| --- | --- | --- |
+| `configs/settings.yaml` | 173 | Infrastructure, paths, spatial resolutions, visualization layout, per-phase `skip_*` flags, scenario offsets. **Never** technology/scientific parameters. |
+| `configs/parameters.json` | 768 | Per-country scientific parameters (solar/wind/biomass tech params, OWA weights, LCOE economics, abatement defaults, land-suitability class scores). The single source of truth for anything scientific. |
+| `configs/net_zero_db.json` | 270 | National net-zero/GHG baseline reference figures (broader country coverage than `parameters.json`), consumed by Phase 7. |
+| `configs/transport_parameters.json` | 555 | Global defaults + per-country parameters for Phase 9 (transport decarbonization). |
+| `.env` | — | `GEOWORLD_RAW_DATA` path, optional Terrascope credentials. Not committed. |
+
+## Why the settings.yaml / parameters.json split exists
+
+This is the central configuration decision in the codebase (see `09-decisions.md` for the formal decision-log entry). In short: `settings.yaml` used to also hold LCOE financial parameters; the v2.0 refactor moved all scientific/technology parameters exclusively into `parameters.json` so that changing where the pipeline *runs* (paths, resolution, which phases to skip) never risks accidentally changing *what it computes*. `lcoe_calculator.py`'s module docstring states explicitly: "`settings.yaml` NÃO é consultado para parâmetros tecnológicos científicos" (settings.yaml is NOT consulted for scientific technology parameters).
+
+### Parameter precedence (highest → lowest)
+
+1. Country entry in `parameters.json` (`countries.{ISO3}`)
+2. `parameters.json`'s `abatement_defaults.default` (abatement only)
+3. `settings.yaml`'s `potential.technologies` (documented as a tech fallback layer in `config_loader.py`, though the primary/authoritative source is always #1)
+4. `constants.DEFAULT_TECH_PARAMS` in `src/core/constants.py` — last resort, hardcoded
+
+## `settings.yaml` — key sections
+
+- `paths` — `raw_data`, `processed_data`, `outputs`, `transport_params`.
+- `geospatial` — CRS (`EPSG:4326`), resolutions per purpose: `land_cover` (~100 m), `suitability` (~1 km), `dem_slope` (~500 m).
+- `criteria_defaults` — fallback spatial-processing parameters (road max distance, population density threshold, river buffers) used when a country-specific value is absent. These are process-control values, not scientific ones.
+- `potential.scenarios` — per-scenario offsets applied on top of the country's base threshold/land-use factor from `parameters.json` (`optimistic`/`balanced`/`conservative`).
+- `visualization` — DPI, figure sizing, color palette per criterion (`criteria_meta`), plant-type colors for context layers.
+- `pipeline.skip_*` — one flag per phase (`skip_audit`, `skip_land_cover`, `skip_align`, `skip_criteria`, `skip_suitability`, `skip_potential`, `skip_lcoe`, `skip_results`, `skip_abatement`, `skip_sensitivity`, `skip_transport`).
+- `pipeline.sensitivity` — per-sub-analysis toggles (`run_sa1`…`run_sa6`) and `n_mc_samples`.
+- `pipeline.transport` — `primary_scenario`, `hub_suitability_threshold`, `run_all_scenarios`.
+
+> ⚠️ Point to validate: as observed at documentation time, `settings.yaml` has `skip_audit`, `skip_land_cover`, `skip_align`, `skip_criteria`, `skip_suitability`, `skip_abatement`, `skip_sensitivity`, and `skip_transport` all set to `true`, with only `skip_potential`, `skip_lcoe`, `skip_results` set to `false`. This looks like an active development/debugging state (re-running only phases 4–6 against already-cached earlier-phase outputs) rather than the default "full run" the README describes. Confirm before assuming a fresh `python main.py <country>` run currently executes all nine phases end-to-end.
+
+## `parameters.json` — structure
+
+Top-level keys: `_meta`, `abatement_defaults`, `countries` (indexed by ISO3), `fallback_logic`, `land_suitability`. Each country entry under `countries` has: `solar`, `wind`, `biomass` (technology blocks — land use factor, threshold, power density, capacity factor, cf_ceiling/floor, plus resource-specific weights), `owa` (three named scenario weight vectors, must sum to 1.0 and be non-increasing), `lcoe` (per-technology CAPEX, OPEX, lifetime, discount rate), `abatement` (carbon price, penetration factor, thermal types, emission factors), and top-level `slope_threshold_deg`, `protected_as_exclusion`, `forest_as_exclusion`, `use_mainland_only`.
+
+## Adding a new country
+
+Per `README.md` §10 (verified structurally consistent with the code, not independently re-derived):
+
+1. Add a `countries.{ISO3}` entry to `parameters.json` with all required sub-keys.
+2. Manually download the WDPA shapefile for that country (see `05-environment.md`) to `raw/protected_areas/{country_name}/shp_0/`.
+3. Run `python main.py <CountryName>`. No `.py` changes are required.

@@ -1,18 +1,26 @@
 # =============================================================================
 # settings.yaml — GeoWorld Framework
 # =============================================================================
-# Operational and infrastructure parameters.
-# Scientific parameters (MCDA weights, per-country thresholds, LCOE economics)
-# are defined in parameters.json — this file governs infrastructure and defaults.
+# Operational and infrastructure parameters ONLY.
+#
+# Scientific parameters (technology CF, power density, suitability thresholds,
+# LCOE economics, OWA weights, per-country biomass yields) are defined in
+# parameters.json — this file governs infrastructure, paths, and analysis
+# control flags only.
+#
+# Tier hierarchy for technology parameters (highest to lowest):
+#   1. parameters.json        — per-country scientific values (authoritative)
+#   2. DEFAULT_TECH_PARAMS    — hardcoded global baseline in constants.py
+#   settings.yaml does NOT participate in technology parameter resolution.
 # =============================================================================
 
 system:
   log_level: "INFO"
 
 paths:
-  raw_data:       "data/raw"
-  processed_data: "data/processed"
-  outputs:        "outputs"
+  raw_data:         "../database/raw"
+  processed_data:   "data/processed"
+  outputs:          "outputs"
   transport_params: "configs/transport_parameters.json"
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -36,6 +44,7 @@ audit:
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Criteria defaults (fallback when country-specific values are absent)
+# These govern spatial processing behaviour, not scientific parameters.
 # ─────────────────────────────────────────────────────────────────────────────
 criteria_defaults:
   roads:
@@ -45,12 +54,21 @@ criteria_defaults:
   protected_areas:
     as_exclusion: true
   rivers:
-    safety_buffer_km: 0.5      # riparian setback
-    max_dist_km: 5.0           # solar/wind saturation distance
-    max_dist_biomass_km: 30.0  # biomass water-access saturation
+    safety_buffer_km: 0.5       # riparian setback
+    max_dist_km: 5.0            # solar/wind saturation distance
+    max_dist_biomass_km: 30.0   # biomass water-access saturation
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Phase 4 — Potential & Energy Estimation
+# Phase 4 — Scenario offsets
+#
+# suitability_threshold: offset added to the country base threshold
+#   (from parameters.json) to derive the per-scenario apt-pixel cutoff.
+#   Example: country threshold=0.75, optimistic offset=-0.10 → cutoff=0.65
+#
+# land_use_multiplier: multiplier applied to the country land_use_factor
+#   for scenario sensitivity (not yet wired — reserved for future use).
+#
+# These are analysis-control parameters, not scientific technology values.
 # ─────────────────────────────────────────────────────────────────────────────
 potential:
   scenarios:
@@ -63,47 +81,6 @@ potential:
     conservative:
       suitability_threshold: +0.10
       land_use_multiplier:    0.50
-
-  # Global fallback technology parameters (tier 2).
-  # Country-specific values in parameters.json take precedence (tier 1).
-  technologies:
-    solar:
-      base_threshold:          0.60
-      land_use_factor:         0.05      # standard conservative (Bolinger 2022)
-      power_density_mw_km2:    40.0      # global median tracking (Fu et al. 2017)
-      capacity_factor_max:     0.22
-    wind:
-      base_threshold:          0.60
-      land_use_factor:         0.03
-      power_density_mw_km2:    6.5
-      capacity_factor_max:     0.35
-    biomass:
-      base_threshold:          0.60
-      land_use_factor:         0.30      # collection_factor alias
-      power_density_mw_km2:    0.5
-      capacity_factor_max:     0.80
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Phase 5 — LCOE global fallback (IRENA, 2024)
-# Country-specific overrides in parameters.json take precedence.
-# ─────────────────────────────────────────────────────────────────────────────
-lcoe:
-  technologies:
-    solar:
-      capex_usd_kw:    760.0
-      opex_usd_kw_yr:   13.0
-      lifetime_years:    25
-      discount_rate:    0.060
-    wind:
-      capex_usd_kw:   1360.0
-      opex_usd_kw_yr:   44.0
-      lifetime_years:    25
-      discount_rate:    0.060
-    biomass:
-      capex_usd_kw:   2720.0
-      opex_usd_kw_yr:  109.0
-      lifetime_years:    20
-      discount_rate:    0.070
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Visualization
@@ -170,9 +147,9 @@ pipeline:
   skip_criteria_maps: false
   map_dpi_export: 150
 
-  skip_audit:       true
-  skip_land_cover:  true
-  skip_align:       true
+  skip_audit:       false
+  skip_land_cover:  false
+  skip_align:       false
   skip_criteria:    false
   skip_suitability: false
   skip_potential:   false
@@ -180,18 +157,22 @@ pipeline:
   skip_results:     false
   skip_abatement:   false
   skip_sensitivity: false
-  skip_transport: false
+  skip_transport:   true   # Phase 9 has a known bug: AttributeError in
+                            # transport_decarbonization_calculator.py:407
+                            # (flat solar_capacity_factor vs. nested
+                            # params.solar.capacity_factor). Disabled until
+                            # fixed — see docs/memory/06-risk-areas.md.
 
   sensitivity:
-    run_sa1: true       # OAT weight sensitivity
-    run_sa2: true       # Monte Carlo AHP
-    run_sa3: true       # Threshold sweep
-    run_sa4: true       # LCOE uncertainty
-    run_sa5: true       # GHG abatement sensitivity
-    run_sa6: true       # Sobol global sensitivity
+    run_sa1: true
+    run_sa2: true
+    run_sa3: true
+    run_sa4: true
+    run_sa5: true
+    run_sa6: true
     n_mc_samples: 1000
-  
+
   transport:
-    primary_scenario: "reference"   # EV penetration scenario to use as the "primary" in reports and maps. Options: reference | accelerated | conservative
-    hub_suitability_threshold: 0.75 # Minimum suitability score for hub placement (0–1)
+    primary_scenario: "reference"
+    hub_suitability_threshold: 0.75
     run_all_scenarios: true
