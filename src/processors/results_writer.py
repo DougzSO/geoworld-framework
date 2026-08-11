@@ -78,6 +78,7 @@ from src.utils.reporting import (
     ReportSection,
     build_phase_report,
 )
+from src.utils.utils import safe_raster_write
 from src.utils.timing import timer as _timer
 from src.visualization.dashboard_panels import DashboardPanels
 
@@ -1107,8 +1108,8 @@ class ResultsWriter:
         }
 
         def _write_uint8(arr: np.ndarray, path: Path, desc: str, legend: str):
-            with rasterio.open(
-                str(path), "w",
+            with safe_raster_write(
+                str(path),
                 driver="GTiff", height=H, width=W,
                 count=1, dtype="uint8",
                 crs=crs, transform=transform,

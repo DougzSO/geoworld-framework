@@ -39,7 +39,6 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import rasterio
 from rasterio.transform import Affine
 
 from src.core.constants import (
@@ -69,7 +68,7 @@ from src.utils.map_styling import GeoWorldStyler
 from src.utils.raster_io import find_suitability_tif
 from src.utils.reporting import ReportSection, build_phase_report
 from src.utils.timing import timer
-from src.utils.utils import safe_raster_open
+from src.utils.utils import safe_raster_open, safe_raster_write
 
 logger = logging.getLogger("geoworld.processors.LCOECalculator")
 
@@ -1191,7 +1190,7 @@ class LCOECalculator:
             blockxsize=256,
             blockysize=256,
         )
-        with rasterio.open(str(tif_path), "w", **profile) as dst:
+        with safe_raster_write(str(tif_path), **profile) as dst:
             dst.write(out_arr, 1)
         logger.info("  [%s] LCOE TIF: %s", tech, tif_path.name)
 

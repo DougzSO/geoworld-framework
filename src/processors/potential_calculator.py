@@ -83,6 +83,7 @@ from src.utils.map_styling import GeoWorldStyler
 from src.core.schemas import PotentialResult
 from src.utils.raster_io import find_suitability_tif
 from src.utils.timing import timer as _timer
+from src.utils.utils import safe_raster_write
 
 logger = logging.getLogger("geoworld.processors.PotentialCalculator")
 
@@ -496,8 +497,8 @@ class PotentialCalculator:
             # Criar array uint8: 255 = suitable, 0 = not suitable
             suitable_uint8 = np.where(apt_mask, np.uint8(255), np.uint8(0))
 
-            with rasterio.open(
-                tif_out, 'w',
+            with safe_raster_write(
+                tif_out,
                 driver='GTiff',
                 height=height,
                 width=width,
