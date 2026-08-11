@@ -227,6 +227,42 @@ plus typed accessors.
 
 ---
 
+### BLOCKER-012 — Transport (Phase 9) has the same double-persistence bug BLOCKER-011 fixed in Phase 6
+
+**Status**: not fixed — documented only. Currently dormant because `skip_transport: true` in `configs/settings.yaml` (Phase 9 has an unrelated, separately-tracked `AttributeError` that keeps it disabled). Discovered while surveying all 9 phases' persistence patterns during BLOCKER-011.
+
+**Title**: Remove `TransportDecarbonizationCalculator`'s manual `ArtifactManager` persistence, same fix shape as BLOCKER-011.
+
+**Current pain**: `src/processors/transport_decarbonization_calculator.py::run()` manually persists via its own `ArtifactManager` call (L570–608) — `serializable_result = {"country_code", "country_name", "generated_at", "summary", "n_hubs", "elapsed"}` (L579–586) — then `run()` returns a **completely different-shaped dict** at L611–617: `{"timeseries_df", "fleet_df", "hubs_gdf", "summary", "report_path"}`. The only overlapping key between the two is `"summary"`. `PipelineOrchestrator.run_phase()`'s automatic `_persist()` step runs after `run()` returns (`pipeline_orchestrator.py:165`) and saves *that* returned dict to `outputs/{ISO3}/transport/result.pkl`, overwriting whatever the manual call just wrote — this is the identical mechanism that caused BLOCKER-011 (`results_writer.py`'s `dominance_suitability_counts`/`dominance_lcoe_counts` being silently discarded), confirmed by direct code inspection, not just structural similarity.
+
+Unlike BLOCKER-011, this has not been confirmed empirically against a real `result.pkl` on disk, because `skip_transport: true` means Phase 9 has not actually completed a full run in this engagement (it hits an unrelated `AttributeError` — `country_params.solar_capacity_factor`, flat vs. nested `CountryParams.solar.capacity_factor` — before ever reaching the persistence step; see `docs/memory/06-risk-areas.md`). The bug is real by inspection of the code path, just not yet observable in a live artifact the way BLOCKER-011's was.
+
+**Depends on**: soft — should be sequenced after (or alongside) whatever eventually fixes Phase 9's `AttributeError` crash, since that crash currently makes this bug unreachable in practice. Not a hard blocker on that fix; the double-persistence code can be removed independently at any time, it just can't be *validated end-to-end* until Phase 9 runs to completion.
+
+**Effort**: S — mechanical, same shape as the BLOCKER-011 fix: delete the manual `ArtifactManager` block, fold whatever fields matter from `serializable_result` (`n_hubs`, `generated_at`) into the dict `run()` already returns, if they're worth keeping; `summary` already appears in both so it isn't lost either way.
+
+**Risk**: Low — behavior-preserving once done the same way BLOCKER-011 was (remove the redundant writer, let the orchestrator's automatic persist be the single source of truth). The only real risk is deciding whether `country_code`/`generated_at`/`n_hubs`/`elapsed` (present only in the manually-persisted dict today) are worth adding to `run()`'s return before deleting the manual call — otherwise those specific fields would be lost the same way `dominance_*_counts` was in BLOCKER-011, rather than fixed.
+
+**Deliverable** (when picked up):
+- `src/processors/transport_decarbonization_calculator.py`: remove the manual `ArtifactManager` persistence block (L570–608); add `n_hubs`, `generated_at` (and `country_code` if useful downstream) to the dict returned at L611–617, alongside the existing `timeseries_df`/`fleet_df`/`hubs_gdf`/`summary`/`report_path`.
+- A test mirroring `tests/unit/test_results_writer.py`'s structural guard (no manual `ArtifactManager` call) — the full-path integration-style guard is lower priority here since Phase 9 needs its own fixture work regardless (real fleet/hub data), independent of this specific bug.
+
+**Success criteria**: `grep -n "ArtifactManager" src/processors/transport_decarbonization_calculator.py` returns nothing; after Phase 9's `AttributeError` is separately fixed and a real run completes, `outputs/{ISO3}/transport/result.pkl` contains every field the current manual `serializable_result` computes, confirmed empirically the same way BLOCKER-011 was.
+
+**Commit message template** (for when this is picked up):
+```
+Fix BLOCKER-012: Transport (Phase 9) double persistence, same shape as BLOCKER-011
+
+TransportDecarbonizationCalculator manually persisted a dict via its
+own ArtifactManager call, then run() returned a completely different-
+shaped dict that PipelineOrchestrator's automatic persistence silently
+overwrote it with. Same root cause and same fix as BLOCKER-011
+(results_writer.py) -- removed the manual persistence, folded the
+fields worth keeping into run()'s return.
+```
+
+---
+
 ## HIGH-VALUE REFACTORS (improve maintainability, enable testing)
 
 ### REFACTOR-001 — Extract `sensitivity_analyzer.py` plotting to `sensitivity_plots.py`
