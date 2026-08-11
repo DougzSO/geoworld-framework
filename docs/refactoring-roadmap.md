@@ -1,6 +1,8 @@
 # Refactoring Roadmap
 
-Planning only — no code changed. Synthesizes `docs/arch-misalignments.md`, `docs/code-duplication.md`, and `docs/write-points-inventory.md` into an ordered task list. Every task below is grounded in a specific finding in one of those three documents; none introduce new findings.
+Originally: planning only, synthesizing `docs/arch-misalignments.md`, `docs/code-duplication.md`, and `docs/write-points-inventory.md` into an ordered task list. Since expanded into the canonical, single-source-of-truth BLOCKER tracker for this project (BLOCKER-001 through BLOCKER-012, both fixed and open) and the home for the technical-decisions log formerly at `docs/memory/09-decisions.md` (see the Appendix at the end of this file — moved here verbatim, not rewritten, so its historical Context/Decision/Consequences entries stay intact). `docs/memory/09-decisions.md` is now a redirect stub pointing here.
+
+Entries below marked with a `**Status**` line are retrospective (already fixed, describing what actually shipped); entries without one are still prospective plans as originally written and have not been re-verified against what (if anything) has shipped since — check `git log`/the relevant module before trusting a "Deliverable" section at face value.
 
 **Commit message convention used in the templates below**: per `CLAUDE.md`'s already-established git rule (plain imperative summary — `Fix X` / `Add Y` / `Move Z` — no Conventional Commit prefixes, no AI attribution, matching this repo's mixed-but-mostly-plain `git log` history), not something newly decided in this document. If a stricter convention is wanted going forward, say so before the first commit lands — the templates are easy to reshape, but should be settled once rather than per-task.
 
@@ -223,6 +225,127 @@ results_writer and transport_decarbonization_calculator each
 re-derived their own "which dict shape did I get" logic for
 potential_results/lcoe_results. Consolidated into one normalizer
 plus typed accessors.
+```
+
+---
+
+### BLOCKER-008 — `cf_renewable` structurally inert in SA-5 Sobol GHG function
+
+**Status**: Fixed — commit `79b962a`.
+
+**Title**: Make `cf_renewable` actually influence `sensitivity_analyzer.py::_build_ghg_function_from_abatement()`'s `ghg_function()` return value.
+
+**Current pain (as found)**: `ghg_function()` accepted `cf_renewable` as one of four Sobol-perturbed parameters but never read it in the return computation, so its total-order Sobol index was forced to exactly `0.0` regardless of true physical sensitivity — a scientifically invalid result being reported as if it were a real finding. Portugal's SA-5 report showed `penetration_factor` as dominant at `ST=0.471` partly *because* `cf_renewable` was structurally prevented from ever registering any sensitivity, not because it was genuinely less influential.
+
+**Depends on**: none.
+
+**Effort**: S — one function, one added ceiling term.
+
+**Risk**: Med — changes a reported scientific result (SA-5 dominant-parameter ranking), not just code structure; required domain reasoning about how capacity factor should physically constrain substitution in the real Phase 7 model before writing the fix, not just a mechanical patch.
+
+**Root cause**: In the real Phase 7 model (`ghg_abatement_calculator.py`), capacity factor does not scale the substitution target directly — it constrains the *ceiling* of available renewable generation via `renew_total_gwh` (built from Phase 4's `capacity_mw x capacity_factor x hours_year`), which caps `subst_gwh = min(gwh_to_add, total_th_gwh, renew_total_gwh)`. The Sobol proxy function had never reproduced that capping structure.
+
+**Deliverable (as shipped)**: `ghg_function()` now computes an `available_gwh_sub` ceiling that scales linearly with `cf_renewable` relative to the function's baseline reference value (`cf_base = 0.25`), applied via `gwh_sub = min(target_gwh_sub, available_gwh_sub)` — mirroring the same capping logic as the real model. Verified regression-safe at the unperturbed baseline (output unchanged when `cf_renewable = cf_base`).
+
+**Success criteria (as validated)**: Portugal, Phase 8 SA-5 only (rest cached) — Sobol total-order indices (ST), before → after:
+
+| Parameter | Before | After |
+| --- | --- | --- |
+| `ef_thermal_gco2_kwh` | 0.394 | **0.441 (now dominant)** |
+| `penetration_factor` | 0.471 (previously dominant — an artifact of the bug) | 0.242 |
+| `ef_lifecycle_gco2_kwh` | 0.142 | 0.159 |
+| `cf_renewable` | 0.000 | 0.244 |
+
+**Commit message** (as shipped):
+```
+Fix cf_renewable being structurally inert in SA-5 Sobol GHG function
+```
+
+---
+
+### BLOCKER-009 — LCOE mean/p10/p90/n_pixels also sourced from region-mean CSV (BLOCKER-002 follow-up)
+
+**Status**: Fixed — commit `7926ec3`.
+
+**Title**: Extend BLOCKER-002's pixel-level TIF overlay to `mean`/`p10`/`p90`/`n_pixels`, not just `p25`/`median`/`p75`.
+
+**Current pain (as found)**: BLOCKER-002 fixed `p25`/`median`/`p75` by overlaying pixel-level TIF stats onto CSV-sourced stats whenever the zonal CSV won Priority 1 recovery, but deliberately left `mean`/`p10`/`p90`/`n_pixels` as the CSV provided them, since fixing quartiles didn't require touching those fields at the time. Checking whether `mean` specifically is printed anywhere citable (the same check BLOCKER-002 did for the quartiles) found that unlike the quartiles — which only ever feed an IQR box-and-whisker plot — LCOE `mean` **is** printed as text: `results_writer.py`'s "BALANCED SCENARIO — INTEGRATED SUMMARY" table in the Phase 6 text report prints `stats["mean"]` directly in its $/MWh column. Portugal's report showed solar at 48.7 USD/MWh (the region-mean-of-means value) where Phase 5's live pixel-level computation gives 43.8 — a real, previously-unnoticed discrepancy in a citable, published-looking figure.
+
+**Depends on**: BLOCKER-002 (extends the same overlay mechanism in the same function).
+
+**Effort**: S — same overlay mechanism already built for BLOCKER-002, extended to replace the complete stats dict instead of three fields.
+
+**Risk**: Med — changes reported LCOE figures for every technology/country whenever the CSV-recovery path is exercised — i.e., whenever Phase 6 runs against disk-recovered rather than live in-process LCOE results, which per BLOCKER-010's investigation is *every* run in current production usage.
+
+**Deliverable (as shipped)**: `data_recovery.py::recover_lcoe_from_disk()`'s overlay block, when the CSV won Priority 1 recovery, now replaces the **complete** stats dict (`mean`, `p10`, `p25`, `median`, `p75`, `p90`, `n_pixels`) with TIF-derived pixel-level values, rather than leaving a dict with some pixel-level and some region-level fields. The overlay marker was renamed from `quartile_source` to `stats_source` to reflect the wider scope.
+
+**Success criteria (as validated)**: Portugal, Phase 6 only (rest cached) — report's $/MWh column, before → after:
+
+| Tech | Before | After | Δ |
+| --- | --- | --- | --- |
+| Solar | 48.7 | 43.8 | −10.1% |
+| Wind | 59.2 | 57.7 | −2.5% |
+| Biomass | 61.4 | 61.2 | −0.3% |
+
+Full stats dict, region-mean (old) vs. pixel-level (new): solar mean 48.70→43.84, p10 41.93→39.53, p90 57.44→48.84; wind mean 59.17→57.68, p10 54.80→53.02, p90 66.13→65.94; biomass mean 61.36→61.24, p10 61.02→60.20, p90 62.00→64.31. `results/result.pkl` unchanged (0 diffs) — same as BLOCKER-002, these values are not persisted there, only printed in the text report and rendered in the executive dashboard.
+
+**Commit message** (as shipped):
+```
+Fix LCOE mean/p10/p90/n_pixels also sourced from region-mean CSV
+```
+
+---
+
+### BLOCKER-010 — Phase 6 always reconstructs Potential/LCOE results from disk, live object never used
+
+**Status**: Not fixed — explicitly deferred to backlog. Do not implement without a separate, dedicated task and sign-off.
+
+**Title**: `main.py` always resolves `potential_dir`/`lcoe_dir` to a disk `Path` before calling `ResultsWriter.run()`, so its already-correct "use the live object if given one" branch is permanently dead code in production.
+
+**Current pain**: Discovered during the CHECKPOINT-2 module analysis (`docs/analysis-results_writer.md` §1a). `main.py:806-809` carries a `# BUG_07 (fix)` comment documenting that `lcoe_result` (a live, validated `LCOEResult` Pydantic model) used to be passed where a directory `Path` was expected, causing a type-mismatch failure; the fix applied was to always resolve to the canonical output directory instead, regardless of whether the live object is available. The same pattern applies to `potential_dir`. `ResultsWriter._normalize_potential`/`_normalize_lcoe` already contain the correct dual-mode logic (`if isinstance(data, dict) and "techs" in data: return data`) — but since `main.py` never passes anything but a `Path`, that branch never executes; every Phase 6 run reconstructs both Potential and LCOE results from disk via `recover_potential_from_disk`/`recover_lcoe_from_disk`, unconditionally.
+
+This is not a theoretical risk: `data_recovery.py`'s own comments document a real historical numeric divergence caused by exactly this pattern (LCOE mean 48.7 vs. 43.8 USD/MWh for solar — see BLOCKER-009 above), patched at the specific symptom rather than the architectural cause.
+
+**Depends on**: none technically, but touches the same `main.py` Phase 4-6 handoff and `ResultsWriter._normalize_*` methods that BLOCKER-007 (dict-shape adapters) also touches — sequence together to avoid re-touching the same lines twice.
+
+**Effort**: M — `main.py` needs to pass `pot_result.model_dump()`/`lcoe_result.model_dump()` when the live object is available (not the bare Pydantic model — confirmed via `src/core/validators.py::validate_result_object()` that `pipeline_orchestrator.run_phase()` returns an actual model instance, which would still fail `_normalize_*`'s `isinstance(data, dict)` check as-is). Needs care around what "available" means given the orchestrator's skip/cache semantics (skip=True+cache → cached object still available and usable; skip=True+no cache → `None`, genuine fallback to disk needed).
+
+**Risk**: Med-High — changes which code path computes the LCOE/Potential numbers Phase 6 reports for every run; needs full CHECKPOINT-style before/after validation, not just a mechanical change.
+
+**Deliverable** (when picked up):
+- `main.py`: pass `pot_result.model_dump()` / `lcoe_result.model_dump()` to `ResultsWriter.run()`'s `potential_dir`/`lcoe_dir` parameters when non-`None`, falling back to the directory `Path` only when the live object is genuinely unavailable (skip+no-cache case).
+- `src/processors/results_writer.py::_normalize_potential`/`_normalize_lcoe`: no change needed — the dual-mode logic already exists and is correct, it just needs to actually be exercised.
+- Full pipeline validation comparing live-object-path output against the current always-disk-recovery output, expecting the live path to be *more* accurate where they diverge (per BLOCKER-009's finding), not just numerically identical.
+
+**Success criteria**: a live pipeline run's Phase 6 report reads pixel-level LCOE stats directly from the in-memory `LCOEResult`, verifiable by a log line or debug marker distinguishing "used live object" from "recovered from disk"; `recover_potential_from_disk`/`recover_lcoe_from_disk` are only invoked when `skip=True` and no live object exists.
+
+---
+
+### BLOCKER-011 — Phase 6 double persistence silently discarded dominance pixel counts
+
+**Status**: Fixed — commit `cb12583`, with a follow-up full-path integration test in commit `7fdb0c8`.
+
+**Title**: Remove `ResultsWriter`'s manual `ArtifactManager` persistence; fold `dominance_suitability_counts`/`dominance_lcoe_counts` into the dict `run()` returns.
+
+**Current pain (as found)**: `ResultsWriter._persist_artifacts()` manually saved a dict containing `dominance_suitability_counts`/`dominance_lcoe_counts` via its own `ArtifactManager` call, but `PipelineOrchestrator.run_phase()`'s automatic persistence step ran afterward and overwrote the same `result.pkl` with the plainer dict `run()` returned, which never had those fields. Confirmed empirically (not just by code inspection): `outputs/PRT/results/result.pkl` was missing both fields after every real run.
+
+**Depends on**: none.
+
+**Effort**: S — mechanical, once the right approach was chosen.
+
+**Risk**: Low — behavior-preserving for every field except the two that were previously lost.
+
+**Decision made**: surveyed all 9 phases' persistence patterns before fixing. 5 of 9 (Audit, Grid Align, Criteria, Potential, LCOE) already rely solely on the orchestrator's automatic persistence — the majority, and safer, pattern. Chose to remove `ResultsWriter`'s manual persistence entirely (matching that majority) rather than making the orchestrator "smarter" about not overwriting (would add complexity to a shared component touching all 9 phases for a narrowly-scoped bug). Discovered in the process that Transport (Phase 9) has the identical bug, currently dormant — see BLOCKER-012.
+
+**Deliverable (as shipped)**: removed `ResultsWriter._persist_artifacts()` and the `ArtifactManager` import entirely; `dominance_suitability_counts`/`dominance_lcoe_counts` now get set directly on the `results` dict `run()` returns.
+
+**Tests added**: `tests/unit/test_results_writer.py` — a structural guard (no manual persistence), a behavioral round-trip test (real dominance-computation statics + real `ArtifactManager` save/load), and a full-path integration test (real `ResultsWriter.run()` driven by the real `PipelineOrchestrator.run_phase()`, with only rendering and Phase 4/5 disk recovery stubbed).
+
+**Success criteria (as validated)**: selective pipeline run (Phase 6 live, all else cached) against the CHECKPOINT-2 state confirmed the dominance-count fields now present with correct values, zero other fields/pixels/TIF content changed, full test suite passing throughout.
+
+**Commit message** (as shipped):
+```
+Fix BLOCKER-011: Phase 6 double persistence silently discarded dominance counts
 ```
 
 ---
@@ -692,3 +815,85 @@ Rough T-shirt-size counts, converted to day-ranges purely for planning-order int
 7. **Ongoing**: the remaining REFACTOR/QI items not yet done by Checkpoint 2 (likely `abatement_plots.py`'s optional subpackage split, mentioned in `docs/arch-misalignments.md` as explicitly low-priority, and any QI test-coverage gaps) are backlog, not blockers to shipping.
 
 No code was changed in this pass — this document is planning only, per the task's instruction.
+
+---
+
+## Appendix: Technical Decisions
+
+Moved verbatim from `docs/memory/09-decisions.md` (content unchanged, only relocated) — `09-decisions.md` is now a redirect stub pointing here. Format: **Context**, **Decision**, **Consequences**, **Related files**, **Status** (`Active` | `Legacy` | `In migration` | `Uncertain`). Entries marked "inferred" were deduced from project structure/docstrings, not stated as an explicit standalone design document — none was found in the repository.
+
+### D1 — Strict separation of operational config (`settings.yaml`) from scientific config (`parameters.json`)
+
+**Context.** Earlier versions apparently kept LCOE financial parameters (CAPEX, OPEX, discount rate) inside `settings.yaml` alongside infrastructure settings, per the explicit callout in `README.md` §6.1 ("`settings.yaml` no longer contains LCOE financial parameters... Any legacy `lcoe` block in `settings.yaml` is ignored").
+**Decision.** All scientific/technology parameters live exclusively in `parameters.json`; `settings.yaml` governs only infrastructure, paths, resolutions, visualization, and phase skip flags.
+**Consequences.** A researcher changing a scientific assumption (e.g. a capacity factor) only ever needs to touch one file and cannot accidentally leave a stale value in the "wrong" config. The tradeoff: this separation is enforced only by convention/documentation, not a runtime check that rejects scientific keys if they reappear in `settings.yaml` — see `06-risk-areas.md`.
+**Related files.** `configs/settings.yaml`, `configs/parameters.json`, `src/core/config_loader.py`, `src/core/constants.py`.
+**Status.** Active. (Inferred from docstrings and README; no standalone ADR document exists.)
+
+---
+
+### D2 — Pydantic v2 schemas (`schemas.py`) replace a legacy `models.py`
+
+**Context.** `schemas.py`'s own docstring states it is the "Autoridade única de modelos de dados — substitui models.py, que foi removido" (single authority for data models — replaces models.py, which was removed).
+**Decision.** All phase input/output/config contracts consolidated into one Pydantic v2 module.
+**Consequences.** Type safety and validation at persistence boundaries; a single place to look up any contract. However, `pipeline_orchestrator.py`'s own docstring still says "AlignedLayers is imported from schemas, not models" (present tense, defensive phrasing) and `src/core/validators.py` repeats the same note — suggesting the migration left residual references worth double-checking whenever `models.py` is mentioned anywhere in code or comments.
+**Related files.** `src/core/schemas.py`, `src/core/validators.py`, `src/core/pipeline_orchestrator.py`.
+**Status.** Active. `models.py` itself does not exist in the current tree (confirmed) — only its removal is referenced.
+
+---
+
+### D3 — MCDA math (AHP/TOPSIS/OWA/exclusion) extracted from `suitability_builder.py` into `src/utils/`
+
+**Context.** `suitability_builder.py`'s docstring notes it was "refactored: orchestration only" as of v2.0.
+**Decision.** AHP, TOPSIS, OWA, and hard-exclusion logic each became a standalone, technology-agnostic module in `src/utils/`, callable independently of the suitability phase.
+**Consequences.** These primitives are reusable for any future MCDA application in the codebase (stated goal in README §4), and independently testable/reviewable — though no tests currently exist (`06-risk-areas.md`). `grid_aligner.py` (Phase 2a) already reuses `src/utils/ahp.py` for multi-height wind resource aggregation, outside the suitability phase.
+**Related files.** `src/utils/{ahp,topsis,owa,exclusion}.py`, `src/processors/suitability_builder.py`, `src/processors/grid_aligner.py`.
+**Status.** Active.
+
+---
+
+### D4 — TOPSIS as primary suitability surface; OWA as secondary/scenario surface
+
+**Context.** Phase 3 produces both; Phase 4 needs exactly one apt-pixel mask per run.
+**Decision.** TOPSIS output is the default input to Phase 4 (`potential_calculator.py`). OWA outputs exist per scenario but selecting them (`use_owa=True`) is implemented and explicitly reserved for future use, not wired into the orchestrator.
+
+The non-integration of OWA into potential/LCOE calculation is deliberate, not an implementation gap. Formal weight-uncertainty analysis is already covered by Phase 8 (SA-1: OAT perturbation; SA-2: Monte Carlo Dirichlet sampling, fixed seed=42, reproducible), which captures weight sensitivity continuously and with statistical grounding. Running OWA with 3 fixed scenarios through the full pipeline would duplicate that analysis with a cruder method, at ~4x processing time and disk cost, without clear scientific gain. TOPSIS remains the primary score because it is an established method in renewable energy siting literature (Hwang & Yoon, 1981) and is already in use for every country processed to date. OWA remains available for comparative visual inspection, preserving the information without making it part of the "official" result.
+
+**Consequences.** Current pipeline runs only reflect the TOPSIS-based apt-pixel definition end-to-end; OWA scenario outputs on disk are informational/comparative only unless someone wires the flag through. Anyone changing this should update this decision entry and `03-pipeline.md`.
+
+BLOCKER-006 (fixed) hardened this decision at the implementation level: TOPSIS-vs-OWA raster discovery across all read call sites is now centralized in `src/utils/raster_io.py::find_suitability_tif()`, with TOPSIS tried first, always, explicitly. Previously `results_writer.py` (Phase 6) had its own, independently-implemented lookup that tried the OWA-balanced file *before* TOPSIS — since Phase 3 always writes the OWA-balanced GeoTIFF unconditionally, that candidate matched on every run, meaning Phase 6's suitability-dominance map (and its printed pixel-count summary) had been silently built from OWA, not TOPSIS, contradicting this decision in practice despite the code/docs stating otherwise. See validation results in the BLOCKER-006 entry above for the before/after numeric impact.
+
+**Related files.** `src/processors/potential_calculator.py`, `src/processors/suitability_builder.py`, `src/processors/sensitivity_analyzer.py`, `src/processors/lcoe_calculator.py`, `src/processors/results_writer.py`, `src/utils/raster_io.py`.
+**Status.** Active (TOPSIS path); the OWA-driven alternative is **In migration** / not yet activated. Raster-discovery precedence bug fixed (BLOCKER-006).
+
+---
+
+### D5 — Centralized map styling and text reporting instead of per-phase implementations
+
+**Context.** README §"Architecture Highlights" and multiple module docstrings (`results_writer.py`, `reporting.py`) describe eliminating duplicated `_plot_*` and text-formatting logic that previously existed independently across phases.
+**Decision.** All raster maps render through `GeoWorldStyler.render_raster_map()` (`src/utils/map_styling.py`); all phase text reports build through `build_phase_report()` (`src/utils/reporting.py`).
+**Consequences.** Visual and textual consistency across all nine phases' outputs — important for a document meant to read as one coherent thesis/publication figure set. New phases must use these rather than writing bespoke plotting/formatting code.
+**Related files.** `src/utils/map_styling.py`, `src/utils/reporting.py`, all `src/processors/*.py`.
+**Status.** Active.
+
+---
+
+### D6 — GHG abatement scope limited to the electricity generation sector
+
+**Context.** Explicitly stated in `ghg_abatement_calculator.py` (`SCOPE: ELECTRICITY TRANSITION`) and `abatement_plots.py` docstrings.
+**Decision.** All Phase 7 figures and calculations model electricity-sector substitution only; any "total national CO₂" figure shown for context includes all sectors and is clearly a different, larger denominator.
+**Consequences.** Prevents the common analytical error of implying economy-wide decarbonization from an electricity-only substitution model. Anyone extending Phase 7 to other sectors (transport is instead handled separately in Phase 9) needs a new, explicitly-scoped module rather than expanding this one's scope silently.
+**Related files.** `src/processors/ghg_abatement_calculator.py`, `src/utils/abatement_plots.py`, `configs/net_zero_db.json`.
+**Status.** Active.
+
+---
+
+### D7 — No automated test suite
+
+**Context.** No `tests/` directory, no `pytest`/`unittest` files found anywhere in the repository at documentation time.
+**Decision (inferred, not stated).** Correctness is currently verified manually/visually (inspecting output maps, reports, and comparing to published benchmarks like IRENA LCOE figures) rather than through an automated suite.
+**Consequences.** Refactors and dependency bumps carry higher regression risk, especially in numerically sensitive modules (AHP/TOPSIS math, LCOE formulas, GHG substitution logic). See `06-risk-areas.md`.
+**Related files.** N/A (absence of files).
+**Status.** Uncertain — it is not documented whether this is a deliberate choice for a single-researcher pipeline or simply not yet done.
+
+**Editorial note (added at move time, not part of the original entry)**: D7 is now stale — `tests/unit/` exists (`pytest`, 77 tests as of BLOCKER-011) since QI-001. Left unchanged above per the "move, don't rewrite" rule for this appendix; flagging here rather than editing the historical entry itself.
