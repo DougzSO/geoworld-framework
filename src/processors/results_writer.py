@@ -35,6 +35,16 @@ Pixel area (BLOCKER-003):
     (area_km2_sum, from build_pixel_area_array() — see geo_stats.py).
   - Phase 6 reads that value via get_scenario_data() instead of
     re-deriving it from the suitable-pixel TIF.
+
+Persistence (BLOCKER-011):
+  - This module no longer performs its own phase-level ArtifactManager
+    persistence. PipelineOrchestrator.run_phase() already persists this
+    module's run() return value automatically, after every call — a
+    second, phase-level persistence call here was being silently
+    overwritten by that automatic step, discarding fields (dominance
+    pixel counts) that existed only in the manually-persisted copy.
+    Any field that must survive into outputs/{ISO3}/results/result.pkl
+    has to be part of the dict run() returns.
 """
 
 from __future__ import annotations
@@ -63,7 +73,6 @@ from src.core.validators import (
     validate_raster_crs,
     validate_raster_shape,
 )
-from src.io.artifact_manager import ArtifactManager
 from src.utils.data_recovery import (
     recover_potential_from_disk,
     recover_lcoe_from_disk,
@@ -376,11 +385,23 @@ class ResultsWriter:
                 out_tif_dir,
             )
 
+        # ── 12. Dominance pixel-count summary ─────────────────────────────
+        # BLOCKER-011: these fields must live in the dict run() returns —
+        # see the module docstring's "Persistence (BLOCKER-011)" note.
+        results["dominance_suitability_counts"] = {
+            TECH_META[tech]["label"]: int((dom_suit == i + 1).sum())
+            for i, tech in enumerate(TECH_ORDER)
+        }
+        results["dominance_lcoe_counts"] = {
+            TECH_META[tech]["label"]: int((dom_lcoe == i + 1).sum())
+            for i, tech in enumerate(TECH_ORDER)
+        }
+
         results["elapsed_total"] = round(
             (datetime.now() - started_at).total_seconds(), 1
         )
 
-        # ── 12. Text report ─────────────────────────────────────────────
+        # ── 13. Text report ─────────────────────────────────────────────
         report = self._format_report(
             results, country_name, country_code,
             potential_results, lcoe_results,
@@ -393,16 +414,9 @@ class ResultsWriter:
             f"{started_at.strftime('%Y%m%d_%H%M%S')}.txt"
         ).write_text(report, encoding="utf-8")
 
-        # ── 13. Completeness checks ────────────────────────────────────────
+        # ── 14. Completeness checks ────────────────────────────────────────
         self._check_output_completeness(
             out_fig, country_code, results
-        )
-
-        # ── 14. Artifact persistence ──────────────────────────────────────
-        self._persist_artifacts(
-            country_code, suitability_dir, potential_dir, lcoe_dir,
-            abatement_results, dom_suit, dom_lcoe,
-            out_fig, out_tif_dir, out_reports, results,
         )
 
         return results
@@ -572,57 +586,6 @@ class ResultsWriter:
             logger.info("  All expected GeoTIFFs exported.")
         else:
             logger.warning("  No GeoTIFFs exported.")
-
-    def _persist_artifacts(
-        self,
-        country_code: str,
-        suitability_dir: Path,
-        potential_dir: Any,
-        lcoe_dir: Any,
-        abatement_results: Dict,
-        dom_suit: np.ndarray,
-        dom_lcoe: np.ndarray,
-        out_fig: Path,
-        out_tif_dir: Path,
-        out_reports: Path,
-        results: Dict,
-    ) -> None:
-        artifact_mgr = ArtifactManager(self.outputs_dir, country_code)
-        phase_dir    = artifact_mgr.phase_dir("results")
-
-        serializable: Dict[str, Any] = {
-            "country":       results["country"],
-            "timestamp":     results["timestamp"],
-            "elapsed_total": results["elapsed_total"],
-            "exported_tifs": results.get("exported_tifs", []),
-            "dominance_suitability_counts": {
-                TECH_META[tech]["label"]: int((dom_suit == i + 1).sum())
-                for i, tech in enumerate(TECH_ORDER)
-            },
-            "dominance_lcoe_counts": {
-                TECH_META[tech]["label"]: int((dom_lcoe == i + 1).sum())
-                for i, tech in enumerate(TECH_ORDER)
-            },
-        }
-        artifact_mgr.save_result(phase_dir, serializable, serializer="pickle")
-
-        files: Dict[str, str] = {}
-        for d in (out_fig, out_tif_dir, out_reports):
-            for p in d.rglob("*"):
-                if p.is_file():
-                    files[str(p.relative_to(phase_dir))] = str(p)
-
-        artifact_mgr.save_manifest(
-            phase_dir, "results",
-            files=files,
-            parameters={
-                "country":             country_code,
-                "suitability_dir":     str(suitability_dir),
-                "potential_dir":       str(potential_dir),
-                "lcoe_dir":            str(lcoe_dir),
-                "abatement_available": abatement_results.get("available", False),
-            },
-        )
 
     # ─────────────────────────────────────────────────────────────────────
     # Dominance computation
