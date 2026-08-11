@@ -47,7 +47,6 @@ from typing import Any, Dict, List, Optional, Tuple
 import geopandas as gpd
 import matplotlib
 matplotlib.use("Agg")
-import matplotlib.gridspec as gridspec
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
@@ -355,7 +354,7 @@ class ResultsWriter:
             )
 
         with _timer("executive_dashboard", timings):
-            self._plot_executive_dashboard(
+            self.panels.draw_executive_dashboard(
                 dom_suit, dom_suit_score, comp_suit,
                 dom_lcoe, dom_lcoe_val, comp_lcoe,
                 potential_results, lcoe_results,
@@ -364,6 +363,7 @@ class ResultsWriter:
                 mainland_gdf, context_gdf,
                 extent, minx, maxx, miny, maxy,
                 out_fig / f"{country_code}_executive_dashboard.png",
+                draw_dominance=self._draw_dominance_on_ax,
                 abatement_results=abatement_results,
             )
 
@@ -846,167 +846,6 @@ class ResultsWriter:
             fig, title_main=t_main, title_sub=country_name
         )
         self.styler.save(fig, out_path)
-
-    # ─────────────────────────────────────────────────────────────────────
-    # Executive dashboard
-    # ─────────────────────────────────────────────────────────────────────
-
-    def _plot_executive_dashboard(
-        self,
-        dom_suit: np.ndarray,
-        dom_suit_score: np.ndarray,
-        comp_suit: np.ndarray,
-        dom_lcoe: np.ndarray,
-        dom_lcoe_val: np.ndarray,
-        comp_lcoe: np.ndarray,
-        potential_results: Dict,
-        lcoe_results: Dict,
-        transform: Affine,
-        crs: str,
-        country_name: str,
-        country_code: str,
-        mainland_gdf: gpd.GeoDataFrame,
-        context_gdf: Optional[gpd.GeoDataFrame],
-        extent: List[float],
-        minx: float, maxx: float,
-        miny: float, maxy: float,
-        out_path: Path,
-        abatement_results: Optional[Dict] = None,
-    ) -> None:
-
-        has_abat = (
-            abatement_results is not None
-            and abatement_results.get("available", False)
-        )
-
-        fig, axes, letters = self._build_dashboard_layout(has_abat, country_name, country_code)
-
-        # (a) Suitability dominance map
-        self._draw_dominance_on_ax(
-            dom_suit, dom_suit_score, comp_suit, "suitability",
-            axes[0], transform, crs,
-            mainland_gdf, context_gdf,
-            extent, minx, maxx, miny, maxy,
-        )
-        axes[0].set_title(
-            "Suitability Dominance\n(AHP-TOPSIS | Balanced Scenario)",
-            fontsize=9.5, fontweight="bold", pad=4,
-        )
-
-        # (b) Technical potential bars
-        self.panels.draw_potential_bars(axes[1], potential_results)
-        axes[1].set_title(
-            "Technical Potential by Scenario",
-            fontsize=9.5, fontweight="bold",
-        )
-
-        # (c) LCOE distribution box-whisker
-        self.panels.draw_lcoe_distribution(axes[2], lcoe_results)
-        axes[2].set_title(
-            "LCOE Distribution ($/MWh)\nP10 ─ IQR ─ P90",
-            fontsize=9.5, fontweight="bold",
-        )
-
-        # (d) LCOE dominance map
-        self._draw_dominance_on_ax(
-            dom_lcoe, dom_lcoe_val, comp_lcoe, "lcoe",
-            axes[3], transform, crs,
-            mainland_gdf, context_gdf,
-            extent, minx, maxx, miny, maxy,
-        )
-        axes[3].set_title(
-            "LCOE Dominance\n(Cheapest Technology per Pixel)",
-            fontsize=9.5, fontweight="bold", pad=4,
-        )
-
-        # (e) Merit-order supply curves
-        self.panels.draw_supply_curves(axes[4], lcoe_results)
-        axes[4].set_title(
-            "Resource Cost Curves (Merit Order)",
-            fontsize=9.5, fontweight="bold",
-        )
-
-        # (f) Summary table
-        self.panels.draw_summary_table(axes[5], potential_results, lcoe_results)
-        axes[5].set_title(
-            "Key Metrics — Balanced Scenario",
-            fontsize=9.5, fontweight="bold",
-        )
-
-        # (g) GHG abatement (optional)
-        if has_abat:
-            self.panels.draw_abatement_summary(axes[6], abatement_results)
-            axes[6].set_title(
-                "GHG Abatement & Thermal Substitution",
-                fontsize=9.5, fontweight="bold",
-            )
-
-        self.styler.add_standard_footer(fig)
-        out_path.parent.mkdir(parents=True, exist_ok=True)
-        fig.savefig(
-            str(out_path), bbox_inches="tight",
-            dpi=self.styler.dpi, facecolor=fig.get_facecolor(),
-        )
-        plt.close(fig)
-
-    def _build_dashboard_layout(
-        self,
-        has_abat: bool,
-        country_name: str,
-        country_code: str,
-    ) -> Tuple[plt.Figure, List[plt.Axes], str]:
-        """Create figure + axes grid for the executive dashboard."""
-        title_extra = "  ·  GHG Abatement" if has_abat else ""
-        fig_width   = 22 if has_abat else 18
-
-        fig = plt.figure(figsize=(fig_width, 13), dpi=self.styler.dpi)
-        fig.patch.set_facecolor(self.styler.fig_bg)
-        fig.suptitle(
-            f"GeoWorld Framework — Renewable Energy Assessment: "
-            f"{country_name} ({country_code})\n"
-            f"AHP-TOPSIS Multi-Criteria Suitability  ·  Technical Potential"
-            f"  ·  LCOE Economics{title_extra}",
-            fontsize=15, fontweight="bold", y=0.99,
-        )
-
-        if has_abat:
-            gs = gridspec.GridSpec(
-                2, 4, figure=fig,
-                width_ratios=[1.05, 1.0, 1.0, 0.8],
-                height_ratios=[1.0, 0.90],
-                hspace=0.38, wspace=0.32,
-                left=0.05, right=0.97, top=0.92, bottom=0.04,
-            )
-            axes = [
-                fig.add_subplot(gs[0, 0]),
-                fig.add_subplot(gs[0, 1]),
-                fig.add_subplot(gs[0, 2]),
-                fig.add_subplot(gs[1, 0]),
-                fig.add_subplot(gs[1, 1]),
-                fig.add_subplot(gs[1, 2]),
-                fig.add_subplot(gs[:, 3]),
-            ]
-            letters = "abcdefg"
-        else:
-            gs = gridspec.GridSpec(
-                2, 3, figure=fig,
-                width_ratios=[1.05, 1.0, 1.0],
-                height_ratios=[1.0, 0.90],
-                hspace=0.38, wspace=0.32,
-                left=0.05, right=0.97, top=0.92, bottom=0.04,
-            )
-            axes   = [fig.add_subplot(gs[i // 3, i % 3]) for i in range(6)]
-            letters = "abcdef"
-
-        for ax, letter in zip(axes, letters):
-            ax.text(
-                0.02, 0.97, f"({letter})",
-                transform=ax.transAxes,
-                fontsize=10, fontweight="bold",
-                va="top", ha="left", color="#111827", zorder=10,
-            )
-
-        return fig, axes, letters
 
     # ─────────────────────────────────────────────────────────────────────
     # Dominance map on dashboard axis (raster + GDF — stays in this module)
