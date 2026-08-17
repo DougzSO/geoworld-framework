@@ -8,8 +8,8 @@ SA-2 · Monte Carlo AHP: Dirichlet distributions on weights (decision robustness
        under the framework's real scenario threshold -- see METRIC_013 below).
 SA-3 · Threshold Sweep: Area elasticity vs. spatial suitability constraints.
 SA-4 · LCOE Uncertainty: Triangular Monte Carlo for CAPEX, OPEX, CF.
-SA-5 · Potential Sensitivity: Parameter elasticities (Power Density, CF).
-SA-6 · Sobol Global Sensitivity: GHG Abatement indices (S1 and ST).
+SA-5 · Sobol Global Sensitivity: GHG Abatement indices (S1 and ST).
+SA-6 · Potential Sensitivity: Parameter elasticities (Power Density, CF).
 
 References:
   - Saltelli et al. (2008). Global Sensitivity Analysis.
@@ -60,6 +60,12 @@ Changelog
                  metric answered "is the score numerically stable"; the
                  framework's actual output is a threshold-based apt/not-apt
                  decision, which is what this metric now measures directly.
+
+  DOC_01 (fix) : This module docstring had SA-5/SA-6 swapped (labeled SA-5
+                 as potential-parameter sensitivity and SA-6 as Sobol) --
+                 the actual functions (sa5_sobol_ghg, sa6_potential_
+                 sensitivity) and docs/memory/04-algorithms.md always had it
+                 the other way around. Corrected here; no code affected.
 """
 
 from __future__ import annotations
@@ -91,29 +97,24 @@ from src.utils.sensitivity_math import (
     sa6_potential_sensitivity,
 )
 
-try:
-    from src.utils.sensitivity_plots import (
-        TECH_LABEL,
-        plot_sa1_tornado,
-        plot_sa1_heatmap,
-        plot_sa2_cv,
-        plot_sa3_threshold,
-        plot_sa4_lcoe,
-        plot_sa5_sobol,
-        plot_sa6_potential,
-        plot_dashboard,
-    )
-    _SENSITIVITY_PLOTS_AVAILABLE = True
-except ImportError:
-    _SENSITIVITY_PLOTS_AVAILABLE = False
-    TECH_LABEL: Dict[str, str] = {
-        "solar":   "Solar PV",
-        "wind":    "Wind Onshore",
-        "biomass": "Biomass / Bioenergy",
-    }
-    plot_sa1_tornado = plot_sa1_heatmap = plot_sa2_cv = None
-    plot_sa3_threshold = plot_sa4_lcoe = plot_sa5_sobol = None
-    plot_sa6_potential = plot_dashboard = None
+# sensitivity_plots is a first-party, version-controlled sibling module, not
+# an optional dependency -- an ImportError here means the package is broken,
+# not a runtime condition to degrade gracefully from. The previous
+# try/except silently set every plot_* function to None on failure, which
+# meant a broken import would surface later as a confusing per-SA "failed"
+# log line (plot_sa1_tornado(...) raising TypeError: 'NoneType' object is
+# not callable) instead of a clear import error at startup. Fail fast.
+from src.utils.sensitivity_plots import (
+    TECH_LABEL,
+    plot_sa1_tornado,
+    plot_sa1_heatmap,
+    plot_sa2_cv,
+    plot_sa3_threshold,
+    plot_sa4_lcoe,
+    plot_sa5_sobol,
+    plot_sa6_potential,
+    plot_dashboard,
+)
 
 logger = logging.getLogger("geoworld.processors.SensitivityAnalyzer")
 
