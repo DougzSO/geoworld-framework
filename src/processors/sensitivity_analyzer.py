@@ -188,16 +188,16 @@ def _load_criteria_arrays(
 def _balanced_threshold(tech: str, pot_results: Any) -> float:
     """
     Resolve the real balanced-scenario TOPSIS threshold from Phase 4's
-    persisted result, for SA-2's threshold-crossing metric (METRIC_013).
+    persisted result.
 
-    Deliberately does not reuse SensitivityAnalyzer._resolve_tech_params()'s
-    `base_thr` -- that helper's `country_params is not None` branch always
-    returns a hardcoded 0.60 fallback in practice (CountryParams has no
-    `suitability_threshold` attribute, so getattr's default silently wins,
-    and the branch that would read the real value from `pot_results` is
-    never reached). That is a separate, pre-existing issue, out of scope
-    here; this function reads Phase 4's actual persisted threshold
-    directly instead, independent of that other code path.
+    Single source of truth for the real threshold, shared by SA-2
+    (METRIC_013) and by SensitivityAnalyzer._resolve_tech_params() for
+    SA-3/SA-6 (BLOCKER-017 fix). _resolve_tech_params() previously had its
+    own inline lookup (`getattr(country_params, "suitability_threshold",
+    thr)`) that always fell back to a hardcoded 0.60 default -- CountryParams
+    has no `suitability_threshold` attribute -- both callers now go through
+    this one function instead of maintaining two independent readers of the
+    same persisted data.
     """
     if pot_results is None:
         return 0.60
@@ -918,12 +918,20 @@ class SensitivityAnalyzer:
         country_params: Optional[CountryParams],
         pot_results: Any,
     ) -> Tuple[float, float, float, float]:
-        """Resolve (power_density, land_use_factor, capacity_factor, threshold)."""
+        """Resolve (power_density, land_use_factor, capacity_factor, threshold).
+
+        `threshold` is always sourced from Phase 4's persisted balanced-
+        scenario result via `_balanced_threshold()` (BLOCKER-017 fix) --
+        `CountryParams` has no `suitability_threshold` attribute, so the
+        previous inline lookup silently fell back to a hardcoded default
+        on every call, before the (correct) `pot_results`-derived value
+        below was ever reached. `power_density`/`land_use_factor`/
+        `capacity_factor` resolution is unchanged.
+        """
         tp    = self.cfg.system.get("potential", {}).get("technologies", {}).get(tech, {})
         pd_mw = float(tp.get("power_density_mw_km2",  30.0))
         luf   = float(tp.get("land_use_factor",        0.20))
         cf    = float(tp.get("capacity_factor_max",    0.22))
-        thr   = float(tp.get("base_threshold",         0.60))
 
         if country_params is not None:
             try:
@@ -932,8 +940,7 @@ class SensitivityAnalyzer:
                     pd_mw = float(getattr(tech_obj, "power_density_mw_km2", pd_mw))
                     luf   = float(getattr(tech_obj, "land_use_factor",       luf))
                     cf    = float(getattr(tech_obj, "capacity_factor",        cf))
-                    thr   = float(getattr(country_params, "suitability_threshold", thr))
-                    return pd_mw, luf, cf, thr
+                    return pd_mw, luf, cf, _balanced_threshold(tech, pot_results)
             except AttributeError:
                 pass
 
@@ -954,13 +961,10 @@ class SensitivityAnalyzer:
                         pd_mw = float(pp.get("power_density_mw_km2", pd_mw))
                         luf   = float(pp.get("land_use_factor",       luf))
                         cf    = float(pp.get("capacity_factor",        cf))
-                        thr_d = pp.get("thresholds", {})
-                        if isinstance(thr_d, dict):
-                            thr = float(thr_d.get("balanced", thr))
             except Exception:
                 pass
 
-        return pd_mw, luf, cf, thr
+        return pd_mw, luf, cf, _balanced_threshold(tech, pot_results)
 
     @staticmethod
     def _match_tech_from_stem(stem: str, country_code: str) -> Optional[str]:

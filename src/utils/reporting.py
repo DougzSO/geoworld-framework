@@ -102,13 +102,9 @@ def build_phase_report(
     sep()
     lines.append("")
     
-    # ── Sections ───────────────────────────────────────────────────────
-    for section in sections:
-        sep("─")
-        lines.append(f"  {section.title}")
-        sep("─")
-        
-        for row in section.rows:
+    # ── Sections (recursive: also renders subsections, BLOCKER-018) ─────
+    def render_rows(rows: List[Tuple[str, str]], indent: str) -> None:
+        for row in rows:
             if isinstance(row, tuple):
                 if len(row) == 2:
                     # Two-column layout: (label, value)
@@ -116,18 +112,32 @@ def build_phase_report(
                     # Detecta se é um header/separator ou linha de dados
                     if label.strip().startswith("─") or not value:
                         # Header ou separator — sem formatação adicional
-                        lines.append(f"  {label}")
+                        lines.append(f"{indent}{label}")
                     else:
                         # Linha normal — formato compacto
-                        lines.append(f"  {label:<40} {value}")
+                        lines.append(f"{indent}{label:<40} {value}")
                 else:
                     # Multi-column (fallback genérico)
-                    lines.append("  " + "  ".join(str(c) for c in row))
+                    lines.append(indent + "  ".join(str(c) for c in row))
             else:
                 # String simples
-                lines.append(f"  {row}")
-        
+                lines.append(f"{indent}{row}")
+
+    def render_section(section: ReportSection, depth: int = 0) -> None:
+        indent = "  " * depth
+        bar = section.separator_char * (width - len(indent))
+        lines.append(f"{indent}{bar}")
+        lines.append(f"{indent}  {section.title}")
+        lines.append(f"{indent}{bar}")
+
+        render_rows(section.rows, f"{indent}  ")
         lines.append("")
+
+        for subsection in section.subsections:
+            render_section(subsection, depth + 1)
+
+    for section in sections:
+        render_section(section)
     
     # ── Timings ────────────────────────────────────────────────────────
     if timings:
@@ -147,36 +157,6 @@ def build_phase_report(
         lines.append("")
     
     return "\n".join(lines)
-
-
-def _append_section(
-    lines: List[str],
-    section: ReportSection,
-    width: int,
-    indent: int,
-) -> None:
-    """Recursively append a section and its subsections to lines."""
-    prefix = "  " * indent
-    sep = section.separator_char * (width - len(prefix) - 2)
-    
-    # Section header
-    lines.extend([
-        f"{prefix}{sep}",
-        f"{prefix}  {section.title}",
-        f"{prefix}{sep}",
-    ])
-    
-    # Section rows
-    for label, value in section.rows:
-        label_col = f"{prefix}  {label}"
-        # Right-align value within remaining width
-        available = width - len(label_col) - 2
-        lines.append(f"{label_col}{value:>{available}}")
-    
-    # Subsections (indented)
-    for subsection in section.subsections:
-        lines.append("")
-        _append_section(lines, subsection, width, indent + 1)
 
 
 def _format_timestamp(ts: str) -> str:
