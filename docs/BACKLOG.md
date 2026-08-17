@@ -1129,13 +1129,13 @@ BLOCKER-006 (fixed) hardened this decision at the implementation level: TOPSIS-v
 
 **Binding design rule.** A parameter sweep produces a **sensitivity report** (the range of results under different values) — it never makes the pipeline auto-select an "optimal" value and use it as the official result. The official result always comes from the base parameters chosen by a human, informed by the sensitivity report. This rule applies to every row below, no exceptions.
 
-**Scope note.** `_MIN_TECH_SUBSTITUTION` (`ghg_abatement_calculator.py`) was flagged in the originating investigation as a related but out-of-scope candidate (outside the five modules originally audited); not included in the 13 rows below. Rows 1, 12 and 13 live in `sensitivity_analyzer.py`, which BLOCKER-017/018 (parallel session, in progress at the time this section was created) is actively editing — do not start work on those three rows until BLOCKER-017/018 lands and this note is removed.
+**Scope note.** `_MIN_TECH_SUBSTITUTION` (`ghg_abatement_calculator.py`) was flagged in the originating investigation as a related but out-of-scope candidate (outside the five modules originally audited); not included in the 13 rows below. Rows 1, 12 and 13 live in `sensitivity_analyzer.py` — BLOCKER-017/018 landed (commits `dcf956e`/`7499c61`), so these three rows are unblocked.
 
 | # | Parâmetro | Status | Valor(es) testado(s) | Veredito | Destino final (config file + chave) | Commit |
 |---|---|---|---|---|---|---|
 | 1 | `concentration` (Dirichlet, SA-2) — `sensitivity_analyzer.py:376` | Pending | — | — | — | — |
-| 2 | `common_exclusions` (lakes_exclusion / protected_areas / proximity_plants) — `suitability_builder.py:167-171` | **Bloco 1 — Task 1 done, awaiting value decision** | See "Bloco 1 results" below | — | — | — |
-| 3 | `_SLOPE_OFFSET_DEG` (solar/wind/biomass) — `suitability_builder.py:93-97` | **Bloco 1 — Task 1 done, awaiting value decision** | See "Bloco 1 results" below | — | — | — |
+| 2 | `common_exclusions` (lakes_exclusion / protected_areas / proximity_plants) — `suitability_builder.py:167-171` | **Bloco 1 — Task 2 (migration) done** | See "Bloco 1 results" below | lakes_exclusion: keep hardcoded (mathematically inert, no value to tune). protected_areas: 0.99, migrated as-is — **value pending Bloco 6 (IUCN_SCORES)**, not final. proximity_plants: 0.01, migrated as-is — **no documented external justification, review in a literature-comparison pass**, not final. | `parameters.json`'s new `exclusion_thresholds.protected_areas` / `.proximity_plants` (`CountryParams.protected_areas_threshold`/`.proximity_plants_threshold`) | `e6b7da4` |
+| 3 | `_SLOPE_OFFSET_DEG` (solar/wind/biomass) — `suitability_builder.py:93-97` | **Bloco 1 — Task 2 (migration) done** | See "Bloco 1 results" below | Current literals (5.0/10.0/20.0°) kept as-is — low priority, no material numeric effect found (<0.3% apt_area swing at ±50%), migrated for config-traceability only, not because a new value was chosen. | `parameters.json`'s new `exclusion_thresholds.slope_offset_deg` (`CountryParams.slope_offset_{solar,wind,biomass}_deg`) | `e6b7da4` |
 | 4 | `normalize_percentile` default `p_low=5.0, p_high=95.0` (solar/wind/biomass resource) — `normalization.py:26-27` | Pending | — | — | — | — |
 | 5 | `IUCN_SCORES` mapping — `constants.py:177-194` | Pending | — | — | — | — |
 | 6 | `_MIN_RESOURCE_COVERAGE=0.05` — `lcoe_calculator.py:112` | Pending | — | — | — | — |
@@ -1179,7 +1179,36 @@ Both countries show the same pattern: halving or increasing the slope offset by 
 
 **Materiality call for triggering the BRA confirmation run** (per instructions, this is a reporting judgment only — not a value decision): swings under ~0.3% on final apt_area were treated as not material and not singled out for separate discussion; `proximity_plants`'s 0.5–6% apt_area swing was treated as material and is the only row confirmed in BRA before being written up above as a relevant finding. `lakes_exclusion`/`protected_areas` were run in BRA anyway (same script pass) and both confirmed zero effect, consistent with the structural explanation above rather than needing a materiality judgment call.
 
-**No verdict recorded.** Per the binding design rule at the top of this section, none of the tested values has been selected as final — that decision is pending user confirmation. Task 2 (migration to `parameters.json`, Pydantic validation, `suitability_builder.py` read-path update, `docs/memory/07-configuration.md` update, full PRT validation run, `pytest tests/`, commit) has not started.
+**No verdict recorded** (as of the OAT sensitivity pass above). Task 2 (migration) followed, per the user's explicit per-item decisions:
+
+### Bloco 1 — Task 2 (migration, completed)
+
+**Decisions** (user-directed, not automated):
+1. `lakes_exclusion` — confirmed mathematically inert in all of `(0, 1)` (see OAT results above). **Not migrated** — `parameters.json`/Pydantic would imply a real tunable value that doesn't exist. `suitability_builder.py`'s `common_exclusions` dict keeps the hardcoded `0.5` literal with a comment explaining why (binary criterion, `crit_arr < threshold` always selects exactly the `0.0` pixels regardless of the exact threshold value in `(0, 1)`).
+2. `protected_areas` — migrated at its current value (0.99), **explicitly marked as a pending value decision**, not final — depends on Bloco 6's `IUCN_SCORES` mapping work (row 5 in the table above), since 0.99 currently sits in the same flat step of the IUCN score ladder as several other candidate values and the "right" threshold can't be chosen independently of that ladder's own review.
+3. `proximity_plants` — kept at its current operational value (0.01), migrated with Pydantic validation, **flagged as having no documented external justification** — a real, monotonic, country-dependent effect was found (PRT apt_area swings up to −6.05% for wind across the tested range; BRA up to −0.62%), so this is not a "safe to ignore" parameter — it should be revisited against literature/regulatory siting-distance standards in a future pass, not treated as settled just because it's now in a config file.
+4. `_SLOPE_OFFSET_DEG` — migrated at current literals (5.0/10.0/20.0°), no value change — the OAT pass found under 0.3% apt_area effect at ±50% swings for every tech/country cell, so this migration is purely for config-traceability (removing a hardcoded-and-therefore-invisible parameter), not a response to a material sensitivity finding.
+
+**Implementation**: new `parameters.json` top-level key `exclusion_thresholds` (global, not per-country — matches the pre-migration behavior, which was a single hardcoded dict shared by all countries):
+```json
+"exclusion_thresholds": {
+  "protected_areas": 0.99,
+  "proximity_plants": 0.01,
+  "slope_offset_deg": { "solar": 5.0, "wind": 10.0, "biomass": 20.0 }
+}
+```
+Note: the user's original instruction said "parameters.json/land_suitability" for the slope offsets — `land_suitability` was already a top-level key with an unrelated meaning (ESA WorldCover class → tech suitability score), so a new `exclusion_thresholds` key was used instead to avoid a semantic collision; flagged for the user to correct if a different placement was intended. Five new `CountryParams` fields (`protected_areas_threshold`, `proximity_plants_threshold`, `slope_offset_{solar,wind,biomass}_deg`), all `Field(..., ge=..., le=...)`-validated, populated via a new `ConfigLoader.exclusion_thresholds` property (mirrors the existing `land_suitability` property pattern) with fallback defaults identical to the pre-migration literals. `suitability_builder.py`'s `get_technology_configs()` now reads these from `CountryParams` instead of the module-level `_SLOPE_OFFSET_DEG` constant and the inline `common_exclusions` literals (which remain only as fallback defaults for legacy dict-style `country_params`).
+
+**Validation (as performed)**:
+- Confirmed via direct instantiation (`ConfigLoader.get_country()` + `get_technology_configs()`) that resolved values are byte-identical to the pre-migration hardcoded literals for both PRT and BRA (`hard_exclusions={'lakes_exclusion': 0.5, 'protected_areas': 0.99, 'proximity_plants': 0.01}`, `slope_max_deg` = 15.0/20.0/30.0 for PRT, 17.0/22.0/32.0 for BRA).
+- Full Phase 3 (Suitability) run for PRT and BRA (Phases 1-2b reused from cache): all suitability/OWA GeoTIFFs and AHP weights JSONs confirmed **byte-identical** (`md5sum` diff empty) against a pre-migration baseline copy of the same outputs.
+- `pytest tests/` — 78/78 passing.
+- `configs/settings.yaml` reverted to the standing configuration, confirmed via empty `git diff`.
+
+**Commit message** (as shipped):
+```
+Migrate Bloco 1 exclusion-gate parameters to parameters.json
+```
 
 ---
 
