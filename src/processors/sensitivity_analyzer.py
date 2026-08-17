@@ -90,6 +90,7 @@ from src.utils.sensitivity_math import (
     _build_ghg_function_from_abatement,
     _sfmt,
     sa1_oat_weight_sensitivity,
+    sa2_distribution_summary,
     sa2_monte_carlo_weights,
     sa3_threshold_sweep,
     sa4_lcoe_uncertainty,
@@ -675,6 +676,10 @@ class SensitivityAnalyzer:
                         criteria_dir, list(weights.keys()), weights,
                         height, width, threshold=sa2_threshold,
                         n_samples=n_mc_samples,
+                    )
+                    sa2_distribution_summary(mc).to_csv(
+                        out_dir / f"{country_code}_{tech}_sa2_distribution_summary.csv",
+                        index=False,
                     )
                     results_sa[tech]["sa2"] = {
                         "threshold":          mc["threshold"],

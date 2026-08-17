@@ -392,6 +392,48 @@ def sa2_monte_carlo_weights(
     }
 
 
+def sa2_distribution_summary(mc: Dict[str, Any]) -> pd.DataFrame:
+    """
+    Percentile summary of SA-2's per-pixel cv/ci_width/crossing_fraction
+    arrays, for CSV persistence (item 5, docs/BACKLOG.md enxugamento).
+
+    One row per metric, not one row per pixel -- cv/ci_width are summarized
+    over all sampled pixels; crossing_fraction is restricted to
+    `apt_base_mask`, the same population decisive/boundary/moderate_fraction
+    are already computed over, so the CSV describes the same population the
+    text report's headline stats describe, just with more granularity.
+    """
+    apt_mask = mc["apt_base_mask"]
+    rows: List[Dict[str, Any]] = []
+    for metric_name, arr, mask in (
+        ("cv", mc["cv"], None),
+        ("ci_width", mc["ci_width"], None),
+        ("crossing_fraction", mc["crossing_fraction"], apt_mask),
+    ):
+        vals = arr[mask] if mask is not None else arr
+        if vals.size == 0:
+            rows.append({
+                "metric": metric_name, "n_pixels": 0,
+                "mean": float("nan"), "std": float("nan"),
+                "p05": float("nan"), "p25": float("nan"), "p50": float("nan"),
+                "p75": float("nan"), "p95": float("nan"),
+            })
+            continue
+        p05, p25, p50, p75, p95 = np.percentile(vals, [5, 25, 50, 75, 95])
+        rows.append({
+            "metric":   metric_name,
+            "n_pixels": int(vals.size),
+            "mean":     round(float(vals.mean()), 4),
+            "std":      round(float(vals.std()),  4),
+            "p05":      round(float(p05), 4),
+            "p25":      round(float(p25), 4),
+            "p50":      round(float(p50), 4),
+            "p75":      round(float(p75), 4),
+            "p95":      round(float(p95), 4),
+        })
+    return pd.DataFrame(rows)
+
+
 def sa3_threshold_sweep(
     suitability_tif: Path,
     pixel_area_km2_func: Callable,
