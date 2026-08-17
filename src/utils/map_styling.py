@@ -1253,14 +1253,26 @@ class GeoWorldStyler:
         max_display_px = self.layout.get("max_raster_display_px", 1200)
         if max(h, w) > max_display_px and _PIL_Image is not None:
             scale = max_display_px / max(h, w)
+            new_size = (max(1, int(w * scale)), max(1, int(h * scale)))
             score_pil = _PIL_Image.fromarray(
                 np.where(np.isfinite(score), score, -9999.0).astype(np.float32)
-            ).resize(
-                (max(1, int(w * scale)), max(1, int(h * scale))),
-                _PIL_Image.NEAREST,
-            )
+            ).resize(new_size, _PIL_Image.NEAREST)
             score = np.array(score_pil, dtype=np.float32)
             score[score == -9999.0] = np.nan
+
+            # BLOCKER-013: exclude_mask must shrink to the same shape as
+            # score, or excl_rgba[exclude_mask, ...] below fails with a
+            # boolean-index shape mismatch for any country whose grid
+            # exceeds max_display_px. NEAREST is deliberate, not a copy
+            # of score's method by coincidence -- exclude_mask is boolean,
+            # and a continuous/interpolated resize would blend 0/1 into
+            # fractional values at exclusion boundaries, which is wrong
+            # even when the resulting shape happens to be right.
+            if exclude_mask is not None:
+                mask_pil = _PIL_Image.fromarray(
+                    exclude_mask.astype(np.uint8) * 255
+                ).resize(new_size, _PIL_Image.NEAREST)
+                exclude_mask = np.array(mask_pil, dtype=np.uint8) > 0
 
         # ── Create figure ─────────────────────────────────────────────
         fig, ax = self.create_figure(
