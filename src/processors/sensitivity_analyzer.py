@@ -1010,13 +1010,16 @@ class SensitivityAnalyzer:
         techs: Dict[str, Any] = {}
         suitability_dir = self.outputs_dir / country_code / "suitability"
 
-        # ── Mapear ficheiros de pesos: tech → Path ───────────────────────
-        weights_by_tech: Dict[str, Path] = {}
-        for wf in suitability_dir.rglob("*_weights.json"):
-            tech = self._match_tech_from_stem(wf.stem, country_code)
-            if tech is not None and tech not in weights_by_tech:
-                # Primeira ocorrência vence (mais específica, country_code primeiro)
-                weights_by_tech[tech] = wf
+        # BLOCKER-017/018 item 4 (docs/BACKLOG.md): reuse _load_weights_from_disk()
+        # instead of duplicating its rglob + parsing logic here. Confirmed this is
+        # NOT the BUG_07/BLOCKER-010 pattern (preferring disk over a live object
+        # that already has the answer) -- SuitabilityStats never carries weights
+        # in memory, only a weights_json path, so disk is the only real source
+        # either way; the two loaders were just independently re-implementing the
+        # same read.
+        weights_by_tech: Dict[str, Dict[str, float]] = self._load_weights_from_disk(
+            country_code
+        )
 
         for tech in ("solar", "wind", "biomass"):
             # 1. Localizar TIF de suitability — resolver centralizado
@@ -1038,24 +1041,8 @@ class SensitivityAnalyzer:
                 suit_tif.relative_to(self.outputs_dir),
             )
 
-            # 2. Carregar pesos
-            weights: Dict[str, float] = {}
-            wf = weights_by_tech.get(tech)
-            if wf:
-                try:
-                    raw = json.loads(wf.read_text(encoding="utf-8"))
-                    if "weights" in raw and isinstance(raw["weights"], dict):
-                        weights = {str(k): float(v) for k, v in raw["weights"].items()}
-                    else:
-                        weights = {
-                            str(k): float(v) for k, v in raw.items()
-                            if isinstance(v, (int, float))
-                        }
-                    logger.info(
-                        "[%s] %d weights loaded from %s", tech, len(weights), wf.name
-                    )
-                except Exception as exc:
-                    logger.warning("[%s] Failed to read weights JSON: %s", tech, exc)
+            # 2. Pesos já carregados por _load_weights_from_disk() acima.
+            weights: Dict[str, float] = dict(weights_by_tech.get(tech, {}))
 
             # 3. Fallback: pesos iguais a partir dos critérios disponíveis
             if not weights:
