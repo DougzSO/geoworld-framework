@@ -32,7 +32,7 @@ This is the central configuration decision in the codebase (see `09-decisions.md
 - `pipeline.sensitivity` — per-sub-analysis toggles (`run_sa1`…`run_sa6`) and `n_mc_samples`.
 - `pipeline.transport` — `primary_scenario`, `hub_suitability_threshold`, `run_all_scenarios`.
 
-> ⚠️ Point to validate: as observed at documentation time, `settings.yaml` has `skip_audit`, `skip_land_cover`, `skip_align`, `skip_criteria`, `skip_suitability`, `skip_abatement`, `skip_sensitivity`, and `skip_transport` all set to `true`, with only `skip_potential`, `skip_lcoe`, `skip_results` set to `false`. This looks like an active development/debugging state (re-running only phases 4–6 against already-cached earlier-phase outputs) rather than the default "full run" the README describes. Confirm before assuming a fresh `python main.py <country>` run currently executes all nine phases end-to-end.
+> **Verified 2026-08-17**: `settings.yaml` now has all `skip_*` flags `false` except `skip_transport: true` (Phase 9 disabled by a known bug, not an intentional skip — see `06-risk-areas.md`). The "only phases 4–6 active" state this note originally described is no longer current — BLOCKER-series sessions since have run all eight active phases end-to-end. Still re-check `settings.yaml` directly before relying on this — it's a runtime setting, not a code guarantee.
 
 ## `parameters.json` — structure
 

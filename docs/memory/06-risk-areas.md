@@ -2,9 +2,11 @@
 
 Fragile, untested, hardcoded, or hard-to-reproduce points identified during a light exploration pass. Not exhaustive — extend this file as more is learned.
 
-## No automated tests
+## Test coverage exists but is uneven
 
-No `tests/` directory, no `pytest`/`unittest` anywhere in the repo. All correctness verification is presumably manual (see decision `D7` in `09-decisions.md`). This is the single biggest risk multiplier for everything else in this file — a change to `src/utils/economics.py` or `src/utils/topsis.py`, for instance, has no automated guard against silently breaking every downstream phase.
+**Corrected 2026-08-17** — this section previously claimed no `tests/` directory existed anywhere in the repo. That's no longer true: `tests/unit/` exists with `pytest` (77 tests as of BLOCKER-011 — `test_ahp.py`, `test_topsis.py`, `test_owa.py`, `test_economics.py`, `test_sensitivity_plots.py`, `test_transport_plots.py`, `test_results_writer.py`). See D7 in `09-decisions.md`'s new location (`docs/BACKLOG.md`'s Appendix) for the same correction on the decision-log side.
+
+Real gaps remain, though: `src/utils/exclusion.py` and `src/utils/normalization.py` — both named in QI-001's original deliverable list (`docs/BACKLOG.md`) — have zero test coverage (confirmed by grep across `tests/`, no `test_exclusion.py`/`test_normalization.py` exist). No integration test exercises the full nine-phase pipeline end-to-end (QI-002, not started). A change to either untested module still has no automated guard against silently breaking a downstream phase.
 
 ## Missing `requirements.txt` and `LICENSE` at repo root (partially addressed)
 
@@ -15,9 +17,9 @@ No `tests/` directory, no `pytest`/`unittest` anywhere in the repo. All correctn
 
 The strict rule that `settings.yaml` must never carry scientific/technology parameters (see `07-configuration.md`, decision `D1`) is enforced only by documentation and by `config_loader.py` simply not reading those keys from `settings.yaml` — there is no schema validation that would reject or warn if someone reintroduces a scientific key there. A silently-ignored stale `lcoe:` block re-added to `settings.yaml` would fail quietly rather than erroring.
 
-## Non-default pipeline state in `settings.yaml` at documentation time
+## Pipeline skip-flag state — corrected
 
-As observed, most `pipeline.skip_*` flags are `true` (audit, land_cover, align, criteria, suitability, abatement, sensitivity, transport all skipped); only `skip_potential`, `skip_lcoe`, `skip_results` are `false`. This is very likely an in-progress development/debugging configuration, not the "full run" default the README describes. Anyone running `python main.py <country>` right now would only execute phases 4–6 against whatever is already cached from earlier runs — this could surprise a new contributor expecting a full nine-phase run. Flagged for the project owner to confirm/reset when appropriate.
+**Corrected 2026-08-17** — this section previously described `settings.yaml` as having most `pipeline.skip_*` flags `true`, with only `skip_potential`/`skip_lcoe`/`skip_results` `false` (i.e., only phases 4–6 active). That was accurate at documentation time but is stale now: `configs/settings.yaml` currently has all `skip_*` flags `false` except `skip_transport: true` — a full eight-phase run is the standing default (Transport/Phase 9 stays off because of the known `AttributeError` two sections below, not by an intentional narrowing to phases 4–6). This is a mutable runtime setting, not a code guarantee — re-check `settings.yaml` directly rather than trusting this note indefinitely.
 
 ## Manual, non-automatable data dependency (WDPA)
 

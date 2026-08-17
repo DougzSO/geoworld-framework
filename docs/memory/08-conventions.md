@@ -37,6 +37,6 @@ New data that crosses a phase boundary and gets persisted to disk should get a P
 - Phase-owning classes are named `{Purpose}{Role}` — `DataAuditor`, `GridAligner`, `CriteriaBuilder`, `SuitabilityBuilder`, `PotentialCalculator`, `LCOECalculator`, `ResultsWriter`, `GHGAbatementCalculator`, `SensitivityAnalyzer`, `TransportDecarbonizationCalculator`. A new phase should follow this pattern and live in `src/processors/`.
 - Output files follow `{ISO3}_{tech}_{artifact}.{ext}` (e.g. `PRT_solar_suitability.tif`, `PRT_wind_weights.json`).
 
-## No test suite
+## Test suite
 
-There is currently no `tests/` directory and no `pytest`/`unittest` usage found anywhere in the repository. There is therefore no established testing convention to follow yet — see `06-risk-areas.md`.
+**Corrected 2026-08-17** — this section previously stated no `tests/` directory existed. `tests/unit/` exists (`pytest`, 77 tests as of BLOCKER-011) — see `06-risk-areas.md` for what's covered and what's still open. New pure-math modules should get a `tests/unit/test_<module>.py` following the existing `test_ahp.py`/`test_topsis.py`/`test_owa.py`/`test_economics.py` pattern.

@@ -80,15 +80,15 @@ Depends on: `src.utils.normalization`, `src.utils.map_styling`, `src.utils.timin
 MCDA suitability scoring for Solar/Wind/Biomass: AHP-derived criterion weights (Saaty pairwise matrix, geometric-mean method, CR ≤ 0.10) aggregated via TOPSIS (primary output, single 0–1 score) and OWA (3 scenarios: optimistic/balanced/conservative). Refactored to orchestration-only; math lives in `src/utils/{ahp,topsis,owa,exclusion}.py`.
 Depends on: `src.utils.{ahp,topsis,owa,exclusion,raster_io,params_helpers}`.
 
-### `potential_calculator.py` (1007 lines) — Phase 4
+### `potential_calculator.py` (1024 lines) — Phase 4
 Installable capacity (GW) and annual generation (GWh/yr) per pixel. Uses Phase 3's TOPSIS suitability as the primary surface, applies per-scenario threshold offsets from `settings.yaml`. OWA-based scenario selection is implemented but not yet wired into the orchestrator (`use_owa=True` reserved for future use).
 Depends on: `src.utils.economics`, `src.utils.raster_io`.
 
-### `lcoe_calculator.py` (1523 lines) — Phase 5
+### `lcoe_calculator.py` (1493 lines) — Phase 5
 Spatial LCOE (USD/MWh) per pixel and technology-dominance raster. Strictly reads scientific parameters from `parameters.json` only (not `settings.yaml`). Calculates LCOE only for the apt-pixel mask produced by Phase 4, ensuring consistent pixel population downstream.
 Depends on: `src.utils.economics`, `src.utils.data_recovery`, `src.utils.raster_io`, `src.utils.reporting`.
 
-### `results_writer.py` (1553 lines) — Phase 6
+### `results_writer.py` (1071 lines) — Phase 6
 Final synthesis: technology suitability/LCOE dominance maps (GeoTIFF + PNG), executive dashboard, text report. Delegates data recovery to `src.utils.data_recovery`, report text to `src.utils.reporting`, dashboard panel drawing to `src.visualization.dashboard_panels`; retains only raster I/O and dominance-map plotting.
 Depends on: `src.utils.data_recovery`, `src.utils.reporting`, `src.visualization.dashboard_panels`.
 
