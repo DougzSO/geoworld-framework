@@ -1,6 +1,6 @@
 # Refactoring Roadmap
 
-Originally: planning only, synthesizing `docs/arch-misalignments.md`, `docs/code-duplication.md`, and `docs/write-points-inventory.md` into an ordered task list. Since expanded into the canonical, single-source-of-truth BLOCKER tracker for this project (BLOCKER-001 through BLOCKER-012, both fixed and open) and the home for the technical-decisions log formerly at `docs/memory/09-decisions.md` (see the Appendix at the end of this file — moved here verbatim, not rewritten, so its historical Context/Decision/Consequences entries stay intact). `docs/memory/09-decisions.md` is now a redirect stub pointing here.
+Originally: planning only, synthesizing `docs/arch-misalignments.md`, `docs/code-duplication.md`, and `docs/write-points-inventory.md` into an ordered task list. Since expanded into the canonical, single-source-of-truth BLOCKER tracker for this project (BLOCKER-001 through BLOCKER-013, both fixed and open) and the home for the technical-decisions log formerly at `docs/memory/09-decisions.md` (see the Appendix at the end of this file — moved here verbatim, not rewritten, so its historical Context/Decision/Consequences entries stay intact). `docs/memory/09-decisions.md` is now a redirect stub pointing here.
 
 Entries below marked with a `**Status**` line are retrospective (already fixed, describing what actually shipped); entries without one are still prospective plans as originally written and have not been re-verified against what (if anything) has shipped since — check `git log`/the relevant module before trusting a "Deliverable" section at face value.
 
@@ -346,6 +346,54 @@ This is not a theoretical risk: `data_recovery.py`'s own comments document a rea
 **Commit message** (as shipped):
 ```
 Fix BLOCKER-011: Phase 6 double persistence silently discarded dominance counts
+```
+
+---
+
+### BLOCKER-013 — Suitability map rendering crashed the whole pipeline for any country above ~1200px
+
+**Status**: Fixed — commit `4f90faf`.
+
+**Severity**: higher than every other numbered BLOCKER in this file. BLOCKER-001 through 012 are numeric-correctness bugs (a wrong value gets computed, persisted, or discarded) — the pipeline still completes. This one is a hard crash: Phase 3 (Suitability) raises an unhandled `IndexError` mid-render and the process exits. **The whole country run fails from Phase 3 onward, not just one map.**
+
+**Title**: `GeoWorldStyler.render_raster_map()` downsampled `score` for display but never resized `exclude_mask` to match, causing a boolean-index shape mismatch for any country whose grid exceeds the display-downsample threshold.
+
+**Current pain (as found)**: reported via `python main.py Brazil` — crashed in `_plot_suitability` → `render_raster_map()` (`src/utils/map_styling.py:1278`, `excl_rgba[exclude_mask, :3] = ...`) with `IndexError: boolean index did not match indexed array along axis 0; size of axis is 1194 but size of corresponding boolean axis is 3902`. Suitability's TOPSIS/OWA math and GeoTIFFs had already computed and saved correctly before the crash — this was a rendering-only bug, not a numeric one, but it aborted the process regardless.
+
+**Root cause**: `render_raster_map()` downsamples `score` via `PIL.Image.resize(..., NEAREST)` whenever `max(h, w) > max_display_px` (`self.layout.get("max_raster_display_px", 1200)` — no override exists in `settings.yaml`, so the fallback of 1200 always applies). `exclude_mask` — the boolean array driving the grey exclusion overlay — was never resized alongside it, so `excl_rgba = np.zeros((*score.shape, 4))` (built from the now-*smaller* `score`) got indexed with the still-full-resolution `exclude_mask`. Confirmed with a standalone reproduction (`scratchpad/repro_bug013.py`, no pipeline run needed): a synthetic 3902×3920 array reproduces the identical `IndexError` message, byte-for-byte; a 170×600 (Portugal-scale) array never enters the downsample branch and never crashes.
+
+**Why Portugal never triggered this and Brazil did**: purely a function of grid size, not geometry/islands — confirmed by reading `mainland_gdf.total_bounds` is only used to set the plot's geographic axis extent, never to crop `score` or `exclude_mask`. Checked the actual grid dimensions (0.01°-resolution reference grid, same logic `grid_aligner.py::build_reference_grid()` uses) for every country currently in `parameters.json`, using already-persisted aligned/suitability rasters rather than re-deriving bounds from scratch:
+
+| Country | Height × Width (px) | Max dim | > 1200px? |
+|---|---|---|---|
+| PRT | 518 × 333 | 518 | No |
+| EGY | 995 × 1111 | 1111 | No (closest to the threshold) |
+| ZAF | 1272 × 1645 | 1645 | **Yes** |
+| IND | 2519 × 2870 | 2870 | **Yes** |
+| CHN | 3335 × 6123 | 6123 | **Yes** |
+| BRA | 3902 × 3920 | 3920 | **Yes** (confirmed crash) |
+| RUS | 3654 × 15270 | 15270 | **Yes** |
+
+**5 of the 7 countries currently configured are at risk, not just Brazil.** Only PRT and EGY sit under the threshold. CHN/RUS/IND/ZAF have older successful suitability PNGs on disk (April/May 2026), but those predate this version of `map_styling.py` (last substantively modified 2026-08-06) — they are not evidence current code would succeed for them; re-run today without this fix, all four would hit the identical crash BRA did.
+
+**Impact — this is a full pipeline failure, not a cosmetic one**: only `suitability_builder.py`'s `_plot_suitability()` ever passes a real `exclude_mask` into `render_raster_map()` (confirmed by checking every call site in the repo — `lcoe_calculator.py`'s only other caller explicitly passes `exclude_mask=None`). `TECH_ORDER = ["solar", "wind", "biomass"]` processes solar first, so the crash on solar's map halted the phase before wind or biomass were ever attempted — even though wind and biomass's TOPSIS/OWA math would have hit the identical bug on the identical grid. For any at-risk country, Phase 3 fails entirely, and every phase downstream of it (4 through 8) never runs.
+
+**Depends on**: none.
+
+**Effort**: S — root-cause fix was an 8-line addition (mirrors the existing `score` resize).
+
+**Risk**: Low — the fix only activates inside the pre-existing downsample branch (`max(h, w) > max_display_px`), and only when `exclude_mask is not None`; behavior for every call site/country under the threshold is unchanged, confirmed empirically (see Validation below).
+
+**Fix (as shipped)**: inside the existing downsample block, resize `exclude_mask` to the same `new_size` as `score`, using `PIL.Image.NEAREST` explicitly rather than inheriting any particular method by coincidence — `exclude_mask` is boolean, and a continuous/interpolated resize would blend 0/1 into fractional values at exclusion boundaries, which is wrong even when the resulting shape happens to be correct.
+
+**Validation (as performed)**:
+- Full PRT regression against the pre-existing CHECKPOINT-2 output: every Suitability/Criteria/Potential/LCOE TIF byte-identical; the two Results dominance TIFs pixel-identical (only an embedded `CREATED` timestamp tag differs, same known pattern as BLOCKER-011's validation); every phase's `result.pkl` identical except wall-clock `timings`/`elapsed_s` fields. One real (but pre-existing and unrelated) difference was found in Abatement's NDC-coverage fields, traced to `_fetch_owid_total_co2_mt()` making a **live network fetch** of an external, time-varying CSV dataset — confirmed unrelated to this fix (`ghg_abatement_calculator.py` doesn't import `map_styling.py`, and its own last modification predates the CHECKPOINT-2 baseline). Flagged here for visibility; not fixed, out of scope for this task.
+- BRA Phase 3 run in isolation (`skip_audit`/`skip_land_cover`/`skip_align`/`skip_criteria: true`, reusing already-cached Phase 1/2a/2b outputs; everything downstream of Phase 3 also skipped to keep the run isolated): completed for solar, wind, **and** biomass — all 3 × (1 TOPSIS + 3 OWA) GeoTIFFs and all 4 PNGs (3 per-tech maps + comparison) generated, "Result: COMPLETED".
+- `pytest tests/` — 77/77 passing throughout.
+
+**Commit message** (as shipped):
+```
+Fix BLOCKER-013: exclude_mask shape mismatch crashed Suitability rendering for large countries
 ```
 
 ---
