@@ -478,7 +478,7 @@ Fix BLOCKER-013: exclude_mask shape mismatch crashed Suitability rendering for l
 
 ### BLOCKER-016 — SA-2's `stable_fraction` replaced with a threshold-crossing decision-robustness metric
 
-**Status**: Fixed. Methodology change, not a bug fix — flagged here for visibility since it changes what a persisted/reported number means, the same reason BLOCKER-008/009 are tracked here rather than left as a silent diff.
+**Status**: Fixed — commit `478caca`. Methodology change, not a bug fix — flagged here for visibility since it changes what a persisted/reported number means, the same reason BLOCKER-008/009 are tracked here rather than left as a silent diff.
 
 **Severity**: not comparable to the crash/correctness BLOCKERs above — nothing was broken, and no downstream computation (Potential/LCOE/Abatement) depends on SA-2's output. This is a decision to replace a metric with a more informative one, validated by a standalone prototype before touching production code.
 
