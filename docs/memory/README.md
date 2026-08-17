@@ -12,7 +12,7 @@ Persistent technical memory for the GeoWorld Framework repository. This is docum
 6. [`05-environment.md`](05-environment.md) — Python version, dependencies, `.venv`, raw-data requirements, reproducibility.
 7. [`10-scripts-and-commands.md`](10-scripts-and-commands.md) — How to actually run the pipeline, per-phase, batch mode.
 8. [`08-conventions.md`](08-conventions.md) — Coding, logging, docstring, and naming conventions already in use.
-9. [`09-decisions.md`](09-decisions.md) — Redirect stub: the actual Context/Decision/Consequences/Status log moved to `docs/refactoring-roadmap.md`'s "Appendix: Technical Decisions" (consolidated with the BLOCKER tracker).
+9. [`09-decisions.md`](09-decisions.md) — Redirect stub: the actual Context/Decision/Consequences/Status log moved to `docs/BACKLOG.md`'s "Appendix: Technical Decisions" (consolidated with the BLOCKER tracker).
 10. [`06-risk-areas.md`](06-risk-areas.md) — Fragile, untested, hardcoded, or hard-to-reproduce areas.
 11. [`11-onboarding.md`](11-onboarding.md) — Condensed checklist for a new AI session or contributor.
 
