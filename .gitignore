@@ -18,6 +18,11 @@ outputs/**/*.tif
 temp/
 configs/~$*.xlsx
 
+# Sensitivity & Config Migration Campaign cross-session commit lock
+# (docs/BACKLOG.md) -- transient, removed after each commit; ignored as
+# a backstop in case a release step is ever missed.
+.session-lock
+
 # Local baseline snapshots for regression diffing
 outputs_baseline/
 
