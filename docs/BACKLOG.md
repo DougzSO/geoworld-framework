@@ -1121,4 +1121,66 @@ BLOCKER-006 (fixed) hardened this decision at the implementation level: TOPSIS-v
 **Related files.** N/A (absence of files).
 **Status.** Uncertain — it is not documented whether this is a deliberate choice for a single-researcher pipeline or simply not yet done.
 
+---
+
+## Sensitivity & Config Migration Campaign
+
+**Purpose.** Following BLOCKER-016 (SA-2's `stable_fraction` → threshold-crossing replacement), a broader question surfaced: `concentration=20` was one hardcoded, undocumented-provenance parameter among several, and it alone moved a reported metric by ~2.5x. This campaign inventories every such parameter found across `suitability_builder.py`, `criteria_builder.py`, `exclusion.py`, `normalization.py`, `economics.py`, `lcoe_calculator.py`, `constants.py` and `sensitivity_analyzer.py`, and for each one: (1) tests sensitivity via OAT, (2) records a human decision on the final value (never an automated "optimal" choice), (3) migrates it from a hardcoded literal to `parameters.json` (scientific/geospatial parameters) or `settings.yaml`'s `pipeline.sensitivity` block (statistical-method meta-parameters), always with a Pydantic schema validating format/range in the same commit as the migration.
+
+**Binding design rule.** A parameter sweep produces a **sensitivity report** (the range of results under different values) — it never makes the pipeline auto-select an "optimal" value and use it as the official result. The official result always comes from the base parameters chosen by a human, informed by the sensitivity report. This rule applies to every row below, no exceptions.
+
+**Scope note.** `_MIN_TECH_SUBSTITUTION` (`ghg_abatement_calculator.py`) was flagged in the originating investigation as a related but out-of-scope candidate (outside the five modules originally audited); not included in the 13 rows below. Rows 1, 12 and 13 live in `sensitivity_analyzer.py`, which BLOCKER-017/018 (parallel session, in progress at the time this section was created) is actively editing — do not start work on those three rows until BLOCKER-017/018 lands and this note is removed.
+
+| # | Parâmetro | Status | Valor(es) testado(s) | Veredito | Destino final (config file + chave) | Commit |
+|---|---|---|---|---|---|---|
+| 1 | `concentration` (Dirichlet, SA-2) — `sensitivity_analyzer.py:376` | Pending | — | — | — | — |
+| 2 | `common_exclusions` (lakes_exclusion / protected_areas / proximity_plants) — `suitability_builder.py:167-171` | **Bloco 1 — Task 1 done, awaiting value decision** | See "Bloco 1 results" below | — | — | — |
+| 3 | `_SLOPE_OFFSET_DEG` (solar/wind/biomass) — `suitability_builder.py:93-97` | **Bloco 1 — Task 1 done, awaiting value decision** | See "Bloco 1 results" below | — | — | — |
+| 4 | `normalize_percentile` default `p_low=5.0, p_high=95.0` (solar/wind/biomass resource) — `normalization.py:26-27` | Pending | — | — | — | — |
+| 5 | `IUCN_SCORES` mapping — `constants.py:177-194` | Pending | — | — | — | — |
+| 6 | `_MIN_RESOURCE_COVERAGE=0.05` — `lcoe_calculator.py:112` | Pending | — | — | — | — |
+| 7 | `src_cv < 0.01` (biomass constant-resource fallback) — `lcoe_calculator.py:1021` | Pending | — | — | — | — |
+| 8 | Scenario deltas `±0.10` (optimistic/conservative) — `configs/settings.yaml` `potential.scenarios` | Pending | — | — | — | — |
+| 9 | `compute_terrain_score` weights `0.6×slope + 0.4×TRI` — `criteria_builder.py:216` | Pending | — | — | — | — |
+| 10 | `TRI_THRESHOLD=50.0` — `constants.py:200` | Pending | — | — | — | — |
+| 11 | Hardcoded percentiles w/ no config path: roads/grid `p_low=5.0,p_high=95.0`; proximity_plants `p_low=5.0,p_high=95.0`; seismic `p_low=2.0,p_high=98.0` — `criteria_builder.py:258,349,589` | Pending | — | — | — | — |
+| 12 | `sa4_lcoe_uncertainty` variations `capex=±15%, opex=±15%, cf=±10%` — `sensitivity_analyzer.py:573-575` | Pending (blocked on BLOCKER-017/018) | — | — | — | — |
+| 13 | SA-1 "robust" cutoff `rho >= 0.95` — `sensitivity_analyzer.py:362` | Pending (blocked on BLOCKER-017/018) | — | — | — | — |
+
+### Bloco 1 — `common_exclusions` and `_SLOPE_OFFSET_DEG` (Phase 3 binary gates)
+
+**Status**: Task 1 (OAT sensitivity) complete for PRT, confirmed in BRA. Task 2 (migration) not started — waiting on user confirmation of final values. No production code changed in this pass.
+
+**Method**: standalone harness `scratchpad/oat_phase3_gate_sensitivity.py` (analysis-only, not committed to the module tree). Reuses cached Phase 2b criteria TIFs (`outputs/{ISO3}/criteria_builder/tif/`) and Phase 2a aligned land-cover/slope rasters (`data/processed/{ISO3}/`) directly from disk — does **not** go through `main.py`/`PipelineOrchestrator`, so it never reads or depends on `configs/settings.yaml`'s pipeline skip flags (which BLOCKER-017/018's parallel session currently has mid-edit for its own Phase-8 isolation testing) and never imports `sensitivity_analyzer.py`. For each tested value it replays `get_technology_configs()` → `apply_hard_exclusions()` → `compute_ahp_weights()` → `topsis_spatial()` exactly as `SuitabilityBuilder` does, via `dataclasses.replace()` copies of the real `TechnologyConfig` objects — no monkeypatching of production code. Two figures reported per test: **area_valid** (km², pixels surviving Phase 3's hard-exclusion stage — the population that enters AHP/TOPSIS) and **apt_area** (km², subset of that with TOPSIS score ≥ the country's balanced-scenario threshold, 0.75 for both PRT and BRA — computed directly from Phase 3's own math, not by running Phase 4).
+
+**`common_exclusions` results** (each key varied alone, other two held at base: lakes=0.5, protected_areas=0.99, proximity_plants=0.01):
+
+| Key tested | Values | PRT effect | BRA effect (confirmation run) |
+|---|---|---|---|
+| `lakes_exclusion` | 0.3 / 0.5 / 0.7 | **Zero effect** — n_excluded, area_valid, apt_area byte-identical across all 3 values, all 3 techs | **Zero effect**, confirmed — identical across all 3 values |
+| `protected_areas` | 0.90 / 0.99 | **Zero effect** in this range — identical n_excluded/area/apt across both values, all 3 techs | **Zero effect**, confirmed — identical across both values |
+| `proximity_plants` | 0.001 / 0.01 / 0.05 | **Real, monotonic swing.** apt_area: solar −1.76%, wind −6.05%, biomass −1.87% (0.001→0.05); area_valid ≈ −1.9% | **Real, monotonic swing, same direction, smaller magnitude.** apt_area: solar −0.52%, wind −0.60%, biomass −0.62% (0.001→0.05); area_valid ≈ −0.25% |
+
+Explanation for the two zero-effect results (not a harness bug — verified against the underlying score distributions):
+- `lakes_exclusion`: `compute_lakes_exclusion()` only ever emits `{0.0, 1.0}` (binary lake/land mask). Any threshold strictly inside `(0.0, 1.0)` — including the full 0.3–0.7 range tested — excludes exactly the same pixels (`score < threshold` catches only `score == 0.0` either way). This parameter is provably inert anywhere in `(0, 1)`, not just at the 3 points tested.
+- `protected_areas`: `compute_protected_areas()` emits a **discrete** score ladder from `IUCN_SCORES` — `{0.0, 0.10, 0.25, 0.30, 0.45, 0.55, 1.0}` (candidate row 5 in this same table). Both 0.90 and 0.99 fall inside the same gap, `(0.55, 1.0)`, so no category boundary is crossed between them and the result is identical. This is **not** evidence the parameter has no effect in general — a value crossing into `(0.45, 0.55]` (e.g. 0.50) would additionally exclude IUCN category VI pixels. The as-tested range (0.90/0.99, both requested by the user) just happens to sit in one flat step of that ladder.
+
+`proximity_plants`'s effect direction is consistent between countries (higher threshold → more excluded → less eligible/apt area) but its magnitude is markedly country-dependent: ~3–8x larger relative swing in PRT (small territory, denser plant registry relative to area) than in continental-scale BRA.
+
+**`_SLOPE_OFFSET_DEG` results** (each tech's offset varied alone at 0.5×/1.0×/1.5× its current value, other two techs held at base):
+
+| Tech | Offsets tested (deg) | PRT: raw `slope_excluded` swing | PRT: apt_area swing | BRA: raw `slope_excluded` swing | BRA: apt_area swing |
+|---|---|---|---|---|---|
+| solar | 2.5 / 5.0 / 7.5 | 1,356 → 366 → 80 (−94% top-to-bottom) | 10,438.1 → 10,447.8 → 10,446.8 km² (**+0.08%**) | 7,620 → 2,791 → 864 (−89%) | 480,304.9 → 480,301.3 → 480,298.9 km² (**−0.001%**) |
+| wind | 5.0 / 10.0 / 15.0 | 366 → 13 → 0 | 2,811.5 → 2,804.8 → 2,804.8 km² (**−0.24%**) | 2,791 → 216 → 12 | 281,129.7 → 281,140.0 → 281,140.0 km² (**+0.004%**) |
+| biomass | 10.0 / 20.0 / 30.0 | 13 → 0 → 0 | 2,620.6 km² unchanged (**0%**) | 216 → 0 → 0 | 442,873.5 → 442,874.6 → 442,874.6 km² (**~0%**) |
+
+Both countries show the same pattern: halving or increasing the slope offset by 50% swings the **raw** slope-exclusion pixel count by up to ~90%, but the **final eligible/apt area** barely moves (well under 0.3% in every cell, both countries) — because the pixels the slope gate would additionally exclude or admit are, almost entirely, pixels *already* excluded by `proximity_plants`/`protected_areas`/other criteria or already outside the country mask. Not confirmed as a "material" finding under this pass's own quantification (see below), so no BRA-vs-PRT generalization claim beyond what's shown in both columns above — both countries were run in full regardless, since the harness computes all countries in one pass.
+
+**Materiality call for triggering the BRA confirmation run** (per instructions, this is a reporting judgment only — not a value decision): swings under ~0.3% on final apt_area were treated as not material and not singled out for separate discussion; `proximity_plants`'s 0.5–6% apt_area swing was treated as material and is the only row confirmed in BRA before being written up above as a relevant finding. `lakes_exclusion`/`protected_areas` were run in BRA anyway (same script pass) and both confirmed zero effect, consistent with the structural explanation above rather than needing a materiality judgment call.
+
+**No verdict recorded.** Per the binding design rule at the top of this section, none of the tested values has been selected as final — that decision is pending user confirmation. Task 2 (migration to `parameters.json`, Pydantic validation, `suitability_builder.py` read-path update, `docs/memory/07-configuration.md` update, full PRT validation run, `pytest tests/`, commit) has not started.
+
+---
+
 **Editorial note (added at move time, not part of the original entry)**: D7 is now stale — `tests/unit/` exists (`pytest`, 77 tests as of BLOCKER-011) since QI-001. Left unchanged above per the "move, don't rewrite" rule for this appendix; flagging here rather than editing the historical entry itself.
