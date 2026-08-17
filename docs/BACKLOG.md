@@ -1,6 +1,6 @@
 # Refactoring Roadmap
 
-Originally: planning only, synthesizing `docs/arch-misalignments.md`, `docs/code-duplication.md`, and `docs/write-points-inventory.md` into an ordered task list. Since expanded into the canonical, single-source-of-truth BLOCKER tracker for this project (BLOCKER-001 through BLOCKER-015, both fixed and open) and the home for the technical-decisions log formerly at `docs/memory/09-decisions.md` (see the Appendix at the end of this file — moved here verbatim, not rewritten, so its historical Context/Decision/Consequences entries stay intact). `docs/memory/09-decisions.md` is now a redirect stub pointing here.
+Originally: planning only, synthesizing `docs/arch-misalignments.md`, `docs/code-duplication.md`, and `docs/write-points-inventory.md` into an ordered task list. Since expanded into the canonical, single-source-of-truth BLOCKER tracker for this project (BLOCKER-001 through BLOCKER-016, both fixed and open) and the home for the technical-decisions log formerly at `docs/memory/09-decisions.md` (see the Appendix at the end of this file — moved here verbatim, not rewritten, so its historical Context/Decision/Consequences entries stay intact). `docs/memory/09-decisions.md` is now a redirect stub pointing here.
 
 Entries below marked with a `**Status**` line are retrospective (already fixed, describing what actually shipped); entries without one are still prospective plans as originally written and have not been re-verified against what (if anything) has shipped since — check `git log`/the relevant module before trusting a "Deliverable" section at face value.
 
@@ -473,6 +473,46 @@ Fix BLOCKER-013: exclude_mask shape mismatch crashed Suitability rendering for l
 **Suggested fix (not applied)**: point the glob at `outputs_dir / "reports"` with pattern `f"audit_{code}_*.txt"` instead of `outputs_dir / code / "audit"`.
 
 **Success criteria**: with `skip_audit: true` and a prior audit report on disk, the log shows "skipped — prior report on disk" instead of the "no prior report found" warning.
+
+---
+
+### BLOCKER-016 — SA-2's `stable_fraction` replaced with a threshold-crossing decision-robustness metric
+
+**Status**: Fixed. Methodology change, not a bug fix — flagged here for visibility since it changes what a persisted/reported number means, the same reason BLOCKER-008/009 are tracked here rather than left as a silent diff.
+
+**Severity**: not comparable to the crash/correctness BLOCKERs above — nothing was broken, and no downstream computation (Potential/LCOE/Abatement) depends on SA-2's output. This is a decision to replace a metric with a more informative one, validated by a standalone prototype before touching production code.
+
+**Title**: `sa2_monte_carlo_weights()` reported `stable_fraction` (fraction of pixels whose 90% CI band on the raw continuous TOPSIS score was narrower than 0.10) — an absolute-score-stability metric. Replaced with a threshold-crossing metric that measures robustness of the framework's actual apt/not-apt decision instead.
+
+**Why**: a standalone prototype (`scratchpad/threshold_crossing_prototype.py`, fidelity-checked by reproducing the real pipeline's own logged `stable_fraction` numbers exactly before trusting any new metric) compared both approaches on PRT and BRA, all 3 techs:
+
+| Country | Tech | Old: `stable_fraction` | New: decisive / boundary / moderate (among apt-by-base pixels) |
+|---|---|---|---|
+| PRT | solar | 2.0% | 17.2% / 49.0% / 33.8% |
+| PRT | wind | 4.4% | **2.3% / 72.1%** / 25.5% |
+| PRT | biomass | 0.4% | 20.4% / 32.6% / 47.0% |
+| BRA | solar | 2.5% | 28.1% / 27.7% / 44.2% |
+| BRA | wind | 4.3% | **53.1% / 19.9%** / 27.0% |
+| BRA | biomass | 0.2% | 24.0% / 44.4% / 31.6% |
+
+`stable_fraction` could not distinguish PRT from BRA on wind (4.4% vs. 4.3%, nearly identical) — the new metric shows they are opposites: PRT's wind classification is almost entirely in the ambiguous boundary zone (72.1%, barely 2.3% decisive either way), while BRA's is mostly decisive (53.1%). `stable_fraction` measures whether the continuous score is numerically stable; the framework's real output is a threshold-based classification (0.75 for the balanced scenario), and score jitter far from that threshold doesn't matter for the actual decision — this is exactly the gap the new metric closes.
+
+**Caveat, not resolved by this change**: `concentration` (the Dirichlet concentration parameter controlling how tightly the 1000 sampled weight vectors cluster around the AHP base weights) was already hardcoded at 20 before this change and remains a plain function parameter now, not wired to `settings.yaml`/`parameters.json`. The same prototype swept `concentration` in `{10, 20, 40}` for BRA/solar and found the reported "decisive" fraction ranges from **17.9% (concentration=10) to 45.4% (concentration=40)** — roughly a 2.5x swing. The qualitative PRT-vs-BRA comparison above held up across that range, but absolute percentages from this metric should always be reported alongside the `concentration` value that produced them, not treated as a fixed ground truth. Making `concentration` configurable, or reporting it as a swept range instead of a point estimate, is future work — not done here.
+
+**Deliverable (as shipped)**:
+- `src/processors/sensitivity_analyzer.py`: `sa2_monte_carlo_weights()` now takes a required `threshold` parameter and returns `crossing_fraction`/`apt_base_mask`/`n_apt_base`/`decisive_fraction`/`boundary_fraction`/`moderate_fraction` instead of `stable_fraction`; docstring documents the metric change and the `concentration` sensitivity finding inline (`METRIC_013` changelog tag). New helper `_balanced_threshold()` reads the real balanced-scenario threshold from Phase 4's persisted `pot_results` — deliberately not through `_resolve_tech_params()`'s existing `base_thr`, which returns a hardcoded 0.60 in practice due to a separate, pre-existing bug (`CountryParams` has no `suitability_threshold` attribute, so its `getattr` fallback always wins) — untouched here, out of scope.
+- `run()`'s SA-2 block, `_format_report()`'s SA-2 rows, and `sensitivity_plots.py::plot_dashboard()`'s SA-2 KPI panel all updated to the new fields. `plot_sa2_cv()` (the CV/CI90 histogram PNG) was not touched — it never referenced `stable_fraction`.
+- `docs/memory/04-algorithms.md`'s SA-2 row and a new explanatory note.
+
+**Validation (as performed)**:
+- Full PRT and BRA runs (Phase 8 at minimum, other phases reusing cache) confirmed the new metric's live numbers match the prototype's Item 2 table above, per technology, both countries.
+- `pytest tests/` — no test referenced `stable_fraction` (confirmed by repo-wide grep before making any change), so nothing needed updating; full suite still green after the change.
+- `configs/settings.yaml` untouched.
+
+**Commit message** (as shipped):
+```
+Replace SA-2's stable_fraction with a threshold-crossing metric
+```
 
 ---
 

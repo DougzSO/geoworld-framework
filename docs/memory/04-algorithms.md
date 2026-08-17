@@ -39,13 +39,15 @@ Six independently toggleable sub-analyses (`settings.yaml` → `pipeline.sensiti
 | ID | Method | Target |
 | --- | --- | --- |
 | SA-1 | OAT (one-at-a-time) AHP weight perturbation ±10–30% | Spearman ρ on suitability ranking |
-| SA-2 | Monte Carlo AHP via Dirichlet-distributed weights | Spatial suitability robustness |
+| SA-2 | Monte Carlo AHP via Dirichlet-distributed weights | Decision robustness (threshold-crossing, see below) |
 | SA-3 | Threshold sweep | Area elasticity vs. suitability cutoff |
 | SA-4 | Triangular Monte Carlo on CAPEX/OPEX/CF | LCOE uncertainty |
 | SA-5 | Parameter elasticity (power density, CF) | Potential-calculation sensitivity |
 | SA-6 | Sobol global sensitivity (`SALib`), first-order (S1) and total-order (ST) indices | GHG abatement indices |
 
 References cited in-module: Saltelli et al. (2008, 2010), Malczewski (1999).
+
+**SA-2 metric (corrected 2026-08-17)**: originally reported `stable_fraction` — the share of pixels whose 90% CI band on the raw TOPSIS score was narrower than 0.10. Replaced with a threshold-crossing metric (`decisive_fraction`/`boundary_fraction`/`moderate_fraction`): among pixels apt under the base AHP weights, what fraction of the 1000 Dirichlet weight samples keep that pixel above the real scenario threshold (0.75 for the balanced scenario as of this writing). A prototype (`scratchpad/threshold_crossing_prototype.py`) found `stable_fraction` couldn't distinguish PRT from BRA on wind (4.4% vs. 4.3%), while the new metric revealed a real difference the old one masked (PRT wind: 72.1% of apt pixels sit in a 25-75% boundary zone, only 2.3% decisive; BRA wind: 53.1% decisive) — the framework's actual output is a threshold-based apt/not-apt decision, and the new metric measures robustness of that decision directly, not just the raw score's numerical stability. See `docs/BACKLOG.md`'s entry on the change for the full before/after and the `concentration`-sensitivity caveat (absolute percentages shift ~2.5x between `concentration=10` and `concentration=40`; the qualitative country comparison held across that range, but exact numbers are `concentration`-dependent, not a fixed ground truth).
 
 ## Transport Decarbonization (Phase 9)
 
