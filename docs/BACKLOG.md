@@ -1,6 +1,6 @@
 # Refactoring Roadmap
 
-Originally: planning only, synthesizing `docs/arch-misalignments.md`, `docs/code-duplication.md`, and `docs/write-points-inventory.md` into an ordered task list. Since expanded into the canonical, single-source-of-truth BLOCKER tracker for this project (BLOCKER-001 through BLOCKER-013, both fixed and open) and the home for the technical-decisions log formerly at `docs/memory/09-decisions.md` (see the Appendix at the end of this file — moved here verbatim, not rewritten, so its historical Context/Decision/Consequences entries stay intact). `docs/memory/09-decisions.md` is now a redirect stub pointing here.
+Originally: planning only, synthesizing `docs/arch-misalignments.md`, `docs/code-duplication.md`, and `docs/write-points-inventory.md` into an ordered task list. Since expanded into the canonical, single-source-of-truth BLOCKER tracker for this project (BLOCKER-001 through BLOCKER-015, both fixed and open) and the home for the technical-decisions log formerly at `docs/memory/09-decisions.md` (see the Appendix at the end of this file — moved here verbatim, not rewritten, so its historical Context/Decision/Consequences entries stay intact). `docs/memory/09-decisions.md` is now a redirect stub pointing here.
 
 Entries below marked with a `**Status**` line are retrospective (already fixed, describing what actually shipped); entries without one are still prospective plans as originally written and have not been re-verified against what (if anything) has shipped since — check `git log`/the relevant module before trusting a "Deliverable" section at face value.
 
@@ -350,6 +350,42 @@ Fix BLOCKER-011: Phase 6 double persistence silently discarded dominance counts
 
 ---
 
+### BLOCKER-012 — Transport (Phase 9) has the same double-persistence bug BLOCKER-011 fixed in Phase 6
+
+**Status**: not fixed — documented only. Currently dormant because `skip_transport: true` in `configs/settings.yaml` (Phase 9 has an unrelated, separately-tracked `AttributeError` that keeps it disabled). Discovered while surveying all 9 phases' persistence patterns during BLOCKER-011.
+
+**Title**: Remove `TransportDecarbonizationCalculator`'s manual `ArtifactManager` persistence, same fix shape as BLOCKER-011.
+
+**Current pain**: `src/processors/transport_decarbonization_calculator.py::run()` manually persists via its own `ArtifactManager` call (L570–608) — `serializable_result = {"country_code", "country_name", "generated_at", "summary", "n_hubs", "elapsed"}` (L579–586) — then `run()` returns a **completely different-shaped dict** at L611–617: `{"timeseries_df", "fleet_df", "hubs_gdf", "summary", "report_path"}`. The only overlapping key between the two is `"summary"`. `PipelineOrchestrator.run_phase()`'s automatic `_persist()` step runs after `run()` returns (`pipeline_orchestrator.py:165`) and saves *that* returned dict to `outputs/{ISO3}/transport/result.pkl`, overwriting whatever the manual call just wrote — this is the identical mechanism that caused BLOCKER-011 (`results_writer.py`'s `dominance_suitability_counts`/`dominance_lcoe_counts` being silently discarded), confirmed by direct code inspection, not just structural similarity.
+
+Unlike BLOCKER-011, this has not been confirmed empirically against a real `result.pkl` on disk, because `skip_transport: true` means Phase 9 has not actually completed a full run in this engagement (it hits an unrelated `AttributeError` — `country_params.solar_capacity_factor`, flat vs. nested `CountryParams.solar.capacity_factor` — before ever reaching the persistence step; see `docs/memory/06-risk-areas.md`). The bug is real by inspection of the code path, just not yet observable in a live artifact the way BLOCKER-011's was.
+
+**Depends on**: soft — should be sequenced after (or alongside) whatever eventually fixes Phase 9's `AttributeError` crash, since that crash currently makes this bug unreachable in practice. Not a hard blocker on that fix; the double-persistence code can be removed independently at any time, it just can't be *validated end-to-end* until Phase 9 runs to completion.
+
+**Effort**: S — mechanical, same shape as the BLOCKER-011 fix: delete the manual `ArtifactManager` block, fold whatever fields matter from `serializable_result` (`n_hubs`, `generated_at`) into the dict `run()` already returns, if they're worth keeping; `summary` already appears in both so it isn't lost either way.
+
+**Risk**: Low — behavior-preserving once done the same way BLOCKER-011 was (remove the redundant writer, let the orchestrator's automatic persist be the single source of truth). The only real risk is deciding whether `country_code`/`generated_at`/`n_hubs`/`elapsed` (present only in the manually-persisted dict today) are worth adding to `run()`'s return before deleting the manual call — otherwise those specific fields would be lost the same way `dominance_*_counts` was in BLOCKER-011, rather than fixed.
+
+**Deliverable** (when picked up):
+- `src/processors/transport_decarbonization_calculator.py`: remove the manual `ArtifactManager` persistence block (L570–608); add `n_hubs`, `generated_at` (and `country_code` if useful downstream) to the dict returned at L611–617, alongside the existing `timeseries_df`/`fleet_df`/`hubs_gdf`/`summary`/`report_path`.
+- A test mirroring `tests/unit/test_results_writer.py`'s structural guard (no manual `ArtifactManager` call) — the full-path integration-style guard is lower priority here since Phase 9 needs its own fixture work regardless (real fleet/hub data), independent of this specific bug.
+
+**Success criteria**: `grep -n "ArtifactManager" src/processors/transport_decarbonization_calculator.py` returns nothing; after Phase 9's `AttributeError` is separately fixed and a real run completes, `outputs/{ISO3}/transport/result.pkl` contains every field the current manual `serializable_result` computes, confirmed empirically the same way BLOCKER-011 was.
+
+**Commit message template** (for when this is picked up):
+```
+Fix BLOCKER-012: Transport (Phase 9) double persistence, same shape as BLOCKER-011
+
+TransportDecarbonizationCalculator manually persisted a dict via its
+own ArtifactManager call, then run() returned a completely different-
+shaped dict that PipelineOrchestrator's automatic persistence silently
+overwrote it with. Same root cause and same fix as BLOCKER-011
+(results_writer.py) -- removed the manual persistence, folded the
+fields worth keeping into run()'s return.
+```
+
+---
+
 ### BLOCKER-013 — Suitability map rendering crashed the whole pipeline for any country above ~1200px
 
 **Status**: Fixed — commit `4f90faf`.
@@ -387,7 +423,7 @@ Fix BLOCKER-011: Phase 6 double persistence silently discarded dominance counts
 **Fix (as shipped)**: inside the existing downsample block, resize `exclude_mask` to the same `new_size` as `score`, using `PIL.Image.NEAREST` explicitly rather than inheriting any particular method by coincidence — `exclude_mask` is boolean, and a continuous/interpolated resize would blend 0/1 into fractional values at exclusion boundaries, which is wrong even when the resulting shape happens to be correct.
 
 **Validation (as performed)**:
-- Full PRT regression against the pre-existing CHECKPOINT-2 output: every Suitability/Criteria/Potential/LCOE TIF byte-identical; the two Results dominance TIFs pixel-identical (only an embedded `CREATED` timestamp tag differs, same known pattern as BLOCKER-011's validation); every phase's `result.pkl` identical except wall-clock `timings`/`elapsed_s` fields. One real (but pre-existing and unrelated) difference was found in Abatement's NDC-coverage fields, traced to `_fetch_owid_total_co2_mt()` making a **live network fetch** of an external, time-varying CSV dataset — confirmed unrelated to this fix (`ghg_abatement_calculator.py` doesn't import `map_styling.py`, and its own last modification predates the CHECKPOINT-2 baseline). Flagged here for visibility; not fixed, out of scope for this task.
+- Full PRT regression against the pre-existing CHECKPOINT-2 output: every Suitability/Criteria/Potential/LCOE TIF byte-identical; the two Results dominance TIFs pixel-identical (only an embedded `CREATED` timestamp tag differs, same known pattern as BLOCKER-011's validation); every phase's `result.pkl` identical except wall-clock `timings`/`elapsed_s` fields. One real (but pre-existing and unrelated) difference was found in Abatement's NDC-coverage fields, traced to `_fetch_owid_total_co2_mt()` making a **live network fetch** of an external, time-varying CSV dataset — confirmed unrelated to this fix (`ghg_abatement_calculator.py` doesn't import `map_styling.py`, and its own last modification predates the CHECKPOINT-2 baseline). Root cause tracked separately, see BLOCKER-014.
 - BRA Phase 3 run in isolation (`skip_audit`/`skip_land_cover`/`skip_align`/`skip_criteria: true`, reusing already-cached Phase 1/2a/2b outputs; everything downstream of Phase 3 also skipped to keep the run isolated): completed for solar, wind, **and** biomass — all 3 × (1 TOPSIS + 3 OWA) GeoTIFFs and all 4 PNGs (3 per-tech maps + comparison) generated, "Result: COMPLETED".
 - `pytest tests/` — 77/77 passing throughout.
 
@@ -398,39 +434,45 @@ Fix BLOCKER-013: exclude_mask shape mismatch crashed Suitability rendering for l
 
 ---
 
-### BLOCKER-012 — Transport (Phase 9) has the same double-persistence bug BLOCKER-011 fixed in Phase 6
+### BLOCKER-014 — Abatement's live OWID network fetch breaks bit-identical validation determinism
 
-**Status**: not fixed — documented only. Currently dormant because `skip_transport: true` in `configs/settings.yaml` (Phase 9 has an unrelated, separately-tracked `AttributeError` that keeps it disabled). Discovered while surveying all 9 phases' persistence patterns during BLOCKER-011.
+**Status**: not fixed — documented only. Discovered as a byproduct of BLOCKER-013's PRT regression validation.
 
-**Title**: Remove `TransportDecarbonizationCalculator`'s manual `ArtifactManager` persistence, same fix shape as BLOCKER-011.
+**Severity**: lower than the numeric-correctness/crash BLOCKERs — doesn't make any single run wrong. It undermines the bit-for-bit regression methodology this entire engagement has relied on (CHECKPOINT-1, CHECKPOINT-2, BLOCKER-011's and BLOCKER-013's validations) whenever Abatement is included in a diffed run.
 
-**Current pain**: `src/processors/transport_decarbonization_calculator.py::run()` manually persists via its own `ArtifactManager` call (L570–608) — `serializable_result = {"country_code", "country_name", "generated_at", "summary", "n_hubs", "elapsed"}` (L579–586) — then `run()` returns a **completely different-shaped dict** at L611–617: `{"timeseries_df", "fleet_df", "hubs_gdf", "summary", "report_path"}`. The only overlapping key between the two is `"summary"`. `PipelineOrchestrator.run_phase()`'s automatic `_persist()` step runs after `run()` returns (`pipeline_orchestrator.py:165`) and saves *that* returned dict to `outputs/{ISO3}/transport/result.pkl`, overwriting whatever the manual call just wrote — this is the identical mechanism that caused BLOCKER-011 (`results_writer.py`'s `dominance_suitability_counts`/`dominance_lcoe_counts` being silently discarded), confirmed by direct code inspection, not just structural similarity.
+**Title**: `GHGAbatementCalculator._fetch_owid_total_co2_mt()` makes a live HTTP GET of an external, time-varying CSV on every run where the value isn't already cached in-process — no local snapshot, no version pin, no logged provenance.
 
-Unlike BLOCKER-011, this has not been confirmed empirically against a real `result.pkl` on disk, because `skip_transport: true` means Phase 9 has not actually completed a full run in this engagement (it hits an unrelated `AttributeError` — `country_params.solar_capacity_factor`, flat vs. nested `CountryParams.solar.capacity_factor` — before ever reaching the persistence step; see `docs/memory/06-risk-areas.md`). The bug is real by inspection of the code path, just not yet observable in a live artifact the way BLOCKER-011's was.
+**Current pain**: `src/processors/ghg_abatement_calculator.py:1137-1159` fetches `https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.csv` (the `master` branch — a moving target, not a pinned commit/release) to help populate `total_co2_mt_2022`/net-zero context feeding `calc_net_zero()`. Confirmed empirically: two full PRT runs of the *identical* code (`ghg_abatement_calculator.py` last modified 2026-06-22, `net_zero_db.json` last modified 2026-03-25 — neither changed between the two runs), six days apart, produced different `ndc_coverage_pct` (93.77 vs. `None`), `national_contribution_pct` (22.53 vs. 0.0), and `owid_scope_warning` (`False` vs. `True`) for the same country. Nothing else in either run differed. This is the only non-timing discrepancy either regression check found.
 
-**Depends on**: soft — should be sequenced after (or alongside) whatever eventually fixes Phase 9's `AttributeError` crash, since that crash currently makes this bug unreachable in practice. Not a hard blocker on that fix; the double-persistence code can be removed independently at any time, it just can't be *validated end-to-end* until Phase 9 runs to completion.
+**Depends on**: none.
 
-**Effort**: S — mechanical, same shape as the BLOCKER-011 fix: delete the manual `ArtifactManager` block, fold whatever fields matter from `serializable_result` (`n_hubs`, `generated_at`) into the dict `run()` already returns, if they're worth keeping; `summary` already appears in both so it isn't lost either way.
+**Effort**: S — either cache/vendor a pinned snapshot of the OWID CSV under `data/raw` or `configs/`, or (lighter touch) log the fetched CSV's commit SHA / `Last-Modified` header / row date actually used per run, so a future "this run doesn't match the baseline" question is diagnosable in seconds instead of requiring the kind of tracing this entry took.
 
-**Risk**: Low — behavior-preserving once done the same way BLOCKER-011 was (remove the redundant writer, let the orchestrator's automatic persist be the single source of truth). The only real risk is deciding whether `country_code`/`generated_at`/`n_hubs`/`elapsed` (present only in the manually-persisted dict today) are worth adding to `run()`'s return before deleting the manual call — otherwise those specific fields would be lost the same way `dominance_*_counts` was in BLOCKER-011, rather than fixed.
+**Risk**: Low — additive (caching or logging), no computation logic changes.
 
-**Deliverable** (when picked up):
-- `src/processors/transport_decarbonization_calculator.py`: remove the manual `ArtifactManager` persistence block (L570–608); add `n_hubs`, `generated_at` (and `country_code` if useful downstream) to the dict returned at L611–617, alongside the existing `timeseries_df`/`fleet_df`/`hubs_gdf`/`summary`/`report_path`.
-- A test mirroring `tests/unit/test_results_writer.py`'s structural guard (no manual `ArtifactManager` call) — the full-path integration-style guard is lower priority here since Phase 9 needs its own fixture work regardless (real fleet/hub data), independent of this specific bug.
+**Suggested fix (not applied)**: pin the fetch to a specific commit SHA in the URL (or vendor a snapshot file and update it deliberately), and/or add the resolved data date/hash to the persisted `abatement` result so it's visible in `result.pkl`/the text report rather than only in a debug-level log line.
 
-**Success criteria**: `grep -n "ArtifactManager" src/processors/transport_decarbonization_calculator.py` returns nothing; after Phase 9's `AttributeError` is separately fixed and a real run completes, `outputs/{ISO3}/transport/result.pkl` contains every field the current manual `serializable_result` computes, confirmed empirically the same way BLOCKER-011 was.
+**Success criteria**: two consecutive full-pipeline runs of the same code on different days produce bit-identical Abatement output for the same country, or — if intentionally kept live — the persisted result records exactly which upstream data snapshot was used.
 
-**Commit message template** (for when this is picked up):
-```
-Fix BLOCKER-012: Transport (Phase 9) double persistence, same shape as BLOCKER-011
+---
 
-TransportDecarbonizationCalculator manually persisted a dict via its
-own ArtifactManager call, then run() returned a completely different-
-shaped dict that PipelineOrchestrator's automatic persistence silently
-overwrote it with. Same root cause and same fix as BLOCKER-011
-(results_writer.py) -- removed the manual persistence, folded the
-fields worth keeping into run()'s return.
-```
+### BLOCKER-015 — Phase 1 (Audit) skip-check looks for its report in the wrong directory
+
+**Status**: not fixed — documented only. Low priority. Discovered while configuring BLOCKER-013's isolated BRA Phase 3 validation run (`skip_audit: true`).
+
+**Title**: `main.py`'s Phase 1 skip check globs a directory `DataAuditor` doesn't write to, so `skip_audit: true` never finds a cached report even when one exists.
+
+**Current pain**: `main.py::_run_phase_1_audit()`'s skip branch checks `(outputs_dir / code / "audit").glob("*audit*.txt")` — but `DataAuditor` actually writes its report to `outputs/reports/audit_{ISO3}_{timestamp}.txt`, a different directory entirely. Confirmed directly: `outputs/BRA/audit/` doesn't exist at all, while `outputs/reports/audit_BRA_20260817_111914.txt` does. With `skip_audit: true`, the check always falls through to the "no prior report found — data-quality metadata will be unavailable" warning branch instead of the intended "skipped — prior report on disk" path — harmless (Phase 1 still correctly doesn't re-run, no crash, no wrong data downstream), just a misleading log line and a warning that shouldn't fire.
+
+**Depends on**: none.
+
+**Effort**: S — one-line glob path fix, or match the actual filename pattern `audit_{code}_*.txt` under `outputs/reports/`.
+
+**Risk**: Low — the check only gates a log message and a warning; correcting the path doesn't change what Phase 1 actually does either way.
+
+**Suggested fix (not applied)**: point the glob at `outputs_dir / "reports"` with pattern `f"audit_{code}_*.txt"` instead of `outputs_dir / code / "audit"`.
+
+**Success criteria**: with `skip_audit: true` and a prior audit report on disk, the log shows "skipped — prior report on disk" instead of the "no prior report found" warning.
 
 ---
 
