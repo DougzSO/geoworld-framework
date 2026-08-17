@@ -509,8 +509,9 @@ def plot_dashboard(
         ]
     if "sa2" in td:
         kpis_g += [
-            ("SA-2 Stable pixels", f"{td['sa2'].get('stable_fraction_90ci', 0) * 100:.1f}%"),
-            ("SA-2 Mean CV",       f"{td['sa2'].get('mean_cv', 0):.4f}"),
+            ("SA-2 Decisive (apt)", f"{td['sa2'].get('decisive_fraction', 0) * 100:.1f}%"),
+            ("SA-2 Boundary (apt)", f"{td['sa2'].get('boundary_fraction', 0) * 100:.1f}%"),
+            ("SA-2 Mean CV",        f"{td['sa2'].get('mean_cv', 0):.4f}"),
         ]
     _draw_kpis(ax, kpis_g)
 

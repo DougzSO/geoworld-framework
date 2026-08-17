@@ -4,7 +4,8 @@ sensitivity_analyzer.py — Phase 8: Sensitivity Analysis
 Sensitivity analysis for the GeoWorld pipeline targeting Q1 publications.
 
 SA-1 · OAT Weight Sensitivity: Perturbs AHP weights (±10 to 30%). Spearman ρ.
-SA-2 · Monte Carlo AHP: Dirichlet distributions on weights (spatial robustness).
+SA-2 · Monte Carlo AHP: Dirichlet distributions on weights (decision robustness
+       under the framework's real scenario threshold -- see METRIC_013 below).
 SA-3 · Threshold Sweep: Area elasticity vs. spatial suitability constraints.
 SA-4 · LCOE Uncertainty: Triangular Monte Carlo for CAPEX, OPEX, CF.
 SA-5 · Potential Sensitivity: Parameter elasticities (Power Density, CF).
@@ -42,6 +43,23 @@ Changelog
                  glob pode devolver um raster OWA em vez do TOPSIS esperado,
                  dependendo da ordem de iteração do filesystem. Corrigido
                  para nome exato esperado, com fallback por stem exato.
+
+  METRIC_013 (change): SA-2's stable_fraction (fraction of pixels whose 90%
+                 CI band on the raw TOPSIS score is narrower than 0.10)
+                 replaced with a threshold-crossing metric: among pixels apt
+                 under the base AHP weights, what fraction of the 1000
+                 Dirichlet weight samples keep that pixel above the real
+                 scenario threshold. A prototype (scratchpad/
+                 threshold_crossing_prototype.py, validated against the
+                 real pipeline's own logged stable_fraction numbers before
+                 trusting the new metric) showed stable_fraction couldn't
+                 distinguish PRT from BRA on wind (4.4% vs. 4.3%) while the
+                 threshold-crossing metric revealed a real inversion (PRT
+                 wind: 72.1% of apt pixels in the 25-75% boundary zone,
+                 barely 2.3% decisive; BRA wind: 53.1% decisive). The old
+                 metric answered "is the score numerically stable"; the
+                 framework's actual output is a threshold-based apt/not-apt
+                 decision, which is what this metric now measures directly.
 """
 
 from __future__ import annotations
@@ -165,6 +183,45 @@ def _load_criteria_arrays(
 
     mat = np.stack(arrays, axis=1)
     return mat, np.all(np.isfinite(mat) & (mat >= 0), axis=1)
+
+
+def _balanced_threshold(tech: str, pot_results: Any) -> float:
+    """
+    Resolve the real balanced-scenario TOPSIS threshold from Phase 4's
+    persisted result, for SA-2's threshold-crossing metric (METRIC_013).
+
+    Deliberately does not reuse SensitivityAnalyzer._resolve_tech_params()'s
+    `base_thr` -- that helper's `country_params is not None` branch always
+    returns a hardcoded 0.60 fallback in practice (CountryParams has no
+    `suitability_threshold` attribute, so getattr's default silently wins,
+    and the branch that would read the real value from `pot_results` is
+    never reached). That is a separate, pre-existing issue, out of scope
+    here; this function reads Phase 4's actual persisted threshold
+    directly instead, independent of that other code path.
+    """
+    if pot_results is None:
+        return 0.60
+    techs = (
+        pot_results.techs if hasattr(pot_results, "techs")
+        else pot_results.get("techs", {}) if isinstance(pot_results, dict)
+        else {}
+    )
+    tech_obj = techs.get(tech) if hasattr(techs, "get") else None
+    if tech_obj is None:
+        return 0.60
+    scenarios = (
+        tech_obj.scenarios if hasattr(tech_obj, "scenarios")
+        else tech_obj.get("scenarios", {}) if isinstance(tech_obj, dict)
+        else {}
+    )
+    balanced = scenarios.get("balanced") if hasattr(scenarios, "get") else None
+    if balanced is None:
+        return 0.60
+    thr = (
+        balanced.threshold if hasattr(balanced, "threshold")
+        else balanced.get("threshold")
+    )
+    return float(thr) if thr is not None else 0.60
 
 
 def _build_ghg_function_from_abatement(
@@ -314,13 +371,27 @@ def sa2_monte_carlo_weights(
     base_weights: Dict[str, float],
     height: int,
     width: int,
+    threshold: float,
     n_samples: int = 1000,
     concentration: float = 20.0,
     max_pixels: int = 300_000,
     seed: int = 42,
 ) -> Dict[str, Any]:
     """
-    SA-2: Monte Carlo weight sampling (Dirichlet) with spatial uncertainty.
+    SA-2: Monte Carlo weight sampling (Dirichlet) with decision robustness.
+
+    METRIC_013: reports threshold-crossing, not raw-score stability.
+    Earlier versions measured `stable_fraction` -- the fraction of pixels
+    whose 90% CI band on the continuous TOPSIS score was narrower than
+    0.10. That answered "is the score numerically stable", not "does the
+    framework's actual apt/not-apt decision (a fixed threshold cutoff,
+    e.g. 0.75 for the balanced scenario) change under weight uncertainty".
+    A prototype comparing both metrics on PRT/BRA found stable_fraction
+    couldn't distinguish the two countries on wind (4.4% vs. 4.3%) while
+    threshold-crossing revealed a real, large difference (PRT wind: 72.1%
+    of apt-by-base-weights pixels sit in a 25-75% "boundary" zone, barely
+    2.3% are decisive either way; BRA wind: 53.1% decisive) -- see
+    scratchpad/threshold_crossing_prototype.py for the full comparison.
 
     Args:
         criteria_dir:   Path to normalized criteria TIFs.
@@ -328,14 +399,36 @@ def sa2_monte_carlo_weights(
         base_weights:   Dictionary of base AHP weights.
         height:         Grid height.
         width:          Grid width.
+        threshold:      The real scenario TOPSIS threshold (e.g. Phase 4's
+                         balanced-scenario cutoff) pixels are classified
+                         against -- not a free parameter, must match
+                         whatever threshold the framework's own apt/not-apt
+                         decision actually uses for this tech/country.
         n_samples:      Number of Monte Carlo weight samples.
-        concentration:  Dirichlet concentration parameter.
+        concentration:  Dirichlet concentration parameter controlling how
+                         tightly the 1000 sampled weight vectors cluster
+                         around `base_weights` (higher = tighter, closer to
+                         the AHP base weights; lower = more dispersed).
+                         Not a physically-derived value -- picked as a
+                         plausible "AHP elicitation noise" magnitude, not
+                         validated against any external calibration. The
+                         same prototype that motivated this metric also
+                         swept concentration in {10, 20, 40} for BRA/solar
+                         and found the reported "decisive" fraction ranges
+                         from 17.9% (concentration=10) to 45.4%
+                         (concentration=40) -- roughly a 2.5x swing. The
+                         qualitative PRT-vs-BRA comparison held up across
+                         that range, but absolute percentages from this
+                         function should not be treated as precise without
+                         stating which concentration produced them.
         max_pixels:     Maximum pixels to sample.
         seed:           Random seed for reproducibility.
 
     Returns:
-        Dictionary with keys: cv, ci_width, stable_fraction, weight_samples,
-        n_samples, concentration, is_pixel_sampled, n_pixels_used.
+        Dictionary with keys: cv, ci_width, crossing_fraction, apt_base_mask,
+        n_apt_base, decisive_fraction, boundary_fraction, moderate_fraction,
+        threshold, weight_samples, n_samples, concentration,
+        is_pixel_sampled, n_pixels_used.
     """
     rng = np.random.default_rng(seed)
     mat, vmask = _load_criteria_arrays(criteria_dir, criteria_names, height, width)
@@ -349,6 +442,9 @@ def sa2_monte_carlo_weights(
 
     w0 = np.array([base_weights[c] for c in criteria_names], dtype=np.float64)
     w0 /= w0.sum()
+
+    score_base = _topsis_flat(mat_s, w0.astype(np.float32))
+
     ws = rng.dirichlet(concentration * w0, size=n_samples)
 
     all_s = np.zeros((n_samples, mat_s.shape[0]), dtype=np.float32)
@@ -359,16 +455,32 @@ def sa2_monte_carlo_weights(
     std = all_s.std(axis=0)
     cv  = np.where(p50 > 0.01, std / p50, 0.0)
 
-    # T8_19: stable_fraction reflete pixels com CI90 < 0.10.
-    # Valor baixo (e.g., 2%) não indica erro — mostra que a maioria dos pixels
-    # tem incerteza moderada a alta, típico em regiões com grande variação
-    # espacial dos critérios (ex: Portugal, com montanha + litoral + planície).
-    stable_fraction = float(((p95 - p05) < 0.10).mean())
+    # METRIC_013: per-pixel fraction of the 1000 Dirichlet samples where the
+    # score stays above `threshold`, restricted to pixels apt under the
+    # unperturbed base weights -- the population the framework's own
+    # scenario classification actually cares about.
+    crossing_fraction = (all_s > threshold).mean(axis=0)
+    apt_base_mask = score_base > threshold
+    n_apt_base    = int(apt_base_mask.sum())
+
+    if n_apt_base > 0:
+        cf_apt = crossing_fraction[apt_base_mask]
+        decisive_fraction = float(((cf_apt > 0.95) | (cf_apt < 0.05)).mean())
+        boundary_fraction = float(((cf_apt >= 0.25) & (cf_apt <= 0.75)).mean())
+        moderate_fraction = float(1.0 - decisive_fraction - boundary_fraction)
+    else:
+        decisive_fraction = boundary_fraction = moderate_fraction = float("nan")
 
     return {
-        "cv":              cv,
-        "ci_width":        p95 - p05,
-        "stable_fraction": stable_fraction,
+        "cv":                cv,
+        "ci_width":          p95 - p05,
+        "crossing_fraction": crossing_fraction,
+        "apt_base_mask":     apt_base_mask,
+        "n_apt_base":        n_apt_base,
+        "decisive_fraction": decisive_fraction,
+        "boundary_fraction": boundary_fraction,
+        "moderate_fraction": moderate_fraction,
+        "threshold":         threshold,
         "weight_samples":  (
             pd.DataFrame(ws, columns=criteria_names)
             .assign(sample_id=range(n_samples))
@@ -1253,28 +1365,40 @@ class SensitivityAnalyzer:
             if run_sa2:
                 t0 = time.perf_counter()
                 try:
+                    sa2_threshold = _balanced_threshold(tech, pot_results)
                     logger.info(
-                        "[%s] SA-2: Monte Carlo AHP (%d samples)...",
-                        tech, n_mc_samples,
+                        "[%s] SA-2: Monte Carlo AHP (%d samples, thr=%.2f)...",
+                        tech, n_mc_samples, sa2_threshold,
                     )
                     mc = sa2_monte_carlo_weights(
                         criteria_dir, list(weights.keys()), weights,
-                        height, width, n_samples=n_mc_samples,
+                        height, width, threshold=sa2_threshold,
+                        n_samples=n_mc_samples,
                     )
                     results_sa[tech]["sa2"] = {
-                        "stable_fraction_90ci": mc["stable_fraction"],
-                        "mean_cv":              float(mc["cv"].mean()),
-                        "mean_ci90_width":      float(mc["ci_width"].mean()),
-                        "elapsed_s":            round(time.perf_counter() - t0, 1),
-                        "_cv":                  mc["cv"],
+                        "threshold":          mc["threshold"],
+                        "concentration":      mc["concentration"],
+                        "n_apt_base":         mc["n_apt_base"],
+                        "decisive_fraction":  mc["decisive_fraction"],
+                        "boundary_fraction":  mc["boundary_fraction"],
+                        "moderate_fraction":  mc["moderate_fraction"],
+                        "mean_cv":            float(mc["cv"].mean()),
+                        "mean_ci90_width":    float(mc["ci_width"].mean()),
+                        "elapsed_s":          round(time.perf_counter() - t0, 1),
+                        "_cv":                mc["cv"],
                     }
                     plot_sa2_cv(
                         self.styler, mc["cv"], mc["ci_width"], tech,
                         out_dir / f"{country_code}_{tech}_sa2_cv_dist.png",
                     )
                     logger.info(
-                        "[%s] SA-2 complete: stable_fraction=%.1f%%",
-                        tech, mc["stable_fraction"] * 100,
+                        "[%s] SA-2 complete: decisive=%.1f%% boundary=%.1f%% "
+                        "moderate=%.1f%% (thr=%.2f, n_apt=%d)",
+                        tech,
+                        mc["decisive_fraction"] * 100,
+                        mc["boundary_fraction"] * 100,
+                        mc["moderate_fraction"] * 100,
+                        mc["threshold"], mc["n_apt_base"],
                     )
                 except Exception as exc:
                     logger.error("[%s] SA-2 failed: %s", tech, exc, exc_info=True)
@@ -1589,9 +1713,15 @@ class SensitivityAnalyzer:
             )
 
             # SA-2
-            stable_pct = sa2.get('stable_fraction_90ci', 0) * 100
+            decisive_pct = sa2.get('decisive_fraction', 0) * 100
+            boundary_pct = sa2.get('boundary_fraction', 0) * 100
+            moderate_pct = sa2.get('moderate_fraction', 0) * 100
             rows2 = [
-                ("Stable pixels (CI90 < 0.10)", f"{_sfmt(stable_pct, '.1f', '0.0')}%"),
+                ("Threshold used", _sfmt(sa2.get('threshold'), '.2f')),
+                ("Apt pixels (base weights)", str(sa2.get('n_apt_base', '—'))),
+                ("Decisive (>95% or <5% crossing)", f"{_sfmt(decisive_pct, '.1f', '0.0')}%"),
+                ("Boundary (25-75% crossing)", f"{_sfmt(boundary_pct, '.1f', '0.0')}%"),
+                ("Moderate (rest)", f"{_sfmt(moderate_pct, '.1f', '0.0')}%"),
                 ("Mean CV Spatial Baseline", _sfmt(sa2.get('mean_cv'), '.4f')),
                 ("Mean CI90 width globally", _sfmt(sa2.get('mean_ci90_width'), '.4f')),
             ]
