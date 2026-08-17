@@ -821,9 +821,8 @@ class SensitivityAnalyzer:
                             index=False,
                         )
                         results_sa[tech]["sa6"] = {
-                            "base_gw":   df6.attrs.get("base_gw",   0),
-                            "base_twh":  df6.attrs.get("base_twh",  0),
-                            "base_area": df6.attrs.get("base_area",  0),
+                            "base_gw":   df6.attrs.get("base_gw",  0),
+                            "base_twh":  df6.attrs.get("base_twh", 0),
                             "elapsed_s": round(time.perf_counter() - t0, 1),
                             "_df":       df6,
                         }

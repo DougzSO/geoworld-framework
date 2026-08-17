@@ -707,9 +707,8 @@ def sa6_potential_sensitivity(
 
     df = pd.DataFrame(rows)
     df.attrs.update({
-        "base_gw":   round(base_gw,  3),
-        "base_twh":  round(base_twh, 3),
-        "base_area": round(area,     1),
+        "base_gw":  round(base_gw,  3),
+        "base_twh": round(base_twh, 3),
     })
     return df
 
