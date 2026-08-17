@@ -1213,3 +1213,23 @@ Migrate Bloco 1 exclusion-gate parameters to parameters.json
 ---
 
 **Editorial note (added at move time, not part of the original entry)**: D7 is now stale — `tests/unit/` exists (`pytest`, 77 tests as of BLOCKER-011) since QI-001. Left unchanged above per the "move, don't rewrite" rule for this appendix; flagging here rather than editing the historical entry itself.
+
+---
+
+### sensitivity_analyzer.py enxugamento — status (2026-08-17, low-token handoff)
+
+**Done, committed, each with its own commit** (pytest 78/78 green after each):
+- `fa0684c` — consolidated `_load_suitability_from_disk`/`_load_weights_from_disk` (confirmed NOT the BUG_07/BLOCKER-010 pattern — `SuitabilityStats` never carries weights in memory, only a `weights_json` path).
+- `350c80c` — extracted SA-1..SA-6 + TOPSIS/loader helpers (~700 lines) to `src/utils/sensitivity_math.py`. Verified byte-identical CSVs/report text via full Phase 8 PRT run against pre-extraction baseline.
+- `a163f36` — removed silent `ImportError` fallback for `sensitivity_plots` (fail-fast); fixed SA-5/SA-6 docstring swap.
+- `5010176` — removed orphaned `base_area` field from SA-6 (unused everywhere, redundant with SA-3's `area_apt_km2`).
+- `d7a4729` — added `sa2_distribution_summary()` + `{ISO3}_{tech}_sa2_distribution_summary.csv` (3-row percentile summary of cv/ci_width/crossing_fraction, format approved by user before coding). **Only syntax/pyflakes/pytest-checked — not yet run through a full pipeline.**
+
+**NOT done — next session should pick up here**:
+1. Full Phase 8 validation run for PRT **and** BRA (cache 1-7, `skip_sensitivity: false` only) covering all 5 commits above together, especially the new SA-2 CSV (never run through the real pipeline yet — only unit-level checks).
+2. Confirm all *other* SA-1/3/4/6 outputs remain numerically identical to the pre-enxugamento baseline (expected, since only base_area/SA-2-CSV changed real output — everything else was pure reorg — but not yet re-confirmed end-to-end post item-5).
+3. `pytest tests/` full pass already confirmed after every individual commit, but not re-run once more after `d7a4729` specifically in a full-pipeline context.
+4. `configs/settings.yaml` — confirmed clean (`git diff` empty) as of `d7a4729`.
+5. Once (1)-(3) pass: nothing further required — this note itself is the placeholder for "one consolidated BACKLOG entry"; expand or replace it with a proper writeup once validated, per the original instruction ("pode ser uma entrada só").
+
+**Not touched, per standing instruction**: BLOCKER-010.
