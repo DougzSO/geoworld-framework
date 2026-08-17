@@ -388,6 +388,17 @@ class CountryParams(BaseModel):
     road_max_dist_km:          float = Field(default=15.0,  gt=0.0)
     pop_density_threshold:     float = Field(default=300.0, ge=0.0)
 
+    # Portões de exclusão rígida da Fase 3 (globais, não per-country --
+    # ver Bloco 1 em docs/BACKLOG.md). lakes_exclusion deliberadamente NÃO
+    # tem campo aqui: compute_lakes_exclusion() só emite {0.0, 1.0}, então
+    # qualquer valor em (0, 1) é matematicamente equivalente -- não há
+    # parâmetro real para migrar.
+    protected_areas_threshold:  float = Field(default=0.99, ge=0.0, le=1.0)
+    proximity_plants_threshold: float = Field(default=0.01, ge=0.0, le=1.0)
+    slope_offset_solar_deg:     float = Field(default=5.0,  ge=0.0, le=90.0)
+    slope_offset_wind_deg:      float = Field(default=10.0, ge=0.0, le=90.0)
+    slope_offset_biomass_deg:   float = Field(default=20.0, ge=0.0, le=90.0)
+
     # Tabela de aptidão por cobertura do solo
     land_suitability: Dict[int, Dict[str, float]] = Field(default_factory=dict)
 

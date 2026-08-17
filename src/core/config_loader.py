@@ -228,6 +228,7 @@ class ConfigLoader:
             c.get("use_mainland_only",
                   pipeline_cfg.get("use_mainland_only", True))
         )
+        excl = self.exclusion_thresholds
 
         params = CountryParams(
             country_code=code,
@@ -250,6 +251,11 @@ class ConfigLoader:
             road_max_dist_km=criteria["road_max_dist_km"],
             pop_density_threshold=criteria["pop_density_threshold"],
             land_suitability=self.land_suitability,
+            protected_areas_threshold=excl["protected_areas_threshold"],
+            proximity_plants_threshold=excl["proximity_plants_threshold"],
+            slope_offset_solar_deg=excl["slope_offset_solar_deg"],
+            slope_offset_wind_deg=excl["slope_offset_wind_deg"],
+            slope_offset_biomass_deg=excl["slope_offset_biomass_deg"],
         )
 
         self._log_summary(params)
@@ -452,6 +458,25 @@ class ConfigLoader:
                 "biomass": float(v["biomass"]),
             }
             for k, v in raw.items()
+        }
+
+    @property
+    def exclusion_thresholds(self) -> Dict[str, float]:
+        """
+        Phase 3 hard-exclusion gate thresholds (global, not per-country).
+
+        See Bloco 1 in docs/BACKLOG.md -- these were hardcoded literals in
+        suitability_builder.py before this migration; defaults here match
+        those literals exactly (zero numeric change).
+        """
+        raw   = self._params.get("exclusion_thresholds", {})
+        slope = raw.get("slope_offset_deg", {})
+        return {
+            "protected_areas_threshold":  float(raw.get("protected_areas", 0.99)),
+            "proximity_plants_threshold": float(raw.get("proximity_plants", 0.01)),
+            "slope_offset_solar_deg":     float(slope.get("solar", 5.0)),
+            "slope_offset_wind_deg":      float(slope.get("wind", 10.0)),
+            "slope_offset_biomass_deg":   float(slope.get("biomass", 20.0)),
         }
 
     @property

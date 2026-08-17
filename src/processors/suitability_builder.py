@@ -90,6 +90,10 @@ logger = logging.getLogger("geoworld.processors.SuitabilityBuilder")
 # ═══════════════════════════════════════════════════════════════════════════
 
 # Per-technology slope offsets added on top of country slope_threshold_deg.
+# Fallback defaults only -- get_technology_configs() reads the real values
+# from CountryParams.slope_offset_{tech}_deg (parameters.json's
+# exclusion_thresholds.slope_offset_deg, Bloco 1) when available, and falls
+# back to these literals only if country_params lacks the fields.
 _SLOPE_OFFSET_DEG: Dict[str, float] = {
     "solar": 5.0,
     "wind": 10.0,
@@ -114,10 +118,12 @@ def get_technology_configs(
     ~~~~~~~~~~~~~~~~
     ``TechnologyConfig.slope_max_deg`` is derived as::
 
-        slope_max_deg = country_params["slope_threshold_deg"] + _SLOPE_OFFSET_DEG[tech]
+        slope_max_deg = country_params["slope_threshold_deg"] + slope_offset_{tech}_deg
 
-    When ``slope_threshold_deg`` is absent from ``country_params``, a
-    conservative default of 10° is used.
+    Both terms come from ``country_params`` (``parameters.json``'s per-country
+    ``slope_threshold_deg`` and global ``exclusion_thresholds.slope_offset_deg``,
+    Bloco 1). When either is absent, conservative defaults are used: 10° for
+    ``slope_threshold_deg``, and the ``_SLOPE_OFFSET_DEG`` literals per tech.
 
     Forest exclusion policy
     ~~~~~~~~~~~~~~~~~~~~~~~
@@ -154,20 +160,35 @@ def get_technology_configs(
 
     # ── Country slope base ─────────────────────────────────────────────
     base_slope_deg: float = float(cp.get("slope_threshold_deg", 10.0))
+
+    # Bloco 1 (docs/BACKLOG.md): sourced from CountryParams when available,
+    # falling back to the _SLOPE_OFFSET_DEG literals otherwise.
+    slope_offset: Dict[str, float] = {
+        "solar":   float(cp.get("slope_offset_solar_deg",   _SLOPE_OFFSET_DEG["solar"])),
+        "wind":    float(cp.get("slope_offset_wind_deg",    _SLOPE_OFFSET_DEG["wind"])),
+        "biomass": float(cp.get("slope_offset_biomass_deg", _SLOPE_OFFSET_DEG["biomass"])),
+    }
     logger.info(
         "  [suitability] slope_threshold_deg=%.1f° → "
         "solar≤%.1f°  wind≤%.1f°  biomass≤%.1f°",
         base_slope_deg,
-        base_slope_deg + _SLOPE_OFFSET_DEG["solar"],
-        base_slope_deg + _SLOPE_OFFSET_DEG["wind"],
-        base_slope_deg + _SLOPE_OFFSET_DEG["biomass"],
+        base_slope_deg + slope_offset["solar"],
+        base_slope_deg + slope_offset["wind"],
+        base_slope_deg + slope_offset["biomass"],
     )
 
     # ── Common hard exclusions ─────────────────────────────────────────
     common_exclusions: Dict[str, float] = {
+        # lakes_exclusion: compute_lakes_exclusion() only ever emits
+        # {0.0, 1.0} (binary land/lake mask) -- any threshold in the open
+        # interval (0, 1) is mathematically equivalent (crit_arr < threshold
+        # selects exactly the lake pixels either way). Confirmed empirically
+        # for 0.3/0.5/0.7 on both PRT and BRA (Bloco 1, docs/BACKLOG.md).
+        # Intentionally NOT migrated to parameters.json -- there is no real
+        # value to tune here.
         "lakes_exclusion": 0.5,
-        "protected_areas": 0.99,
-        "proximity_plants": 0.01,
+        "protected_areas": float(cp.get("protected_areas_threshold", 0.99)),
+        "proximity_plants": float(cp.get("proximity_plants_threshold", 0.01)),
     }
 
     return {
@@ -186,7 +207,7 @@ def get_technology_configs(
                 "proximity_plants",
             ],
             hard_exclusions=common_exclusions,
-            slope_max_deg=base_slope_deg + _SLOPE_OFFSET_DEG["solar"],
+            slope_max_deg=base_slope_deg + slope_offset["solar"],
             lc_exclusion_classes=base_lc_exclusions,
         ),
         "wind": TechnologyConfig(
@@ -204,7 +225,7 @@ def get_technology_configs(
                 "river_wind",
             ],
             hard_exclusions=common_exclusions,
-            slope_max_deg=base_slope_deg + _SLOPE_OFFSET_DEG["wind"],
+            slope_max_deg=base_slope_deg + slope_offset["wind"],
             lc_exclusion_classes=base_lc_exclusions,
         ),
         "biomass": TechnologyConfig(
@@ -223,7 +244,7 @@ def get_technology_configs(
                 "seismic_suitability",
             ],
             hard_exclusions=common_exclusions,
-            slope_max_deg=base_slope_deg + _SLOPE_OFFSET_DEG["biomass"],
+            slope_max_deg=base_slope_deg + slope_offset["biomass"],
             lc_exclusion_classes=base_lc_exclusions,
         ),
     }

@@ -765,5 +765,11 @@
     "90": { "description": "Herbaceous wetland", "solar": 0.0, "wind": 0.0, "biomass": 0.0 },
     "95": { "description": "Mangroves", "solar": 0.0, "wind": 0.0, "biomass": 0.0 },
     "100": { "description": "Moss and lichen", "solar": 0.0, "wind": 0.0, "biomass": 0.0 }
+  },
+
+  "exclusion_thresholds": {
+    "protected_areas": 0.99,
+    "proximity_plants": 0.01,
+    "slope_offset_deg": { "solar": 5.0, "wind": 10.0, "biomass": 20.0 }
   }
 }
