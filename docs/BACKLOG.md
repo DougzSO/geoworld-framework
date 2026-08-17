@@ -514,6 +514,92 @@ Fix BLOCKER-013: exclude_mask shape mismatch crashed Suitability rendering for l
 Replace SA-2's stable_fraction with a threshold-crossing metric
 ```
 
+**Update (2026-08-17)**: the `_resolve_tech_params()` bug referenced above as "untouched here, out of scope" has since been fixed — see BLOCKER-017.
+
+---
+
+### BLOCKER-017 — `_resolve_tech_params()`'s threshold bug contaminated SA-3's plot/label and SA-6's absolute potential figures (2.6x–4.3x overstated)
+
+**Status**: Fixed — commit `dcf956e`.
+
+**Severity**: real contamination of already-generated, already-persisted numbers for every country run this session (PRT, BRA) — not a low-impact technicality. Investigated as impact-first (measure before fixing) per explicit instruction, given BLOCKER-016 flagged this same bug as "out of scope."
+
+**Title**: `SensitivityAnalyzer._resolve_tech_params()` resolved `threshold` via `getattr(country_params, "suitability_threshold", thr)` — `CountryParams` has no `suitability_threshold` attribute (it's a per-country object, not per-technology), so `getattr`'s hardcoded default (0.60) silently won on every call, and the early `return` in that branch meant the function's own correct fallback logic (reading `pot_results.techs[tech].params["thresholds"]["balanced"]`, a few lines further down) was never reached. `power_density`/`land_use_factor`/`capacity_factor` resolution in the same function was unaffected — confirmed via `country_params.{tech}.power_density_mw_km2`/`land_use_factor`/`capacity_factor` being independently correct attributes that do exist.
+
+**Call site**: `run()`'s per-technology loop, `src/processors/sensitivity_analyzer.py` — `pd_mw, luf, cf, base_thr = self._resolve_tech_params(tech, country_params, pot_results)`, once per tech, before SA-1 runs.
+
+**Downstream consumers of `base_thr`** (traced every reference):
+
+| Consumer | How it uses `base_thr` | Actually affected? |
+|---|---|---|
+| SA-3 sweep computation (`sa3_threshold_sweep()`) | not passed in at all — sweeps a fixed range `np.arange(0.30, 0.85, 0.05)` independent of any base threshold | **No** — CSV data intact across the full range, including the real 0.75 row |
+| SA-3 report/metadata field (`results_sa[tech]["sa3"]["base_threshold"]`) | label only | Yes, but not currently visible — see BLOCKER-018 (report text wasn't rendering this field at all before that fix) |
+| SA-3 plot (`plot_sa3_threshold()`) | vertical reference line position on the PNG | **Yes** — every already-generated SA-3 PNG for PRT/BRA marks the wrong point (0.60) on an otherwise-correct curve |
+| SA-6 (`sa6_potential_sensitivity()`) | direct computational input: `area = pxa[score >= base_threshold].sum()`, feeding `base_gw`/`base_twh`/every OAT row's absolute potential/generation | **Yes** — absolute values wrong; `elasticity_gw`/`elasticity_twh` are algebraically threshold-invariant (the `area` term cancels in the ratio), so the sensitivity *conclusions* were not wrong, only the absolute numbers alongside them |
+
+**Quantified impact** (real SA-3 CSV data already on disk this session, threshold=0.60 vs. 0.75 — identical to what SA-6 computes at those thresholds, same formula/area):
+
+| Country/Tech | GW @0.60 (bug) | GW @0.75 (real) | Ratio | Elasticity @0.60 | Elasticity @0.75 |
+|---|---|---|---|---|---|
+| PRT solar | 69.9 | 26.1 | 2.7x | -2.20 | -9.21 |
+| PRT wind | 1.85 | 0.46 | 4.0x | -4.47 | -10.66 |
+| PRT biomass | 1.70 | 0.39 | 4.3x | -5.61 | -8.45 |
+| BRA solar | 2770 | 1081 | 2.6x | -3.12 | -7.14 |
+| BRA wind | 135 | 50.6 | 2.7x | -3.57 | -5.21 |
+| BRA biomass | 242 | 66.4 | 3.6x | -2.39 | -10.54 |
+
+Every affected number differs by a factor of 2.6x-4.3x, not a marginal rounding difference — real contamination, not a low-impact technicality.
+
+**Depends on**: none. Related to BLOCKER-016 (same root cause category — a broken `country_params` threshold read — BLOCKER-016 worked around it with an isolated helper rather than fixing it in place).
+
+**Fix — consolidation trade-off considered before choosing**:
+- *Isolated duplicate* (mirror `_balanced_threshold()`'s read logic inline inside `_resolve_tech_params()`, independently): zero coupling, but leaves two independent implementations of "read the real balanced threshold" that could silently drift apart in a future refactor of either data path — the same class of bug this entry is about.
+- *Shared helper* (chosen): confirmed first that `_balanced_threshold()`'s read path (`pot_results.techs[tech].scenarios["balanced"].threshold`) and `_resolve_tech_params()`'s already-existing-but-unreachable pot_results branch (`pot_results.techs[tech].params["thresholds"]["balanced"]`) resolve to the *same* value — `potential_calculator.py` computes `threshold` once per scenario and stores it into both locations. Made `_resolve_tech_params()` call `_balanced_threshold(tech, pot_results)` directly for the threshold component at both of its return points, leaving `power_density`/`land_use_factor`/`capacity_factor` resolution untouched. `_balanced_threshold()`'s docstring updated (previously described itself as deliberately *not* reused by this function — now the opposite is true).
+
+**Risk**: Low — the only behavior change is what `threshold` resolves to (0.60 hardcoded fallback → the real per-country/tech balanced threshold, 0.75 for both PRT and BRA today); `pd_mw`/`luf`/`cf` resolution paths are byte-identical to before.
+
+**Validation (as performed)**:
+- Full Phase 8 runs (PRT, BRA; Phases 1-7 reused from cache) after the fix: SA-2/SA-3/SA-6 all now log `thr=0.75`; SA-6's `base_gw` values match this entry's "@0.75 (real)" column exactly (PRT solar 26.1, wind 0.5, biomass 0.4; BRA solar 1080.7, wind 50.6, biomass 66.4).
+- Re-extracted the SA-3 sweep CSVs post-fix: byte-identical to the pre-fix values in the table above at both threshold=0.60 and 0.75 rows, for all 3 techs, both countries — confirms the sweep computation itself was never affected, only the "base" label/reference line, exactly as predicted.
+- `pytest tests/` — 78/78 passing.
+- `configs/settings.yaml` reverted to the standing configuration, confirmed via empty `git diff`.
+
+**Commit message** (as shipped):
+```
+Fix BLOCKER-017/018: resolve real threshold in _resolve_tech_params(), render report subsections
+```
+
+---
+
+### BLOCKER-018 — Sensitivity report text rendered empty SOLAR/WIND/BIOMASS sections for every country
+
+**Status**: Fixed — commit `dcf956e`. Independent bug from BLOCKER-017, fixed in the same session/commit because both surfaced during the same investigation, tracked separately since they have unrelated root causes.
+
+**Severity**: moderate — no wrong numbers were ever computed or persisted (SA-1 through SA-6 all ran and saved correctly to CSV/pickle/PNG); the text report (`{ISO3}_sensitivity_report.txt`), one of the phase's primary human-facing deliverables, was simply blank where its content should have been. Discovered as a side effect of BLOCKER-017's Task 1 investigation (checking whether `base_thr`'s report-text field was currently visible).
+
+**Title**: `build_phase_report()` (`src/utils/reporting.py`) never rendered `ReportSection.subsections` — only top-level `rows`. `sensitivity_analyzer.py::_format_report()` builds one `ReportSection` per technology with all SA-1...SA-6 content nested inside `subsections` (never in the top-level `rows`), so every tech section rendered its header/separator only, with zero content rows, for both PRT and BRA (confirmed via direct inspection of the persisted `.txt` files).
+
+**Root cause**: a fully-correct recursive helper, `_append_section()`, already existed in the same module (docstring: "Recursively append a section and its subsections to lines") — but was never called from anywhere, including `build_phase_report()` itself, which has its own separate, non-recursive inline loop that iterates `section.rows` only. Classic orphaned-refactor: the recursive helper was written (presumably to replace the inline loop) but never wired in.
+
+**Scope check**: grepped every use of `ReportSection`/`subsections`/`build_phase_report` repo-wide — `sensitivity_analyzer.py` is the *only* caller that populates `subsections` (suitability_builder/lcoe_calculator/potential_calculator/results_writer all only use top-level `rows`). This bug was therefore invisible everywhere except the sensitivity report.
+
+**Depends on**: none.
+
+**Effort**: S.
+
+**Risk**: Low — fix is additive for every other phase's report (their sections never populate `subsections`, so the new recursive branch never fires for them; top-level row formatting reproduced byte-for-byte at depth 0). Confirmed no test in the repo asserts report-text formatting.
+
+**Fix (as shipped)**: replaced `build_phase_report()`'s non-recursive section loop with a recursive `render_section()`/`render_rows()` pair that reproduces the exact prior top-level formatting at depth 0 and additionally recurses into `subsections` at increasing indent. Deleted the now-truly-dead `_append_section()` rather than leaving two parallel implementations — its own formatting (right-aligned values) differed from the inline loop's (left-padded label, compact value) and was never used, so keeping it around post-fix would just be a second, subtly different, unused implementation of the same concept.
+
+**Validation (as performed)**:
+- Full Phase 8 runs (PRT, BRA) after the fix: `{ISO3}_sensitivity_report.txt` now shows all 5 subsections (SA-1, SA-2, SA-3, SA-4, SA-6) with real content under SOLAR/WIND/BIOMASS, for both countries — grepped `Base threshold (balanced)` and confirmed 3 hits per country (one per tech), value `0.75`.
+- `pytest tests/` — 78/78 passing (shared run with BLOCKER-017's validation, no test exercises `build_phase_report`/`ReportSection` directly).
+
+**Commit message** (as shipped):
+```
+Fix BLOCKER-017/018: resolve real threshold in _resolve_tech_params(), render report subsections
+```
+
 ---
 
 ## HIGH-VALUE REFACTORS (improve maintainability, enable testing)
