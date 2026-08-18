@@ -1027,13 +1027,26 @@ class DataAuditor:
             and slope_meta.get("max") is not None
         ):
             slope_max_obs = float(slope_meta["max"])
-            try:
+            # INVAR-001: get_country() raises ConfigError both when the
+            # country is absent AND when an existing entry fails internal
+            # validation (e.g. malformed OWA weights) -- catching ConfigError
+            # here can't tell those apart. has_country() is the deterministic
+            # way to detect "no per-country override configured"; any other
+            # failure from get_country() means an existing entry is broken
+            # and must propagate, not be masked as a missing override.
+            if not self.cfg.has_country(country_code):
+                logger.info(
+                    "  [slope_threshold] No parameters.json entry for %s — "
+                    "using default slope_threshold_deg=15.0 for the "
+                    "inactivity check.",
+                    country_code,
+                )
+                slope_threshold = 15.0
+            else:
                 country_params_for_audit = self.cfg.get_country(country_code)
                 slope_threshold = float(
                     country_params_for_audit.get("slope_threshold_deg", 15.0)
                 )
-            except Exception:
-                slope_threshold = 15.0
 
             if slope_max_obs < slope_threshold:
                 audit["alerts"].append(

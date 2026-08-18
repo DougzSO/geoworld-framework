@@ -177,6 +177,26 @@ class ConfigLoader:
             f"Available: {sorted(countries)}"
         )
 
+    def has_country(self, code: str) -> bool:
+        """
+        Return whether a per-country override exists in parameters.json,
+        without building/validating a ``CountryParams`` instance.
+
+        Unlike ``get_country()``, this never raises ``ConfigError`` — it is
+        the deterministic way to distinguish "no override configured" from
+        "an override exists but is broken", since ``get_country()`` raises
+        the same ``ConfigError`` type for both a missing country and an
+        existing one that fails internal validation.
+
+        Args:
+            code: ISO-3166-alpha-3 country code.
+
+        Returns:
+            True if ``code`` has a ``countries`` entry in parameters.json.
+        """
+        countries = self._params.get("countries", {})
+        return code.upper().strip() in countries
+
     # ------------------------------------------------------------------
     # Primary builder
     # ------------------------------------------------------------------
