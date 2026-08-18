@@ -516,7 +516,7 @@ Replace SA-2's stable_fraction with a threshold-crossing metric
 
 **Update (2026-08-17)**: the `_resolve_tech_params()` bug referenced above as "untouched here, out of scope" has since been fixed — see BLOCKER-017.
 
----
+**Update (2026-08-18)**: the prototype cited above (`scratchpad/threshold_crossing_prototype.py`) as the source of the "17.9% → 45.4%, ~2.5x" `concentration` swing was never committed — confirmed gone from both the working tree and the full git history (`git log --all` for its filename returns nothing across any branch/commit) — and is unrecoverable. A new, independent, committed sweep (`scratchpad/oat_sa2_concentration_sensitivity.py`, commit `2204109`) reproduces 17.9%/45.4% for BRA/solar exactly, but covering all 3 techs × PRT/BRA found the swing is **not** a universal ~2.5x — PRT/wind swings ~16.3x over the identical `concentration ∈ {10, 20, 40}` range. See Campaign table row 1 and its "Row 1" write-up below.
 
 ### BLOCKER-017 — `_resolve_tech_params()`'s threshold bug contaminated SA-3's plot/label and SA-6's absolute potential figures (2.6x–4.3x overstated)
 
@@ -1198,7 +1198,7 @@ BLOCKER-006 (fixed) hardened this decision at the implementation level: TOPSIS-v
 
 | # | Parâmetro | Status | Valor(es) testado(s) | Veredito | Destino final (config file + chave) | Commit |
 |---|---|---|---|---|---|---|
-| 1 | `concentration` (Dirichlet, SA-2) — `sensitivity_analyzer.py:376` | Pending | — | — | — | — |
+| 1 | `concentration` (Dirichlet, SA-2) — `src/utils/sensitivity_math.py:276` | Done (OAT sweep only — no final-value decision) | conc ∈ {10, 20, 40} × {PRT, BRA} × {solar, wind, biomass} (18 cells) — see "Row 1" write-up below | Highly heterogeneous, **not** a uniform ~2.5x — new open finding, needs triage (see below) | Not migrated — `concentration=20` remains the sole hardcoded default (`sensitivity_analyzer.py:675-679`) for every country/tech pair; value decision pending Douglas's triage | `2204109` |
 | 2 | `common_exclusions` (lakes_exclusion / protected_areas / proximity_plants) — `suitability_builder.py:167-171` | **Bloco 1 — Task 2 (migration) done** | See "Bloco 1 results" below | lakes_exclusion: keep hardcoded (mathematically inert, no value to tune). protected_areas: 0.99, migrated as-is — **value pending Bloco 6 (IUCN_SCORES)**, not final. proximity_plants: 0.01, migrated as-is — **no documented external justification, review in a literature-comparison pass**, not final. | `parameters.json`'s new `exclusion_thresholds.protected_areas` / `.proximity_plants` (`CountryParams.protected_areas_threshold`/`.proximity_plants_threshold`) | `e6b7da4` |
 | 3 | `_SLOPE_OFFSET_DEG` (solar/wind/biomass) — `suitability_builder.py:93-97` | **Bloco 1 — Task 2 (migration) done** | See "Bloco 1 results" below | Current literals (5.0/10.0/20.0°) kept as-is — low priority, no material numeric effect found (<0.3% apt_area swing at ±50%), migrated for config-traceability only, not because a new value was chosen. | `parameters.json`'s new `exclusion_thresholds.slope_offset_deg` (`CountryParams.slope_offset_{solar,wind,biomass}_deg`) | `e6b7da4` |
 | 4 | `normalize_percentile` default `p_low=5.0, p_high=95.0` (solar/wind/biomass resource) — `normalization.py:26-27` | Pending | — | — | — | — |
@@ -1211,6 +1211,33 @@ BLOCKER-006 (fixed) hardened this decision at the implementation level: TOPSIS-v
 | 11 | Hardcoded percentiles w/ no config path: roads/grid `p_low=5.0,p_high=95.0`; proximity_plants `p_low=5.0,p_high=95.0`; seismic `p_low=2.0,p_high=98.0` — `criteria_builder.py:258,349,589` | Pending | — | — | — | — |
 | 12 | `sa4_lcoe_uncertainty` variations `capex=±15%, opex=±15%, cf=±10%` — `sensitivity_analyzer.py:573-575` | Pending (blocked on BLOCKER-017/018) | — | — | — | — |
 | 13 | SA-1 "robust" cutoff `rho >= 0.95` — `sensitivity_analyzer.py:362` | Pending (blocked on BLOCKER-017/018) | — | — | — | — |
+
+### Row 1 — `concentration` (Dirichlet, SA-2) OAT sweep
+
+**Status**: OAT sensitivity test complete. The "Done" in the table above refers to this step only — per the campaign's own binding design rule, a sweep produces a report, not an auto-selected value; no final-value decision or config migration has been made.
+
+**Why this row was still "Pending" despite BLOCKER-016 already citing a `concentration` sweep**: BLOCKER-016's cited prototype (`scratchpad/threshold_crossing_prototype.py`) covered BRA/solar only and was never committed — confirmed gone from both the working tree and the full git history (`git log --all` for its filename returns nothing). Its 17.9%/45.4% figures could not be re-derived from that source. The sweep below is an independent implementation against the current `sa2_monte_carlo_weights()` signature, not a replay of the lost code.
+
+**Method**: `scratchpad/oat_sa2_concentration_sensitivity.py` (committed, commit `2204109`) calls `sa2_monte_carlo_weights()` (`src/utils/sensitivity_math.py`) directly — standalone, does not go through `main.py`/`PipelineOrchestrator`. Reuses already-cached Phase 2b criteria TIFs, Phase 3 AHP weight JSONs, and Phase 4's persisted balanced-scenario threshold (read from the `THRESHOLD` tag on `outputs/{code}/potential/tifs/{code}_{tech}_suitable_balanced.tif` — `recover_potential_from_disk()`'s reconstructed dict does not carry a `"threshold"` field, so the production `_balanced_threshold()` fallback path would silently return 0.60 instead of the real 0.75; this harness reads the tag directly to avoid that gap rather than reproducing it). `n_samples=1000`, `seed=42` — both match production defaults.
+
+**Results** (decisive_fraction / boundary_fraction / moderate_fraction; full data in `scratchpad/oat_sa2_concentration_sensitivity_results.json`):
+
+| Country | Tech | conc=10 | conc=20 (production default) | conc=40 | conc=40 / conc=10 ratio |
+|---|---|---|---|---|---|
+| PRT | solar | 9.7% / 56.2% / 34.1% | 17.2% / 49.0% / 33.8% | 26.7% / 37.7% / 35.6% | 2.76x |
+| PRT | wind | 0.4% / 84.5% / 15.1% | 2.3% / 72.1% / 25.5% | 7.2% / 58.3% / 34.5% | **16.3x** |
+| PRT | biomass | 6.3% / 38.3% / 55.5% | 20.4% / 32.6% / 47.0% | 40.8% / 27.2% / 32.0% | 6.52x |
+| BRA | solar | 17.9% / 36.7% / 45.4% | 28.1% / 27.7% / 44.2% | 45.4% / 19.5% / 35.1% | 2.54x |
+| BRA | wind | 31.8% / 27.0% / 41.2% | 53.1% / 19.9% / 27.0% | 66.8% / 14.8% / 18.4% | 2.10x |
+| BRA | biomass | 14.7% / 52.1% / 33.2% | 24.0% / 44.4% / 31.6% | 34.5% / 35.5% / 30.0% | 2.35x |
+
+BRA/solar's ratio (2.54x) matches BLOCKER-016's old "~2.5x" claim almost exactly — confirming that figure was numerically correct and is reproducible from the current code/data given the same seed/threshold/weights, **not** independent corroboration from separately-built logic (the lost script's own inputs/assumptions can no longer be checked, only that today's deterministic computation lands on the same number). It does not generalize: PRT/wind swings 16.3x over the identical `concentration` range — more than six times BRA/solar's swing. The heterogeneity itself, not any single point estimate, is this row's real finding.
+
+**Validation**: the `concentration=20` column above is byte-identical to the `Decisive`/`Boundary`/`Moderate` figures already persisted in `outputs/{PRT,BRA}/sensitivity/*_sensitivity_report.txt` (the 2026-08-18 enxugamento validation run), confirming the harness reads the same production inputs (AHP weights, criteria rasters, balanced-scenario threshold=0.75) rather than synthetic data.
+
+**Open finding (new, unassigned — needs Douglas's triage), not closed by this row**: `concentration=20` is the sole hardcoded production default for every country/tech pair (`sensitivity_analyzer.py:675-679`, no per-tech/per-country override exists anywhere). Given PRT/wind's 16.3x swing vs. BRA/solar's 2.5x and BRA/wind's 2.1x over the same tested range, the open question is whether `concentration=20` is appropriate uniformly, or whether high-variance pairs like PRT/wind (and potentially others not yet swept, for countries beyond PRT/BRA) need per-tech/per-country calibration — or at minimum a documented caveat in thesis methodology acknowledging this sensitivity. No priority assigned yet. Tracked in `docs/CURRENT-SPRINT.md` as "Campaign #1 (follow-up)".
+
+**Commit**: `2204109` (harness + results JSON).
 
 ### Bloco 1 — `common_exclusions` and `_SLOPE_OFFSET_DEG` (Phase 3 binary gates)
 
