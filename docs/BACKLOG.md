@@ -637,6 +637,42 @@ A second, currently-unreachable instance of the identical pattern exists at `_lo
 
 ---
 
+### BLOCKER-020 — `criteria_builder.py`'s `ParamsLike` keeps a raw-`dict` input path alive for `country_params`, same class of gap as BLOCKER-005/QI-003
+
+**Status**: not fixed — documented only. Found while scoping the BLOCKER-005 "validation half" removal (raw-dict `country_params` input to `build_tech_params()`/`PotentialCalculator.run()`); out of scope for that pass because it lives in a different subsystem (Phase 2b, not the Phase 4/5 threshold chain) and touches ~12 call sites on its own, so it gets its own tracking number instead of being folded in or left as a loose comment.
+
+**Title**: `src/processors/criteria_builder.py:70` defines `ParamsLike = Union[CountryParams, Dict[str, Any]]`, with the inline comment `# Type alias: accepts both new typed contract and legacy dict during migration.` The private helper `_param(params: ParamsLike, key: str, default: Any = None) -> Any` (line 115-117, body: `return params.get(key, default)`) duck-types across both shapes — it works today only because `CountryParams` itself implements a dict-style `.get()` for legacy-compatibility (`schemas.py`'s "Compatibility" design principle), not because `_param()` validates anything. A raw, unvalidated `dict` standing in for `country_params` is therefore still a live, typed-and-documented code path here, same as the one BLOCKER-005/QI-003 closed for `build_tech_params()`.
+
+**Call sites using `ParamsLike`** (11 function parameters + 1 class attribute, ~12 total):
+- `_param(params: ParamsLike, ...)` — line 115 (the duck-typed accessor itself)
+- `compute_solar_resource(solar_path, params: ParamsLike)` — line 125-127
+- `compute_wind_resource(wind_path, params: ParamsLike)` — line 148-150
+- `compute_terrain_score(slope_path, elev_path, params: ParamsLike)` — line 167-170 (reads `_param(params, "slope_threshold_deg", 7.0)` at line 176)
+- `compute_linear_proximity_suitability(dist_path, params: ParamsLike, max_dist_key, default_max_km)` — line 234-238 (reads `_param(params, max_dist_key, default_max_km)` at line 248)
+- `compute_road_suitability(roads_path, params: ParamsLike)` — line 263-264
+- `compute_grid_suitability(grid_path, params: ParamsLike)` — line 272-273
+- `compute_biomass_resource(land_cover_path, yield_raw, params: ParamsLike)` — line 388-391
+- `compute_population_suitability(pop_path, params: ParamsLike)` — line 518-519
+- `compute_river_suitability(rivers_path, params: ParamsLike, tech="solar")` — line 550-551
+- `CriteriaBuilder.run(..., country_params: ParamsLike, ...)` — line 831 (the public entry point that receives whatever `main.py`/callers pass in and threads it through all of the above)
+
+**Overlap with Campaign #9/#10/#11** (`docs/BACKLOG.md`'s Sensitivity & Config Migration Campaign table, row 9/10/11 — all `criteria_builder.py`): partial, and about different things living in the same lines, not the same defect.
+- **Row 9** (`compute_terrain_score` weights `0.6×slope + 0.4×TRI`, line 216) — **touches the same function** as this entry (`compute_terrain_score`, which also reads `_param(params, "slope_threshold_deg", ...)` at line 176), but Row 9's concern is the hardcoded `0.6`/`0.4` blend weights (a scientific-parameter migration question, per the Campaign's own scope), not the `ParamsLike`/`_param()` type-safety gap this entry tracks. Two different fixes in the same function; neither blocks the other.
+- **Row 11** (hardcoded percentiles, `criteria_builder.py:258,349,589`) — **partial overlap only**. Line 258 (`compute_linear_proximity_suitability`, roads/grid path) is inside a `ParamsLike`-typed function and does overlap. Lines 349 (`compute_proximity_plants`) and 589 (`compute_seismic_suitability`) do **not** — neither function takes a `params` argument at all, so that portion of Row 11 is unrelated to this entry.
+- **Row 10** (`TRI_THRESHOLD=50.0`, `constants.py:200`) — no overlap; it's a module-level constant in a different file, not read via `_param()`/`ParamsLike` anywhere.
+
+**Depends on**: none technically. Conceptually the same category of fix as BLOCKER-005's validation half / QI-003 (removing an unvalidated raw-dict stand-in for a Pydantic-validated config object) — should probably be scheduled alongside or immediately after that work for consistency, but does not block or get blocked by it code-wise (disjoint files, disjoint call graphs — `criteria_builder.py` does not import `build_tech_params` or call `PotentialCalculator.run`).
+
+**Effort**: M — mechanical but wide: delete `ParamsLike`, retype ~11 function signatures plus `CriteriaBuilder.run` from `ParamsLike` to `CountryParams`, decide whether `_param()` becomes a thin `getattr`-based accessor or is removed in favor of direct attribute/`.get()` access on a guaranteed-`CountryParams` instance, and add the same `TypeError`-on-wrong-type guard used elsewhere once this pattern is settled.
+
+**Risk**: Low — per the BLOCKER-005 diff precedent, no test in `tests/` references `criteria_builder.py`'s `ParamsLike`-typed functions or `country_params` at all (`grep -rn "country_params" tests/` returns zero matches repo-wide), and `main.py` already always passes a validated `CountryParams` in production. The risk is coverage blindness (nothing would catch a regression), not behavioral risk from the change itself.
+
+**Success criteria**: `grep -n "ParamsLike" src/processors/criteria_builder.py` returns zero matches; `CriteriaBuilder.run()` and every `compute_*` helper it calls type-hint `country_params`/`params` as `CountryParams` (or `Optional[CountryParams]`), not a `Union` with `Dict`; passing a raw `dict` to `CriteriaBuilder.run()` raises a clear `TypeError` instead of being silently accepted.
+
+**Not fixed here** — this entry only registers the finding and its scope; no code in `criteria_builder.py` was changed in this pass.
+
+---
+
 ### REFACTOR-001 — Extract `sensitivity_analyzer.py` plotting to `sensitivity_plots.py`
 
 **Title**: Move all `_fig_*`/`_watermark`/`_draw_kpis`/`_sfmt` module-level plotting functions (L692-1196, ~500 lines) out of `sensitivity_analyzer.py` into a new `src/utils/sensitivity_plots.py`, mirroring the existing `abatement_plots.py` pattern.
