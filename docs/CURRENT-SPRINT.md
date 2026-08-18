@@ -6,7 +6,7 @@
 
 ## 1. Status em uma linha
 
-**2026-08-18** — último commit `e57d233` ("Finalize sensitivity_analyzer.py enxugamento BACKLOG entry"). Concluído mais recentemente: enxugamento de `sensitivity_analyzer.py` (6 commits, validado) + migração do Bloco 1 da Sensitivity & Config Migration Campaign (`common_exclusions`/`_SLOPE_OFFSET_DEG` → `parameters.json`) + utilitários de coordenação da campanha (`scripts/session_lock.py`, `scripts/validate_run_checksum.py`). Árvore de trabalho limpa (só `__pycache__/*.pyc` modificados).
+**2026-08-18** — último commit local pendente: fechamento de duas lacunas encontradas na auditoria que gerou este arquivo (BLOCKER-019 registrado para o crash real de Transport; `SUMMARY.md` corrigido por completo — não só `sensitivity_analyzer.py`, 15 módulos estavam com LOC desatualizado e 3 módulos novos não tinham entrada; REFACTOR-004 corrigido de "sem status" para "Partial"). Antes disso: enxugamento de `sensitivity_analyzer.py` (6 commits, validado) + migração do Bloco 1 da Sensitivity & Config Migration Campaign (`common_exclusions`/`_SLOPE_OFFSET_DEG` → `parameters.json`) + utilitários de coordenação da campanha (`scripts/session_lock.py`, `scripts/validate_run_checksum.py`). Árvore de trabalho limpa (só `__pycache__/*.pyc` modificados) antes desta sessão.
 
 ---
 
@@ -52,16 +52,16 @@
 - [ ] **Campaign #11** — percentis hardcoded sem nenhum caminho de config: roads/grid, proximity_plants, seismic (`criteria_builder.py:258,349,589`). → [BACKLOG.md, Campaign table row 11]
 - [ ] **Campaign #12** — variações do `sa4_lcoe_uncertainty` (capex/opex/cf), desbloqueado desde que BLOCKER-017/018 landaram (`sensitivity_analyzer.py:573-575`). → [BACKLOG.md, Campaign table row 12]
 - [ ] **Campaign #13** — corte "robust" do SA-1, `rho >= 0.95`, desbloqueado (`sensitivity_analyzer.py:362`). → [BACKLOG.md, Campaign table row 13]
-- [ ] **REFACTOR-004 (metade restante)** — extração de SA1-6 para `sensitivity_math.py` já feita (commit `350c80c`); `run()` ainda **não** foi dividido em `_run_sa1()`…`_run_sa6()` (confirmado por grep: nenhum método desse nome existe em `sensitivity_analyzer.py`). → [BACKLOG.md#REFACTOR-004](BACKLOG.md)
+- [ ] **REFACTOR-004 (status: Partial)** — extração de SA1-6 para `sensitivity_math.py` feita (commit `350c80c`); `run()` ainda **não** foi dividido em `_run_sa1()`…`_run_sa6()` (confirmado por grep: nenhum método desse nome existe em `sensitivity_analyzer.py`). Status corrigido em BACKLOG.md nesta passada (antes não tinha `**Status**` nenhum). → [BACKLOG.md#REFACTOR-004](BACKLOG.md)
 - [ ] **REFACTOR-006 (achado residual)** — Phase 8 (`sensitivity_analyzer.py`) é a única fase sem `output_model` Pydantic no `result.pkl` (`main.py` passa `output_model=None`); investigado, não corrigido. → [BACKLOG.md#REFACTOR-006, "Status update"](BACKLOG.md)
 - [ ] **Gap não numerado (Part 4b)** — `mask_source` (Phase 5/LCOE) é computado e logado, mas descartado antes de persistir; nunca recebeu número de BLOCKER/REFACTOR. → [00-project-state-and-reorg-plan.md#4b](00-project-state-and-reorg-plan.md)
-- [ ] **Transport `AttributeError`** — crash real (`country_params.solar_capacity_factor` flat vs. `CountryParams.solar.capacity_factor` aninhado) é a causa raiz de `skip_transport: true`; referenciado em várias entradas mas nunca recebeu seu próprio número de BLOCKER. → [BACKLOG.md#BLOCKER-012, nota de dependência](BACKLOG.md)
 - [ ] **QI-001 (gap)** — `exclusion.py` e `normalization.py` seguem sem nenhum teste (`tests/unit/` não tem `test_exclusion.py`/`test_normalization.py`, confirmado). → [BACKLOG.md#QI-001](BACKLOG.md)
 - [ ] **QI-004** — testes para `raster_io.find_raster_by_base_name()` e os acessores de `params_helpers.py` introduzidos por BLOCKER-003/006/007. → [BACKLOG.md#QI-004](BACKLOG.md)
 - [ ] **QI-003** — script de validação de config/schema no startup (`config_validator.py` não existe ainda). → [BACKLOG.md#QI-003](BACKLOG.md)
 
 ### Baixa prioridade
 
+- [ ] **BLOCKER-019** — Transport (Phase 9) crasha de verdade em `country_params.solar_capacity_factor` (atributo flat vs. `CountryParams.solar.capacity_factor` aninhado), em `run()` L402-404 e `_log_parameter_dashboard()` L1461-1462; é a causa raiz de `skip_transport: true`. Registrado nesta passada (antes só existia em texto solto). Baixa prioridade — Transport fica dormente por decisão, não por esquecimento. → [BACKLOG.md#BLOCKER-019](BACKLOG.md)
 - [ ] **BLOCKER-012** — Transport (Phase 9) tem o mesmo bug de dupla persistência do BLOCKER-011; dormente enquanto `skip_transport: true`. → [BACKLOG.md#BLOCKER-012](BACKLOG.md)
 - [ ] **BLOCKER-014** — fetch ao vivo da OWID em Abatement quebra determinismo bit-a-bit de validação. → [BACKLOG.md#BLOCKER-014](BACKLOG.md)
 - [ ] **BLOCKER-015** — skip-check da Fase 1 (Audit) olha para o diretório errado. → [BACKLOG.md#BLOCKER-015](BACKLOG.md)
@@ -73,7 +73,7 @@
 - [ ] **Gap não numerado (Part 4c)** — `_LCOEView.mean_lcoe` tolera 4 formatos de dict distintos; sintoma do mesmo problema raiz do BLOCKER-010, não resolvível isoladamente. → [00-project-state-and-reorg-plan.md#4c](00-project-state-and-reorg-plan.md)
 - [ ] **Gap não numerado (Part 4d)** — `transport_decarbonization_calculator.py` escreve um GeoDataFrame como CSV puro, perdendo fidelidade espacial; dormente com Phase 9 desligada. → [00-project-state-and-reorg-plan.md#4d](00-project-state-and-reorg-plan.md)
 - [ ] **Gap não numerado (Part 4f)** — `write_criteria_summary()` e outros escritores de relatório não usam a convenção compartilhada `build_phase_report()`. → [00-project-state-and-reorg-plan.md#4f](00-project-state-and-reorg-plan.md)
-- [ ] **Doc stale** — `SUMMARY.md` ainda lista `sensitivity_analyzer.py` com 2150 linhas (real: 1094, pós-enxugamento) e não tem entrada para o novo `src/utils/sensitivity_math.py` (765 linhas). → `SUMMARY.md`
+- [ ] **QI-005** — gerar a tabela de LOC do `SUMMARY.md` via script (`wc -l` automatizado por módulo) em vez de edição manual; registrado nesta passada depois do `SUMMARY.md` ficar desatualizado pela segunda vez após um refactor estrutural — padrão recorrente, não incidente isolado. Não implementado ainda. → [BACKLOG.md#QI-005](BACKLOG.md)
 - [ ] **Doc stale** — `src/visualization/` continua sem `__init__.py` (confirmado); nota ⚠️ em `02-architecture.md` segue sem resolução. → [docs/memory/02-architecture.md](memory/02-architecture.md)
 
 ---
@@ -81,3 +81,5 @@
 ## Já resolvido, não repetir (verificado nesta passada)
 
 Para não reabrir o que já foi checado: BLOCKER-001–004, 006–009, 011, 013, 016–018 = done; REFACTOR-001, 002, 005, 007 = done; a verificação da Part 4a (dupla persistência em Suitability/Abatement/Sensitivity) já foi feita — nenhum dos três perde dado, só Transport (BLOCKER-012) perde; a reorganização da Part 6 do reorg-plan já foi aplicada (`docs/BACKLOG.md`, `docs/analysis/`, `docs/README.md` existem); as staleness da Part 5 em `06-risk-areas.md`, `08-conventions.md`, `07-configuration.md` e `D7` já foram corrigidas.
+
+**Corrigido nesta passada**: `SUMMARY.md` teve **todos** os números de LOC conferidos contra `wc -l` real (não só `sensitivity_analyzer.py`) — 15 módulos estavam desatualizados (`config_loader.py`, `constants.py`, `schemas.py`, `artifact_manager.py`, `grid_aligner.py`, `suitability_builder.py`, `sensitivity_analyzer.py`, `transport_decarbonization_calculator.py`, `raster_io.py`, `data_recovery.py`, `params_helpers.py`, `map_styling.py`, `reporting.py`, `dashboard_panels.py`, `settings.yaml`, `parameters.json`) e 3 módulos novos não tinham entrada nenhuma (`sensitivity_math.py`, `sensitivity_plots.py`, `transport_plots.py`) — todos corrigidos/adicionados. Duas alegações de "maior módulo do código" ficaram falsas com os números corretos (`sensitivity_analyzer.py` não é mais o maior processor, `transport_decarbonization_calculator.py` não é mais o maior módulo do repo) e foram removidas do texto.

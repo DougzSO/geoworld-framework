@@ -352,7 +352,7 @@ Fix BLOCKER-011: Phase 6 double persistence silently discarded dominance counts
 
 ### BLOCKER-012 — Transport (Phase 9) has the same double-persistence bug BLOCKER-011 fixed in Phase 6
 
-**Status**: not fixed — documented only. Currently dormant because `skip_transport: true` in `configs/settings.yaml` (Phase 9 has an unrelated, separately-tracked `AttributeError` that keeps it disabled). Discovered while surveying all 9 phases' persistence patterns during BLOCKER-011.
+**Status**: not fixed — documented only. Currently dormant because `skip_transport: true` in `configs/settings.yaml` (Phase 9 has an unrelated `AttributeError` that keeps it disabled — now tracked as **BLOCKER-019**). Discovered while surveying all 9 phases' persistence patterns during BLOCKER-011.
 
 **Title**: Remove `TransportDecarbonizationCalculator`'s manual `ArtifactManager` persistence, same fix shape as BLOCKER-011.
 
@@ -604,6 +604,39 @@ Fix BLOCKER-017/018: resolve real threshold in _resolve_tech_params(), render re
 
 ## HIGH-VALUE REFACTORS (improve maintainability, enable testing)
 
+### BLOCKER-019 — Transport (Phase 9) crashes on `country_params.solar_capacity_factor` — flat attribute access on a nested schema
+
+**Status**: not fixed — documented only. Low priority while Transport stays dormant — `skip_transport: true` is a deliberate choice (this bug is *why* it was first set, not a symptom of neglect since). Formalizes a bug that has only ever existed in prose (`configs/settings.yaml:160`'s `skip_transport` comment, `docs/memory/06-risk-areas.md`, and BLOCKER-012's "Depends on" note) since it was first discovered, without its own tracking number until now.
+
+**Title**: `TransportDecarbonizationCalculator.run()` and `_log_parameter_dashboard()` both read `country_params.solar_capacity_factor` / `.wind_capacity_factor` / `.biomass_capacity_factor` as flat attributes, but `CountryParams` (`src/core/schemas.py:363-365`) stores these nested — `country_params.solar.capacity_factor`, `.wind.capacity_factor`, `.biomass.capacity_factor`. The flat names exist only as `_FLAT_KEY_MAP` dict-style aliases (`schemas.py:416,427,435` — `country_params.get("solar_capacity_factor")`), not as real attributes, so any real (non-`None`) `CountryParams` passed to Phase 9 raises `AttributeError` immediately.
+
+**Current pain**: confirmed by direct inspection. `src/processors/transport_decarbonization_calculator.py:402-404`, inside `run()`'s "Log CountryParams traceability" block — one of the first things `run()` does after input validation:
+```python
+logger.info(
+    "  [CountryParams] %s — solar CF=%.3f | wind CF=%.3f | biomass CF=%.3f | threshold=%.2f",
+    country_params.country_code,
+    country_params.solar_capacity_factor,   # AttributeError
+    country_params.wind_capacity_factor,    # AttributeError
+    country_params.biomass_capacity_factor, # AttributeError
+    suitability_threshold,
+)
+```
+A second, currently-unreachable instance of the identical pattern exists at `_log_parameter_dashboard()` (L1461-1462) — unreachable today only because `run()` already crashes at L402 before that method is ever called with a real `country_params`. This is the concrete cause behind `configs/settings.yaml`'s `skip_transport: true` (L160, inline comment) — Phase 9 was not deprioritized, it cannot complete a run at all while `country_params` is passed in, which `main.py` always does.
+
+**Depends on**: none technically. Referenced as a soft dependency by BLOCKER-012 ("should be sequenced after ... whatever eventually fixes Phase 9's `AttributeError` crash") and REFACTOR-009 (hub-siting extraction), since both need Phase 9 to actually complete a run before their own success criteria can be validated end-to-end rather than just by code inspection.
+
+**Effort**: S — two call sites, same fix shape at each: read the nested attributes (`country_params.solar.capacity_factor` etc.) or use the dict-style flat accessor the schema already supports (`country_params.get("solar_capacity_factor")`, per the docstring at `schemas.py:354`).
+
+**Risk**: Low in isolation (the fix itself is mechanical), but **fixing this unblocks Phase 9 running for the first time in this engagement** — once it can complete, it will surface whatever else in the ~1758-line `transport_decarbonization_calculator.py` has never been exercised end-to-end (BLOCKER-012's double-persistence bug, the `hubs_gdf.to_csv()` spatial-fidelity gap from `docs/00-project-state-and-reorg-plan.md` Part 4d, and any other currently-cold code path in that module). Do not fix this in isolation without budgeting for a full Phase 9 validation pass — BLOCKER-012 itself notes its own bug "has not been confirmed empirically... because `skip_transport: true` means Phase 9 has not actually completed a full run."
+
+**Suggested fix (not applied)**: replace the three flat attribute reads at each of the two sites with either the nested path (`country_params.solar.capacity_factor`, `.wind.capacity_factor`, `.biomass.capacity_factor`) or `country_params.get("solar_capacity_factor")` etc. — whichever convention the rest of the file already favors elsewhere (not audited in this pass) — applied consistently at both sites.
+
+**Success criteria**: `python main.py PRT` with `skip_transport: false` completes Phase 9 without an `AttributeError`; `grep -n "country_params\.\(solar\|wind\|biomass\)_capacity_factor" src/processors/transport_decarbonization_calculator.py` returns zero matches.
+
+**Not fixed here** — this entry only assigns a tracking number and records the exact evidence already known informally. Per standing direction, Transport stays dormant by decision; this is not the dedicated Phase 9 reactivation session that would also need to budget for BLOCKER-012 and the Part 4d gap alongside this fix.
+
+---
+
 ### REFACTOR-001 — Extract `sensitivity_analyzer.py` plotting to `sensitivity_plots.py`
 
 **Title**: Move all `_fig_*`/`_watermark`/`_draw_kpis`/`_sfmt` module-level plotting functions (L692-1196, ~500 lines) out of `sensitivity_analyzer.py` into a new `src/utils/sensitivity_plots.py`, mirroring the existing `abatement_plots.py` pattern.
@@ -679,6 +712,8 @@ land cover, and WorldPop remain in data_fetcher.py.
 ---
 
 ### REFACTOR-004 — Extract sensitivity SA1-6 methods and split `run()`
+
+**Status**: **Partial.** The extraction half is done — commit `350c80c` (part of the 2026-08-18 `sensitivity_analyzer.py` enxugamento, see `docs/BACKLOG.md`'s Sensitivity & Config Migration Campaign section) moved 11 pure functions (`_topsis_flat`, `_load_criteria_arrays`, `_balanced_threshold`, `_build_ghg_function_from_abatement`, `sa1_oat_weight_sensitivity` through `sa6_potential_sensitivity`, `_sfmt`) to `src/utils/sensitivity_math.py` — not `sensitivity_methods.py` as originally named below, functionally equivalent. The `run()`-split half is **not done**: `grep -n "_run_sa[0-9]" src/processors/sensitivity_analyzer.py` returns zero matches — `run()` (currently starting at L446) remains one method, not six `_run_sa1()`...`_run_sa6()` orchestrators. Do not mark this item "done" on the strength of the extraction alone.
 
 **Title**: Move `sa1_oat_weight_sensitivity`...`sa6_potential_sensitivity` (L212-691, ~480 lines) to `src/utils/sensitivity_methods.py`; split `SensitivityAnalyzer.run()` (L1524-2041, ~517 lines) into six `_run_sa1()`...`_run_sa6()` orchestration methods.
 
@@ -958,6 +993,36 @@ Add tests for centralized TIF-finder and result-shape adapters
 Pins the TOPSIS/OWA precedence decision from the raster_io
 consolidation and verifies params_helpers resolves all three known
 result shapes identically.
+```
+
+---
+
+### QI-005 — Generate `SUMMARY.md`'s LOC table from a script instead of hand-editing
+
+**Status**: not started — registered only, per explicit instruction not to implement yet.
+
+**Title**: `SUMMARY.md`'s per-module LOC figures are typed by hand and have now gone stale twice after a structural refactor (once before the Fase 0 documentation consolidation, again after the 2026-08-18 `sensitivity_analyzer.py` enxugamento — REFACTOR-001/002/004 alone moved ~2500 lines out of `sensitivity_analyzer.py`/`transport_decarbonization_calculator.py` into three new files with no `SUMMARY.md` entry at all until manually corrected in this pass). This is a recurring pattern, not a one-off oversight — the underlying cause is that LOC counts live in prose, disconnected from the files they describe.
+
+**Current pain**: every module split/extraction (already routine in this codebase — `ahp.py`/`topsis.py`/`owa.py`/`exclusion.py`, `abatement_plots.py`, `dashboard_panels.py`, `sensitivity_math.py`/`sensitivity_plots.py`/`transport_plots.py`, and whatever REFACTOR-003/008/009 eventually produce) silently invalidates `SUMMARY.md`'s numbers and can leave the new file with zero entry, and nothing catches it — the drift is only found by whoever happens to `wc -l` by hand, as this pass did.
+
+**Depends on**: none.
+
+**Effort**: S — a script that walks `src/`, `main.py`, and `configs/*.{yaml,json}`, runs `wc -l` per file, and either regenerates `SUMMARY.md`'s LOC parentheticals in place or fails CI/pre-commit if they've drifted. Does not need to auto-generate the prose (responsibilities/dependencies) — only the numbers, and ideally flags files present in `src/` with no `SUMMARY.md` entry at all (the second failure mode this pass found, not just wrong numbers).
+
+**Risk**: Low — read-only tooling, no behavior change to the pipeline itself.
+
+**Deliverable (not built in this pass)**: `scripts/update_summary_loc.py` (or similar, alongside the existing `scripts/session_lock.py`/`scripts/validate_run_checksum.py` campaign tooling) that either rewrites the `(N lines)` figures in `SUMMARY.md` in place, or runs as a check that exits non-zero on drift.
+
+**Success criteria**: a future module split (e.g. whichever of REFACTOR-003/008/009 lands next) cannot leave `SUMMARY.md` stale without an explicit, visible failure.
+
+**Commit message template**:
+```
+Add SUMMARY.md LOC drift check/generator
+
+SUMMARY.md's per-module line counts have gone stale twice after
+structural refactors, both times caught by hand rather than
+tooling. Automates the wc -l bookkeeping so the next module split
+can't silently invalidate it again.
 ```
 
 ---
