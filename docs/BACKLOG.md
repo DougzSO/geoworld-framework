@@ -168,6 +168,8 @@ This narrows but does **not** close BLOCKER-005. The removal closes the specific
 
 (Separately, and not addressed by this update: the constant-consolidation half of this entry's deliverable — replacing the bare `0.60` literals — was already complete going into this session; `FALLBACK_SUITABILITY_THRESHOLD` (`constants.py:241`) is the single named constant in use in both files. This entry's own citation of `potential_calculator.py:439` still matches current code; its citation of `lcoe_calculator.py:592,597` does not — current usage is at lines 545/547/552.)
 
+**Related**: INVAR-007 (Invariant Validation Project, 2026-08-18 audit — see the "Invariant Validation Project" section near the end of this file) tracks the same `potential_calculator.py:439` fallback site from the broader 16-item invariant-gap catalogue. This cross-reference does **not** close BLOCKER-005 — the remaining open scope (the load-time three-scenario-key validator described in the Update above) stands as written.
+
 ---
 
 ### BLOCKER-006 — Centralize TIF-discovery logic in `raster_io.py`
@@ -336,6 +338,8 @@ This is not a theoretical risk: `data_recovery.py`'s own comments document a rea
 - **Full disk/live parity for those 5 fields — open, unresolved decision**: `capacity_mw`/`generation_gwh` are cheaply backfillable (`_extract_capacity`/`_extract_generation` in `data_recovery.py` already recognize `capacity_mw_sum`/`capacity_mw` as candidate CSV columns, just don't keep the value). `threshold`/`n_pixels`/`area_eff_km2` are **not** recoverable from the zonal CSV at all — `threshold` only exists as a GeoTIFF tag (`potential_calculator.py:510`), `n_pixels`/`area_eff_km2` are never persisted anywhere in tabular form (computed transiently from the raster mask, `potential_calculator.py:544-546`). Two options on the table, neither chosen: (i) extend `recover_potential_from_disk()` for full parity (partial — 2 of 5 fields cheap, 3 need new raster-tag/pixel-recount logic), or (ii) accept the asymmetry as documented degraded-resume behavior and add a `"_source": "disk_recovery"|"live_object"` marker for traceability.
 - **Test coverage confirmed zero**: `tests/unit/test_results_writer.py`'s integration test explicitly `monkeypatch`es around `_normalize_potential`/`_normalize_lcoe`, with a comment naming BLOCKER-010 by number as deliberately out of scope for that test.
 - **Classification**: closer to **(a)** than (b) — confined to `main.py`'s Phase 6 `input_getter` + (confirmed) zero changes needed in `results_writer.py`'s `_normalize_*` methods, `potential_calculator.py`, `lcoe_calculator.py`, or `dashboard_panels.py`. Not a pure one-liner: must preserve the `None`/resume-without-cache fallback deliberately (it's a legitimate use case, not just legacy), and needs a new test (none exists today covering this path). Ready for direct implementation in a future dedicated session — no further investigation/design round needed. The shape-parity decision (option (i) vs (ii) above) is the one open call Douglas still needs to make before or during that implementation.
+
+**Related**: INVAR-009/INVAR-010/INVAR-011 (Phase 6 — Invariant Validation Project, 2026-08-18 audit — see the "Invariant Validation Project" section near the end of this file) are gated on this entry: their `_normalize_potential`/`_normalize_lcoe`/`_normalize_abatement` and disk-recovery findings can't be exercised end-to-end via the live-object branch until BLOCKER-010 lands. Not duplicated there — that section links back here for the full architecture discussion.
 
 ---
 
@@ -657,7 +661,7 @@ A second, currently-unreachable instance of the identical pattern exists at `_lo
 
 ### BLOCKER-020 — `criteria_builder.py`'s `ParamsLike` keeps a raw-`dict` input path alive for `country_params`, same class of gap as BLOCKER-005/QI-003
 
-**Status**: not fixed — documented only. Found while scoping the BLOCKER-005 "validation half" removal (raw-dict `country_params` input to `build_tech_params()`/`PotentialCalculator.run()`); out of scope for that pass because it lives in a different subsystem (Phase 2b, not the Phase 4/5 threshold chain) and touches ~12 call sites on its own, so it gets its own tracking number instead of being folded in or left as a loose comment.
+**Status**: Closed (2026-08-18) — absorbed by **INVAR-004** (Invariant Validation Project, 2026-08-18 audit — see the "Invariant Validation Project" section near the end of this file). The finding and its ~12-call-site inventory below remain the canonical detail for this item; INVAR-004 does not repeat it, it links back here. Originally: not fixed — documented only. Found while scoping the BLOCKER-005 "validation half" removal (raw-dict `country_params` input to `build_tech_params()`/`PotentialCalculator.run()`); out of scope for that pass because it lives in a different subsystem (Phase 2b, not the Phase 4/5 threshold chain) and touches ~12 call sites on its own, so it gets its own tracking number instead of being folded in or left as a loose comment.
 
 **Title**: `src/processors/criteria_builder.py:70` defines `ParamsLike = Union[CountryParams, Dict[str, Any]]`, with the inline comment `# Type alias: accepts both new typed contract and legacy dict during migration.` The private helper `_param(params: ParamsLike, key: str, default: Any = None) -> Any` (line 115-117, body: `return params.get(key, default)`) duck-types across both shapes — it works today only because `CountryParams` itself implements a dict-style `.get()` for legacy-compatibility (`schemas.py`'s "Compatibility" design principle), not because `_param()` validates anything. A raw, unvalidated `dict` standing in for `country_params` is therefore still a live, typed-and-documented code path here, same as the one BLOCKER-005/QI-003 closed for `build_tech_params()`.
 
@@ -1355,6 +1359,55 @@ Note: the user's original instruction said "parameters.json/land_suitability" fo
 ```
 Migrate Bloco 1 exclusion-gate parameters to parameters.json
 ```
+
+---
+
+## Invariant Validation Project (2026-08-18 audit)
+
+**Purpose.** A repo-wide audit dated 2026-08-18, run after BLOCKER-005's narrowing and BLOCKER-020's registration both surfaced the same underlying shape of gap in two different subsystems (Phase 4 and Phase 2b respectively) — an input's *type* is accepted, or a lookup silently falls back, without validating its *content*. This project catalogues every phase-scoped instance of that gap found across all 9 pipeline phases: 16 items, INVAR-001 through INVAR-016. **Documentation only** — no file under `src/` was modified to register this project; nothing listed below has been fixed yet.
+
+**Pattern definitions.**
+- **Pattern 1 (P1) — silent fallback**: a missing or malformed value is quietly replaced via `.get(default)` or a bare `except: pass`, instead of failing loudly at the point of the mistake.
+- **Pattern 2 (P2) — unrestricted input type**: a function or parameter accepts `Union[Model, Dict]` — a validated model or a raw, unvalidated dict standing in for it.
+- **Pattern 3 (P3) — multiple accepted input formats, no content-level validation**: a consumer branches on shape (`isinstance(...)`, `"key" in data`) to accept several input formats, without validating the values once a shape is matched.
+
+**Active vs. latent.** "Active" = the gap is reachable through a real call path in current production usage (`main.py`). "Latent" = the code path exists but nothing in current production (`main.py`, `tests/`, `scripts/`, `scratchpad/`) exercises the vulnerable branch today — same distinction BLOCKER-005 and BLOCKER-020 already used after their own narrowing/scoping passes.
+
+### The 16 items
+
+| # | Location | Phase | Pattern | Status | Notes |
+|---|---|---|---|---|---|
+| INVAR-001 | `data_auditor.py:1023-1036` | Phase 1 | P1 | Active | |
+| INVAR-002 | `data_auditor.py:877` | Phase 1 | P1 | Latent (low severity) | |
+| INVAR-003 | `grid_aligner.py:910,960,968-969` | Phase 2a | P1 | Latent (low severity) | |
+| INVAR-004 | `criteria_builder.py` — `ParamsLike` + `_param()` + 12 call sites | Phase 2b | P1+P2 | Latent | Absorbs and closes **BLOCKER-020** — see that entry (marked Closed, not deleted) for the full ~12-call-site inventory |
+| INVAR-005 | `suitability_builder.py:140,144,162,167-169,190-191` | Phase 3 | P1 | Latent | |
+| INVAR-006 | `suitability_builder.py:339` | Phase 3 | P1 | Latent (low severity) | |
+| INVAR-007 | `potential_calculator.py:439` | Phase 4 | P1 | Active | Relates to **BLOCKER-005**'s remaining (not-closed) scope — same site; see that entry's "Related" note |
+| INVAR-008 | `lcoe_calculator.py:527-560` (`_resolve_threshold`) | Phase 5 | P1 | Active | |
+| INVAR-009 | `results_writer.py:162-211` (`_normalize_potential`/`_normalize_lcoe`) | Phase 6 | P3 | Active | Gated on **BLOCKER-010** — see that entry, not duplicated here |
+| INVAR-010 | `results_writer.py:213-229+` (`_normalize_abatement`) | Phase 6 | P3 | Active | Gated on **BLOCKER-010** |
+| INVAR-011 | `data_recovery.py` (`recover_potential_from_disk`/`recover_lcoe_from_disk`/`recover_abatement_from_disk`) | Phase 6 | P3 | Active | Gated on **BLOCKER-010** |
+| INVAR-012 | `ghg_abatement_calculator.py:946` | Phase 7 | P3 | Active | |
+| INVAR-013 | `ghg_abatement_calculator.py:1031-1054` | Phase 7 | P1 | Active | |
+| INVAR-014 | `sensitivity_analyzer.py:230-278` (`_resolve_tech_params`) | Phase 8 | P1+P3 | Active | |
+| INVAR-015 | `sensitivity_analyzer.py:484-496` | Phase 8 | P1 | Active | |
+| INVAR-016 | `sensitivity_analyzer.py:418` | Phase 8 | P1 | Latent (minor) | |
+
+**Cross-references, both directions:**
+- **INVAR-004 ↔ BLOCKER-020**: INVAR-004 absorbs BLOCKER-020's finding (`criteria_builder.py`'s `ParamsLike`/`_param()` gap, ~12 call sites). BLOCKER-020's entry is marked `Status: Closed — absorbed by INVAR-004`, not deleted — its full call-site inventory and the Row 9/10/11 overlap analysis it already contains remain the canonical detail for this item; this section does not repeat that inventory.
+- **INVAR-007 ↔ BLOCKER-005**: INVAR-007 tracks the same `potential_calculator.py:439` fallback site BLOCKER-005 (narrowed, 2026-08-18) already covers. BLOCKER-005 is **not** closed by this cross-reference — its remaining open scope (the load-time three-scenario-key validator described in its Update) stands as written; BLOCKER-005's entry now carries a "Related: INVAR-007" note pointing here.
+- **INVAR-009/010/011 ↔ BLOCKER-010**: all three Phase 6 items are gated on BLOCKER-010 landing — until Phase 6 actually receives the live in-memory object instead of always reconstructing from disk, the live-object branch of `_normalize_potential`/`_normalize_lcoe`/`_normalize_abatement` and the equivalent `data_recovery.py` functions can't be exercised end-to-end to validate a fix. See the existing BLOCKER-010 entry for the full architecture discussion — not duplicated here. BLOCKER-010's entry now carries a "Related: INVAR-009/INVAR-010/INVAR-011" note pointing here.
+
+### Phase 9 (dormant, unnumbered)
+
+Four additional findings were noted in `transport_decarbonization_calculator.py` during the same audit pass:
+- `transport_decarbonization_calculator.py:106-156`
+- `transport_decarbonization_calculator.py:163-211`
+- `transport_decarbonization_calculator.py:217-269+`
+- `transport_decarbonization_calculator.py:1509` / `:1635`
+
+These are **explicitly not part of the 16-item INVAR-001–016 count**. Phase 9 is dormant (`skip_transport: true`, per BLOCKER-019's crash and BLOCKER-012's double-persistence bug) — auditing invariant gaps in a phase that cannot currently complete a run is lower priority than the 16 items above, all of which sit on active phases. Revisit these four only if/when Phase 9 is reactivated (i.e., after BLOCKER-019 is fixed), at which point they should either be folded into a Phase-9 batch of their own INVAR numbers or reassessed against whatever Phase 9 looks like post-fix.
 
 ---
 
