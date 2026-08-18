@@ -105,6 +105,59 @@ def test_slope_threshold_falls_back_when_country_not_configured(tmp_path):
     )
 
 
+def test_missing_resolution_tolerance_falls_back_and_warns(tmp_path, caplog):
+    """
+    INVAR-002 regression guard.
+
+    settings.yaml's "audit" block is a raw dict (no Pydantic schema), so
+    a missing/misspelled resolution_tolerance key can't be caught at load
+    time. Before this fix, DataAuditor.__init__ read it via a bare
+    audit_cfg.get("resolution_tolerance", 0.5) -- a missing key silently
+    fell back to 0.5 with no signal. The fix keeps the 0.5 fallback (it
+    only affects this report's own diagnostic alert text, never a
+    downstream value -- see INVAR-002 comment in data_auditor.py) but now
+    logs a warning when the key is absent, so a settings.yaml typo is
+    observable instead of silent.
+    """
+    cfg = _FakeCfg(base_dir=tmp_path, configured=False)
+    cfg.system = {"audit": {"expected_resolutions": {"solar": 0.0083}}}
+
+    with caplog.at_level("WARNING", logger="geoworld.processors.DataAuditor"):
+        auditor = DataAuditor(cfg)
+
+    assert auditor.res_tolerance == 0.5
+    assert any(
+        "resolution_tolerance missing from settings.yaml" in r.message
+        for r in caplog.records
+    )
+
+
+def test_present_resolution_tolerance_does_not_warn(tmp_path, caplog):
+    """
+    Negative case for the INVAR-002 fix: when resolution_tolerance IS
+    present in settings.yaml (matching the real repo's current value),
+    the key is used as-is and no warning fires. Without this test, the
+    fallback test above wouldn't rule out the warning firing unconditionally
+    regardless of whether the key is actually present.
+    """
+    cfg = _FakeCfg(base_dir=tmp_path, configured=False)
+    cfg.system = {
+        "audit": {
+            "expected_resolutions": {"solar": 0.0083},
+            "resolution_tolerance": 0.5,
+        }
+    }
+
+    with caplog.at_level("WARNING", logger="geoworld.processors.DataAuditor"):
+        auditor = DataAuditor(cfg)
+
+    assert auditor.res_tolerance == 0.5
+    assert not any(
+        "resolution_tolerance missing from settings.yaml" in r.message
+        for r in caplog.records
+    )
+
+
 def test_broken_country_config_propagates_instead_of_defaulting(tmp_path):
     """
     Country IS configured but get_country() fails to build (a field

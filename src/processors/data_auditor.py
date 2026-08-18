@@ -874,6 +874,25 @@ class DataAuditor:
                 "slope": 0.005,
             },
         )
+        # INVAR-002: audit_cfg is a raw dict off settings.yaml (ConfigLoader.system
+        # returns self._settings straight from yaml.safe_load() -- no Pydantic
+        # schema wraps the "audit" section; confirmed no AuditConfig/SystemConfig
+        # class exists anywhere in src/). resolution_tolerance only gates whether
+        # diagnose_consistency() appends an "UNEXPECTED RESOLUTION" string to this
+        # report's own alert list; it has no effect on any value consumed by
+        # Phase 2+ (GridAligner reads elev/slope/solar paths directly), and *.txt
+        # reports are never re-read by any downstream phase/script (deliberately
+        # excluded from scripts/validate_run_checksum.py's scientific-output
+        # hashing). So a missing key can't corrupt a run -- but it can silently
+        # mis-calibrate diagnostics, hence the explicit warning below rather than
+        # a bare .get() default.
+        if "resolution_tolerance" not in audit_cfg:
+            logger.warning(
+                "audit.resolution_tolerance missing from settings.yaml -- "
+                "defaulting to %.2f. 'UNEXPECTED RESOLUTION' alerts may be "
+                "mis-calibrated.",
+                0.5,
+            )
         self.res_tolerance = audit_cfg.get("resolution_tolerance", 0.5)
 
     def run(
