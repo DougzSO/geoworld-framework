@@ -1216,20 +1216,24 @@ Migrate Bloco 1 exclusion-gate parameters to parameters.json
 
 ---
 
-### sensitivity_analyzer.py enxugamento — status (2026-08-17, low-token handoff)
+### sensitivity_analyzer.py enxugamento (2026-08-18) — complete
 
-**Done, committed, each with its own commit** (pytest 78/78 green after each):
-- `fa0684c` — consolidated `_load_suitability_from_disk`/`_load_weights_from_disk` (confirmed NOT the BUG_07/BLOCKER-010 pattern — `SuitabilityStats` never carries weights in memory, only a `weights_json` path).
-- `350c80c` — extracted SA-1..SA-6 + TOPSIS/loader helpers (~700 lines) to `src/utils/sensitivity_math.py`. Verified byte-identical CSVs/report text via full Phase 8 PRT run against pre-extraction baseline.
-- `a163f36` — removed silent `ImportError` fallback for `sensitivity_plots` (fail-fast); fixed SA-5/SA-6 docstring swap.
-- `5010176` — removed orphaned `base_area` field from SA-6 (unused everywhere, redundant with SA-3's `area_apt_km2`).
-- `d7a4729` — added `sa2_distribution_summary()` + `{ISO3}_{tech}_sa2_distribution_summary.csv` (3-row percentile summary of cv/ci_width/crossing_fraction, format approved by user before coding). **Only syntax/pyflakes/pytest-checked — not yet run through a full pipeline.**
+**Status**: Done and fully validated. 6 commits, each independently validated and containing exactly one category of change (2a extraction vs. 2b redundancy-removal vs. new-output-addition, never mixed), per the standing instruction for this task.
 
-**NOT done — next session should pick up here**:
-1. Full Phase 8 validation run for PRT **and** BRA (cache 1-7, `skip_sensitivity: false` only) covering all 5 commits above together, especially the new SA-2 CSV (never run through the real pipeline yet — only unit-level checks).
-2. Confirm all *other* SA-1/3/4/6 outputs remain numerically identical to the pre-enxugamento baseline (expected, since only base_area/SA-2-CSV changed real output — everything else was pure reorg — but not yet re-confirmed end-to-end post item-5).
-3. `pytest tests/` full pass already confirmed after every individual commit, but not re-run once more after `d7a4729` specifically in a full-pipeline context.
-4. `configs/settings.yaml` — confirmed clean (`git diff` empty) as of `d7a4729`.
-5. Once (1)-(3) pass: nothing further required — this note itself is the placeholder for "one consolidated BACKLOG entry"; expand or replace it with a proper writeup once validated, per the original instruction ("pode ser uma entrada só").
+**Context**: `sensitivity_analyzer.py` had grown to ~1800 lines mixing pure computation (SA-1 through SA-6, TOPSIS core) with orchestration (I/O, caching, report formatting). This pass reduced it to orchestration-only, fixed two small, independently-discovered redundancy/hygiene issues, and closed the one real output-consistency gap (SA-2 was the only sub-analysis with no persisted CSV).
+
+**Commits**:
+1. `fa0684c` — `_load_suitability_from_disk()` now reuses `_load_weights_from_disk()` instead of duplicating its rglob/parsing logic, keeping its own equal-weights fallback on top. Investigated first (per explicit instruction) whether "always reread weights from disk" was the BUG_07/BLOCKER-010 pattern (preferring disk over a live in-memory object) — confirmed it is **not**: `SuitabilityStats` (the Pydantic schema for a successful Phase 3 tech result) never carries the actual weight values in memory, only a `weights_json: Path` pointer (confirmed both by reading the schema and by inspecting a real persisted `result.pkl`), so disk is the only real source of the weights either way.
+2. `350c80c` (2a, extraction) — moved 11 pure functions (`_topsis_flat`, `_load_criteria_arrays`, `_balanced_threshold`, `_build_ghg_function_from_abatement`, `sa1_oat_weight_sensitivity` through `sa6_potential_sensitivity`, `_sfmt`) verbatim to new `src/utils/sensitivity_math.py`, mirroring the existing `sensitivity_plots.py`/`abatement_plots.py` split (REFACTOR-001/002). Zero logic change — verified via a full Phase 8 PRT run producing byte-identical CSVs and report text against a pre-extraction baseline. Unused `numpy`/`pandas`/`warnings` imports dropped from `sensitivity_analyzer.py` after the move (pyflakes-clean).
+3. `a163f36` (2b) — removed the silent `try/except ImportError` fallback around the `sensitivity_plots` import (previously set every `plot_*` function to `None` on failure, which would have surfaced a broken import as a confusing per-SA `TypeError: NoneType not callable` instead of a clear startup error — `sensitivity_plots` is a first-party sibling module, not an optional dependency). Also fixed the module docstring's SA-5/SA-6 swap (labeled backwards relative to the actual function names and `docs/memory/04-algorithms.md`).
+4. `5010176` (2b) — removed the orphaned `base_area` field from SA-6's output (`sa6_potential_sensitivity()`'s `df.attrs` and `results_sa[tech]["sa6"]`): computed and persisted but never read anywhere (absent from `_format_report()`, absent from `sensitivity_plots.py`), and redundant with SA-3's own `area_apt_km2`, already persisted per-threshold.
+5. `d7a4729` (new output) — added `sa2_distribution_summary()` (`sensitivity_math.py`) and its CSV output `{ISO3}_{tech}_sa2_distribution_summary.csv`, closing the one real output-consistency gap: SA-2 was the only sub-analysis with no persisted CSV (its per-pixel `cv`/`ci_width`/`crossing_fraction` arrays only fed a PNG). Format proposed and approved before coding: 3 rows (one per metric), columns `n_pixels, mean, std, p05, p25, p50, p75, p95` — not a raw per-pixel dump. `crossing_fraction`'s percentiles are restricted to `apt_base_mask`, the same population `decisive_fraction`/`boundary_fraction`/`moderate_fraction` are already computed over.
+6. `1150ad1` — interim handoff note (superseded by this entry).
+
+**Final validation (2026-08-18, full Phase 8 pipeline, PRT and BRA, cache 1-7 reused)**:
+- Every pre-existing CSV and the report `.txt` for both countries confirmed **byte-identical** against a baseline captured immediately before this run — the only difference found was the report's embedded `date.today()` stamp (day rolled over from 08-17 to 08-18 between baseline capture and this run; not a regression).
+- All 6 new `{ISO3}_{tech}_sa2_distribution_summary.csv` files generated (solar/wind/biomass × PRT/BRA) with correct row counts matching already-known values from this session's logs (e.g. PRT wind: `cv`/`ci_width` at `n_pixels=92402` matching the tech's total territorial pixel count, `crossing_fraction` at `n_pixels=5462` matching the already-logged `n_apt_base`).
+- `pytest tests/` — 78/78 passing.
+- `configs/settings.yaml` reverted to the standing configuration, confirmed via empty `git diff`.
 
 **Not touched, per standing instruction**: BLOCKER-010.
