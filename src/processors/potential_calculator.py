@@ -80,7 +80,7 @@ from src.utils.geo_stats import (
     zonal_stats_raster,
 )
 from src.utils.map_styling import GeoWorldStyler
-from src.core.schemas import PotentialResult
+from src.core.schemas import CountryParams, PotentialResult
 from src.utils.raster_io import find_suitability_tif
 from src.utils.timing import timer as _timer
 from src.utils.utils import safe_raster_write
@@ -157,14 +157,9 @@ class PotentialCalculator:
         mainland_gdf: gpd.GeoDataFrame,
         suitability_dir: Path,
         context_gdf: Optional[gpd.GeoDataFrame] = None,
-        country_params=None,
+        country_params: Optional[CountryParams] = None,
     ) -> Dict[str, Any]:
         """Execute Phase 4: calculate technical potential from suitability maps.
-
-        Accepts *country_params* as either a Pydantic ``CountryParams`` model
-        or a plain ``dict`` — both are handled transparently by
-        ``build_tech_params()``, which prefers ``CountryParams.to_flat_dict()``
-        when available.
 
         Args:
             country_code:    ISO-3166 alpha-3 code.
@@ -172,7 +167,7 @@ class PotentialCalculator:
             mainland_gdf:    Country boundary GeoDataFrame.
             suitability_dir: Directory containing Phase 3 GeoTIFF outputs.
             context_gdf:     Neighbouring-countries GeoDataFrame (optional).
-            country_params:  Per-country parameters (``CountryParams`` or dict).
+            country_params:  Validated per-country parameters, or ``None``.
 
         Returns:
             Validated ``PotentialResult.model_dump()`` — a serialisable dict

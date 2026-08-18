@@ -7,27 +7,34 @@ Type-safe parameters conversion and duck-typing utilities.
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, Optional
+
+from src.core.schemas import CountryParams
 
 logger = logging.getLogger("geoworld.utils.params_helpers")
 
 
-def extract_params_dict(country_params: Any) -> Dict[str, Any]:
+def extract_params_dict(country_params: Optional[CountryParams]) -> Dict[str, Any]:
     """
-    Safely resolves any country parameters instance down to a flat python dict.
+    Resolves a validated CountryParams instance down to a flat python dict
+    via ``model_dump()``.
 
-    Compatible with:
-      - Pydantic v2 CountryParams model (via model_dump)
-      - Standard dictionary structures
-      - None values (returns empty dict)
+    REMOVED (BLOCKER-005 validation half / QI-003 fragility note): this used
+    to also accept a plain ``dict``, passing it through unvalidated. That
+    bypassed CountryParams'/TechParams' Pydantic validation, so a dict-shaped
+    country_params with missing or malformed fields (e.g. a tech block
+    missing ``threshold``) never failed loudly. A validated ``CountryParams``
+    instance (or ``None``) is now required.
     """
     if country_params is None:
         return {}
-    if hasattr(country_params, "model_dump"):
-        return country_params.model_dump()
-    if isinstance(country_params, dict):
-        return country_params
-    return {}
+    if not isinstance(country_params, CountryParams):
+        raise TypeError(
+            "country_params must be a validated CountryParams instance or "
+            f"None, got {type(country_params).__name__}. Build it via "
+            "ConfigLoader.get_country()."
+        )
+    return country_params.model_dump()
 
 
 def get_scenario_data(

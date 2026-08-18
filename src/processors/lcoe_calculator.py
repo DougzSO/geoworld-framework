@@ -50,6 +50,7 @@ from src.core.constants import (
     TECH_ORDER,
     build_tech_params,
 )
+from src.core.schemas import CountryParams
 from src.core.validators import (
     validate_raster_crs,
     validate_raster_exists,
@@ -223,7 +224,7 @@ class LCOECalculator:
         return params
 
     def _load_pot_params(
-        self, country_params: Optional[Dict]
+        self, country_params: Optional[CountryParams]
     ) -> Dict[str, Dict]:
         """
         Build physical technology parameters (LUF, CF, density, thresholds)
@@ -570,7 +571,7 @@ class LCOECalculator:
         suitability_dir: Path,
         criteria_dir: Path,
         context_gdf: Optional[gpd.GeoDataFrame] = None,
-        country_params: Optional[Dict] = None,
+        country_params: Optional[CountryParams] = None,
     ) -> Dict[str, Any]:
         """Execute Phase 5: spatial LCOE from suitability maps + resource rasters."""
 

@@ -66,6 +66,7 @@ from src.core.constants import (
     TECH_META,
     TECH_ORDER,
 )
+from src.core.schemas import CountryParams
 from src.core.validators import validate_raster_crs, validate_raster_shape
 from src.io.artifact_manager import ArtifactManager
 from src.utils.ahp import compute_ahp_weights, log_ahp_result
@@ -110,7 +111,7 @@ _OWA_SCENARIOS: List[str] = ["optimistic", "balanced", "conservative"]
 
 
 def get_technology_configs(
-    country_params=None,
+    country_params: Optional[CountryParams] = None,
 ) -> Dict[str, TechnologyConfig]:
     """Return MCDA configuration objects for each renewable technology.
 
@@ -131,8 +132,7 @@ def get_technology_configs(
     WorldCover class 10 (Tree cover) is added to ``lc_exclusion_classes``.
 
     Args:
-        country_params: Per-country parameters — accepts ``CountryParams``
-                        (Pydantic v2), plain ``dict``, or ``None``.
+        country_params: Validated ``CountryParams`` instance, or ``None``.
 
     Returns:
         Mapping technology identifier → :class:`TechnologyConfig`.
@@ -354,7 +354,7 @@ class SuitabilityBuilder:
         context_gdf: Optional[gpd.GeoDataFrame] = None,
         lc_aligned: Optional[Path] = None,
         slope_aligned: Optional[Path] = None,
-        country_params=None,
+        country_params: Optional[CountryParams] = None,
     ) -> Dict[str, Any]:
         """Execute Phase 3 for all modelled renewable energy technologies."""
         started_at = datetime.now()

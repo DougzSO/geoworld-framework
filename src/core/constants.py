@@ -18,7 +18,9 @@ It retains only scenario offsets which are added to the country base threshold a
 from __future__ import annotations
 
 import copy
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+
+from src.core.schemas import CountryParams
 
 # ===========================================================================
 # Technology metadata
@@ -299,7 +301,7 @@ def _set_nested(d: dict, dotted_key: str, value: float) -> None:
         d[parts[0]] = value
 
 
-def _extract_nested_country_params(country_params) -> Dict:
+def _extract_nested_country_params(country_params: Optional[CountryParams]) -> Dict:
     """Resolve *country_params* to the flat-key dict consumed by ``build_tech_params``.
 
     FIX (constants_flat_dict): this used to hand-roll a partial re-implementation
@@ -308,42 +310,35 @@ def _extract_nested_country_params(country_params) -> Dict:
     added to the schema's flat-key map silently failed to reach
     ``build_tech_params`` unless someone remembered to update this function too.
 
-    Now delegates to ``CountryParams.to_flat_dict()`` (the single source of
-    truth for flat-key access) when available, and falls back to a thin
-    flattening of plain dicts for legacy/manual call sites that still pass
-    a raw ``dict`` instead of a validated ``CountryParams`` instance.
+    Delegates to ``CountryParams.to_flat_dict()`` (the single source of
+    truth for flat-key access). ``schemas.py`` does not import anything
+    from this module, so there is no circular-import risk in importing
+    ``CountryParams`` here.
 
-    Unlike the previous implementation, zero-valued fields (e.g. ``cf_floor =
-    0.0``) are preserved — only ``None`` / missing values are treated as
-    absent. ``schemas.py`` does not import anything from this module, so
-    there is no circular-import risk in importing ``CountryParams`` here.
+    REMOVED (BLOCKER-005 validation half / QI-003 fragility note): this
+    used to also accept a raw ``dict``, hand-flattening it for "legacy/
+    manual call sites." That path bypassed ``TechParams.threshold``'s
+    Pydantic validation (schemas.py's required, range-checked field),
+    letting a country block with a missing or malformed ``threshold``
+    reach ``build_tech_params()`` without config load ever failing. A
+    validated ``CountryParams`` instance is now required.
     """
     if country_params is None:
         return {}
 
-    # Preferred path: validated CountryParams already knows how to flatten itself.
-    if hasattr(country_params, "to_flat_dict"):
-        return country_params.to_flat_dict()
+    if not isinstance(country_params, CountryParams):
+        raise TypeError(
+            "country_params must be a validated CountryParams instance or "
+            f"None, got {type(country_params).__name__}. Build it via "
+            "ConfigLoader.get_country() before calling build_tech_params()."
+        )
 
-    # Fallback: plain dict, either already flat or nested (legacy parameters.json
-    # shape). Pass through anything already flat, and also expose nested
-    # tech blocks under their flat-key equivalent without dropping zeros.
-    if isinstance(country_params, dict):
-        raw = country_params
-        flat: Dict[str, Any] = dict(raw)
-        for tech in ("solar", "wind", "biomass"):
-            block = raw.get(tech)
-            if isinstance(block, dict):
-                for key, val in block.items():
-                    flat.setdefault(f"{tech}_{key}", val)
-        return flat
-
-    return {}
+    return country_params.to_flat_dict()
 
 
 def build_tech_params(
     cfg_system: Dict,
-    country_params=None,
+    country_params: Optional[CountryParams] = None,
 ) -> Dict[str, Dict]:
     params = copy.deepcopy(DEFAULT_TECH_PARAMS)
     cp_flat = _extract_nested_country_params(country_params)
