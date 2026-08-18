@@ -1377,8 +1377,8 @@ Migrate Bloco 1 exclusion-gate parameters to parameters.json
 
 | # | Location | Phase | Pattern | Status | Notes |
 |---|---|---|---|---|---|
-| INVAR-001 | `data_auditor.py:1023-1036` | Phase 1 | P1 | Active | |
-| INVAR-002 | `data_auditor.py:877` | Phase 1 | P1 | Latent (low severity) | |
+| INVAR-001 | `data_auditor.py:1023-1036` | Phase 1 | P1 | Closed | Commit `25c7ec4` |
+| INVAR-002 | `data_auditor.py:877` | Phase 1 | P1 | Closed | Commit `a9ff465` — kept the 0.5 fallback (confirmed zero downstream effect: report-only, never re-read by any phase/script), added `logger.warning` when the key is absent |
 | INVAR-003 | `grid_aligner.py:910,960,968-969` | Phase 2a | P1 | Latent (low severity) | |
 | INVAR-004 | `criteria_builder.py` — `ParamsLike` + `_param()` + 12 call sites | Phase 2b | P1+P2 | Latent | Absorbs and closes **BLOCKER-020** — see that entry (marked Closed, not deleted) for the full ~12-call-site inventory |
 | INVAR-005 | `suitability_builder.py:140,144,162,167-169,190-191` | Phase 3 | P1 | Latent | |
