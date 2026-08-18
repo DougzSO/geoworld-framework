@@ -1,0 +1,182 @@
+[
+  {
+    "country": "PRT",
+    "tech": "solar",
+    "concentration": 10,
+    "threshold": 0.75,
+    "n_apt_base": 14841,
+    "decisive_fraction": 0.09696112121824675,
+    "boundary_fraction": 0.5618219796509669,
+    "moderate_fraction": 0.34121689913078634
+  },
+  {
+    "country": "PRT",
+    "tech": "solar",
+    "concentration": 20,
+    "threshold": 0.75,
+    "n_apt_base": 14841,
+    "decisive_fraction": 0.17188868674617613,
+    "boundary_fraction": 0.49026345933562426,
+    "moderate_fraction": 0.33784785391819955
+  },
+  {
+    "country": "PRT",
+    "tech": "solar",
+    "concentration": 40,
+    "threshold": 0.75,
+    "n_apt_base": 14841,
+    "decisive_fraction": 0.26730004716663297,
+    "boundary_fraction": 0.37679401657570244,
+    "moderate_fraction": 0.35590593625766465
+  },
+  {
+    "country": "PRT",
+    "tech": "wind",
+    "concentration": 10,
+    "threshold": 0.75,
+    "n_apt_base": 5462,
+    "decisive_fraction": 0.004393994873672647,
+    "boundary_fraction": 0.8447455144635665,
+    "moderate_fraction": 0.15086049066276086
+  },
+  {
+    "country": "PRT",
+    "tech": "wind",
+    "concentration": 20,
+    "threshold": 0.75,
+    "n_apt_base": 5462,
+    "decisive_fraction": 0.023434639326254118,
+    "boundary_fraction": 0.7213474917612596,
+    "moderate_fraction": 0.2552178689124863
+  },
+  {
+    "country": "PRT",
+    "tech": "wind",
+    "concentration": 40,
+    "threshold": 0.75,
+    "n_apt_base": 5462,
+    "decisive_fraction": 0.07158549981691688,
+    "boundary_fraction": 0.5834859025997803,
+    "moderate_fraction": 0.34492859758330285
+  },
+  {
+    "country": "PRT",
+    "tech": "biomass",
+    "concentration": 10,
+    "threshold": 0.75,
+    "n_apt_base": 3704,
+    "decisive_fraction": 0.06263498920086392,
+    "boundary_fraction": 0.382829373650108,
+    "moderate_fraction": 0.554535637149028
+  },
+  {
+    "country": "PRT",
+    "tech": "biomass",
+    "concentration": 20,
+    "threshold": 0.75,
+    "n_apt_base": 3704,
+    "decisive_fraction": 0.20437365010799136,
+    "boundary_fraction": 0.3255939524838013,
+    "moderate_fraction": 0.47003239740820735
+  },
+  {
+    "country": "PRT",
+    "tech": "biomass",
+    "concentration": 40,
+    "threshold": 0.75,
+    "n_apt_base": 3704,
+    "decisive_fraction": 0.408207343412527,
+    "boundary_fraction": 0.27213822894168466,
+    "moderate_fraction": 0.3196544276457883
+  },
+  {
+    "country": "BRA",
+    "tech": "solar",
+    "concentration": 10,
+    "threshold": 0.75,
+    "n_apt_base": 30892,
+    "decisive_fraction": 0.17888126375760716,
+    "boundary_fraction": 0.3667616211316846,
+    "moderate_fraction": 0.45435711511070825
+  },
+  {
+    "country": "BRA",
+    "tech": "solar",
+    "concentration": 20,
+    "threshold": 0.75,
+    "n_apt_base": 30892,
+    "decisive_fraction": 0.2806551858086236,
+    "boundary_fraction": 0.2768677974880228,
+    "moderate_fraction": 0.4424770167033536
+  },
+  {
+    "country": "BRA",
+    "tech": "solar",
+    "concentration": 40,
+    "threshold": 0.75,
+    "n_apt_base": 30892,
+    "decisive_fraction": 0.4536449566230739,
+    "boundary_fraction": 0.19506668393111484,
+    "moderate_fraction": 0.35128835944581127
+  },
+  {
+    "country": "BRA",
+    "tech": "wind",
+    "concentration": 10,
+    "threshold": 0.75,
+    "n_apt_base": 18729,
+    "decisive_fraction": 0.31784932457685944,
+    "boundary_fraction": 0.27016925623364835,
+    "moderate_fraction": 0.4119814191894922
+  },
+  {
+    "country": "BRA",
+    "tech": "wind",
+    "concentration": 20,
+    "threshold": 0.75,
+    "n_apt_base": 18729,
+    "decisive_fraction": 0.5306743552779113,
+    "boundary_fraction": 0.1992631747557264,
+    "moderate_fraction": 0.2700624699663623
+  },
+  {
+    "country": "BRA",
+    "tech": "wind",
+    "concentration": 40,
+    "threshold": 0.75,
+    "n_apt_base": 18729,
+    "decisive_fraction": 0.6681082812750281,
+    "boundary_fraction": 0.1481659458593625,
+    "moderate_fraction": 0.18372577286560943
+  },
+  {
+    "country": "BRA",
+    "tech": "biomass",
+    "concentration": 10,
+    "threshold": 0.75,
+    "n_apt_base": 30619,
+    "decisive_fraction": 0.1470328880760312,
+    "boundary_fraction": 0.5206571083314282,
+    "moderate_fraction": 0.3323100035925406
+  },
+  {
+    "country": "BRA",
+    "tech": "biomass",
+    "concentration": 20,
+    "threshold": 0.75,
+    "n_apt_base": 30619,
+    "decisive_fraction": 0.24034096476044287,
+    "boundary_fraction": 0.443744080472909,
+    "moderate_fraction": 0.31591495476664816
+  },
+  {
+    "country": "BRA",
+    "tech": "biomass",
+    "concentration": 40,
+    "threshold": 0.75,
+    "n_apt_base": 30619,
+    "decisive_fraction": 0.3449492145399915,
+    "boundary_fraction": 0.3549756687024397,
+    "moderate_fraction": 0.3000751167575688
+  }
+]
