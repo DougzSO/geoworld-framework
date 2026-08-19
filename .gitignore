@@ -42,14 +42,3 @@ data/
 data/raw/
 data/processed/
 data/cache/
-
-# CLAUDE
-CLAUDE.md
-.claude
-docs/
-scratchpad/
-scripts/
-
-# GeoFREA
-
-GeoFREA/
