@@ -1,0 +1,12 @@
+# Credenciais Terrascope
+TERRASCOPE_USERNAME=USERNAME
+TERRASCOPE_PASSWORD=PASSWORD
+
+# Se seus dados raw estiverem fora da pasta do projeto, defina aqui:
+GEOWORLD_RAW_DATA = DATABASE_RAW_PATH
+
+# Dados processados a partir do código
+DATABASE_PROCESSED_PATH = DATABASE_PROCESSED_PATH
+
+# Outputs gerados
+OUTPUT_PATH = OUTPUT_PATH
