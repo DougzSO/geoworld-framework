@@ -1,3 +1,16 @@
+---
+id: archive-current-sprint-original
+type: archive
+status: archived
+created: 2026-08-17
+updated: 2026-08-18
+updated_by: claude-code
+version: 1
+depends_on: [archive-backlog-full]
+linked_by: [docs-sprint, archive-session-log]
+scope: "Cópia verbatim do antigo CURRENT-SPRINT.md no momento do arquivamento (2026-08-18); NÃO é mais atualizado — status atual vive em SPRINT.md, log completo em session-log.md."
+---
+
 # CURRENT-SPRINT.md
 
 > Este arquivo é gerado/atualizado pelo Claude Code a partir do estado real do repositório. Qualquer resumo colado em uma conversa de chat é uma cópia de um instante específico — em caso de dúvida, este arquivo e `docs/BACKLOG.md` são a fonte de verdade, não o histórico da conversa.

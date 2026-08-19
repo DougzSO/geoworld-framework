@@ -1,3 +1,16 @@
+---
+id: analysis-results-writer
+type: frozen
+status: frozen
+created: 2026-08-11
+updated: 2026-08-18
+updated_by: claude-code
+version: 1
+depends_on: [analysis-code-duplication, analysis-write-points-inventory]
+linked_by: [docs-tasks, archive-backlog-full]
+scope: "Leitura pós-fix da Fase 6 (results_writer.py), congelada em 2026-08-11; origem textual do BLOCKER-010/BLOCKER-011 — NÃO reflete mudanças posteriores ao código."
+---
+
 # `results_writer.py` (Phase 6) — Analysis
 
 Analysis only. No code changed in this pass. Full line-by-line read of `src/processors/results_writer.py` (1108 LOC, current `main` HEAD `6d59120`) plus supporting reads of `main.py` (Phase 4–6 orchestration block), `src/core/pipeline_orchestrator.py` (`run_phase`/`_persist`), and `src/utils/data_recovery.py` (`recover_potential_from_disk`, `recover_lcoe_from_disk`) to trace the two findings below to their actual root cause rather than stopping at this file's boundary. One finding (§1b) is verified empirically against this session's own CHECKPOINT-2 pipeline output, not just by reading code.

@@ -1,3 +1,16 @@
+---
+id: mem-02-architecture
+type: reference
+status: active
+created: 2026-08-06
+updated: 2026-08-18
+updated_by: claude-code
+version: 1
+depends_on: [mem-01-overview]
+linked_by: [mem-readme, mem-03-pipeline, mem-11-onboarding]
+scope: "Layout de pacotes, camadas e contrato de orquestração; não descreve o fluxo fase-a-fase (ver 03-pipeline.md) nem convenções de código (ver 08-conventions.md)."
+---
+
 # 02 — Architecture
 
 ## Package layout
@@ -72,4 +85,4 @@ This split is enforced by convention (documented in module docstrings across `lc
 | Artifact recovery from disk (cache/resume) | `src/utils/data_recovery.py` |
 | Financial math (CRF, LCOE, supply curve) | `src/utils/economics.py` |
 
-> ⚠️ Point to validate: `src/visualization/` has no `__init__.py`, unlike every other `src/*` package (`core`, `io`, `processors`, `utils` all have one, even if empty). It still appears importable (only `dashboard_panels.py` is imported directly), but confirm whether this is an intentional namespace-package choice or an oversight before adding a second file to that package.
+> ⚠️ Point to validate (tracked as `DOC-002` in `../TASKS.md`): `src/visualization/` has no `__init__.py`, unlike every other `src/*` package (`core`, `io`, `processors`, `utils` all have one, even if empty). It still appears importable (only `dashboard_panels.py` is imported directly), but confirm whether this is an intentional namespace-package choice or an oversight before adding a second file to that package.

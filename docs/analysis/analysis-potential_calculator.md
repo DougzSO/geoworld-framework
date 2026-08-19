@@ -1,3 +1,16 @@
+---
+id: analysis-potential-calculator
+type: frozen
+status: frozen
+created: 2026-08-11
+updated: 2026-08-18
+updated_by: claude-code
+version: 1
+depends_on: [analysis-code-duplication, analysis-write-points-inventory]
+linked_by: [docs-tasks]
+scope: "Leitura pós-fix da Fase 4 (potential_calculator.py), congelada em 2026-08-11; NÃO reflete mudanças posteriores ao código."
+---
+
 # `potential_calculator.py` (Phase 4) — Analysis
 
 Analysis only. No code changed in this pass. Full line-by-line read of `src/processors/potential_calculator.py` (1024 LOC, current `main` HEAD `6d59120`). Cross-referenced against `docs/code-duplication.md`, `docs/refactoring-roadmap.md`, `docs/write-points-inventory.md` and `git log`, same methodology as `docs/analysis-lcoe_calculator.md`.

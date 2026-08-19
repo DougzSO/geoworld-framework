@@ -1,3 +1,16 @@
+---
+id: analysis-arch-misalignments
+type: frozen
+status: frozen
+created: 2026-08-06
+updated: 2026-08-18
+updated_by: claude-code
+version: 1
+depends_on: []
+linked_by: [docs-tasks, archive-backlog-full]
+scope: "Auditoria original nº1 (estrutura/responsabilidades de módulos), congelada no estado do código de 2026-08-06; NÃO reflete correções aplicadas depois — status atual vive em TASKS.md/archive/backlog-full-2026-08.md."
+---
+
 # Architecture Misalignments — Analysis
 
 Analysis only. No code changed in this pass. Scope: `results_writer.py` (Phase 6) read in full; the other six modules flagged in `SUMMARY.md` as >1000 LOC were analyzed structurally (function/class signatures + line positions via `grep`, not full-body reads) — marked per section. Line ranges for `results_writer.py` are exact; line ranges elsewhere are derived from consecutive `def`/`class` start lines and are therefore approximate (±a few lines) until someone reads the body directly.

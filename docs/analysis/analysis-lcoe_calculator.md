@@ -1,3 +1,16 @@
+---
+id: analysis-lcoe-calculator
+type: frozen
+status: frozen
+created: 2026-08-11
+updated: 2026-08-18
+updated_by: claude-code
+version: 1
+depends_on: [analysis-code-duplication, analysis-write-points-inventory]
+linked_by: [docs-tasks]
+scope: "Leitura pós-fix da Fase 5 (lcoe_calculator.py), congelada em 2026-08-11; origem textual do GAP-001 (mask_source) — NÃO reflete mudanças posteriores ao código."
+---
+
 # `lcoe_calculator.py` (Phase 5) — Analysis
 
 Analysis only. No code changed in this pass. Full line-by-line read of `src/processors/lcoe_calculator.py` (1493 LOC, current `main` HEAD `6d59120`). Cross-referenced against `docs/code-duplication.md`, `docs/refactoring-roadmap.md`, `docs/arch-misalignments.md` (all written before the BLOCKER-001…006 and REFACTOR-001…007 fix commits) and against `git log` to distinguish what those documents flagged that has since been fixed from what is still genuinely open. Also cross-referenced against `results_writer.py` for one shared-lookup claim (confirmed by grep, not a full read of that file — full read follows in its own pass/doc).

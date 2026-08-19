@@ -1,3 +1,16 @@
+---
+id: archive-reorg-plan
+type: archive
+status: archived
+created: 2026-08-11
+updated: 2026-08-18
+updated_by: claude-code
+version: 1
+depends_on: [analysis-arch-misalignments, analysis-code-duplication, analysis-write-points-inventory]
+linked_by: [docs-tasks, docs-decisions]
+scope: "Registro pontual de uma reorganização anterior de docs/ (2026-08-11), superseded pela reorganização de 2026-08-18; NÃO é mantido, não editar — só consultar como histórico."
+---
+
 # GeoWorld Framework — Consolidated Project State & Documentation Reorganization Plan
 
 **Status of this document**: synthesis produced outside the codebase (by Claude, not Claude Code), from 20 `.md` files supplied by the project author plus the full BLOCKER-001→012 session log. Not verified against current source directly — treat every claim below as "true as of the source documents read," and have Claude Code re-verify against live code before relying on anything here for a code change.

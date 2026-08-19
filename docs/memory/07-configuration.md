@@ -1,3 +1,16 @@
+---
+id: mem-07-configuration
+type: reference
+status: active
+created: 2026-08-17
+updated: 2026-08-18
+updated_by: claude-code
+version: 1
+depends_on: []
+linked_by: [mem-readme, mem-06-risk-areas, mem-10-scripts-and-commands, mem-11-onboarding, docs-decisions]
+scope: "settings.yaml vs. parameters.json (dono dos fatos 'estado das flags skip_*' e 'como adicionar país'); não é o log da decisão D1 em si (ver DECISIONS.md)."
+---
+
 # 07 — Configuration
 
 ## Files
@@ -38,7 +51,7 @@ This is the central configuration decision in the codebase (see `09-decisions.md
 
 Top-level keys: `_meta`, `abatement_defaults`, `countries` (indexed by ISO3), `fallback_logic`, `land_suitability`, `exclusion_thresholds`. Each country entry under `countries` has: `solar`, `wind`, `biomass` (technology blocks — land use factor, threshold, power density, capacity factor, cf_ceiling/floor, plus resource-specific weights), `owa` (three named scenario weight vectors, must sum to 1.0 and be non-increasing), `lcoe` (per-technology CAPEX, OPEX, lifetime, discount rate), `abatement` (carbon price, penetration factor, thermal types, emission factors), and top-level `slope_threshold_deg`, `protected_as_exclusion`, `forest_as_exclusion`, `use_mainland_only`.
 
-`exclusion_thresholds` (added Bloco 1, see `BACKLOG.md`) is **global**, not per-country: `protected_areas` (0.99) and `proximity_plants` (0.01) are Phase 3 hard-exclusion gate thresholds, and `slope_offset_deg` (`{solar: 5.0, wind: 10.0, biomass: 20.0}`) is added on top of each country's `slope_threshold_deg`. Loaded via `ConfigLoader.exclusion_thresholds` into `CountryParams.protected_areas_threshold`/`.proximity_plants_threshold`/`.slope_offset_{solar,wind,biomass}_deg`. `protected_areas`'s value is pending Bloco 6 (`IUCN_SCORES`); `proximity_plants`'s has no documented external justification yet — see the BACKLOG entry before treating either as settled science. `lakes_exclusion` (0.5) stays hardcoded in `suitability_builder.py`, not here — it's mathematically inert for any value in `(0, 1)` (binary criterion), so there is no real parameter to migrate.
+`exclusion_thresholds` (added Bloco 1, see `archive/backlog-full-2026-08.md`) is **global**, not per-country: `protected_areas` (0.99) and `proximity_plants` (0.01) are Phase 3 hard-exclusion gate thresholds, and `slope_offset_deg` (`{solar: 5.0, wind: 10.0, biomass: 20.0}`) is added on top of each country's `slope_threshold_deg`. Loaded via `ConfigLoader.exclusion_thresholds` into `CountryParams.protected_areas_threshold`/`.proximity_plants_threshold`/`.slope_offset_{solar,wind,biomass}_deg`. `protected_areas`'s value is pending `Campaign-05` (`IUCN_SCORES`); `proximity_plants`'s has no documented external justification yet (`Campaign-02`) — see `../TASKS.md` before treating either as settled science. `lakes_exclusion` (0.5) stays hardcoded in `suitability_builder.py`, not here — it's mathematically inert for any value in `(0, 1)` (binary criterion), so there is no real parameter to migrate.
 
 ## Adding a new country
 

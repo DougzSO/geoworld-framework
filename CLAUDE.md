@@ -86,3 +86,27 @@ Document large/generic code, duplication, missing tests, hardcoded values, fragi
 ## Final rule
 
 No generic work. Every implementation, documentation update, and commit must respect this project's actual nature (doctoral research pipeline, not a generic app), its existing patterns, and the persistent documentation in `/docs/memory`.
+
+## 📋 DOCUMENTATION MAINTENANCE — MANDATORY, NOT OPTIONAL
+
+### After completing ANY task in a session:
+1. Mark the task as done in `docs/TASKS.md` → move to ✅ section
+2. Update `updated:` and increment `version:` in that file's frontmatter
+3. If an architectural decision was made → append to `docs/DECISIONS.md`
+4. At session end → add 1 line to the session log in `docs/SPRINT.md`
+5. Run: `git add -A && git commit -m "<type>(<scope>): <what was done>"`
+
+### Commit message format:
+- `fix(phase6): resolve BLOCKER-010 disk reconstruction`
+- `docs(tasks): mark INVAR-003 as complete`
+- `refactor(sensitivity): split run() into _run_sa1..6()`
+
+### PROHIBITED:
+- Creating a new .md in docs/ without asking first
+- Writing the same fact in more than one file
+- Editing files with status: frozen or status: archived
+- Registering a task anywhere other than docs/TASKS.md
+- Skipping the git commit at the end of a session
+
+### Commit is local only (no push):
+`git push` is NEVER run automatically. Local commits only.

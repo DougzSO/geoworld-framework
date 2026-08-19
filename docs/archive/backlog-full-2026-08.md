@@ -1,3 +1,16 @@
+---
+id: archive-backlog-full
+type: archive
+status: archived
+created: 2026-08-06
+updated: 2026-08-18
+updated_by: claude-code
+version: 1
+depends_on: [analysis-arch-misalignments, analysis-code-duplication, analysis-write-points-inventory]
+linked_by: [docs-tasks, docs-decisions, archive-reorg-plan]
+scope: "BACKLOG.md completo e congelado (BLOCKER/REFACTOR/QI/INVAR/Campaign + apêndice D1-D7), última versão viva antes da reorganização de 2026-08-18; NÃO é mais atualizado — tarefas abertas agora vivem em TASKS.md, decisões em DECISIONS.md."
+---
+
 # Refactoring Roadmap
 
 Originally: planning only, synthesizing `docs/arch-misalignments.md`, `docs/code-duplication.md`, and `docs/write-points-inventory.md` into an ordered task list. Since expanded into the canonical, single-source-of-truth BLOCKER tracker for this project (BLOCKER-001 through BLOCKER-016, both fixed and open) and the home for the technical-decisions log formerly at `docs/memory/09-decisions.md` (see the Appendix at the end of this file — moved here verbatim, not rewritten, so its historical Context/Decision/Consequences entries stay intact). `docs/memory/09-decisions.md` is now a redirect stub pointing here.

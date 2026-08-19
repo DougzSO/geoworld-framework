@@ -1,3 +1,16 @@
+---
+id: mem-04-algorithms
+type: reference
+status: active
+created: 2026-08-17
+updated: 2026-08-18
+updated_by: claude-code
+version: 1
+depends_on: [mem-03-pipeline]
+linked_by: [mem-readme]
+scope: "Métodos matemáticos (AHP/TOPSIS/OWA/LCOE/GHG/SA) e onde vivem no código; não é uma leitura completa do código-fonte de cada método (ver DOC-007 em TASKS.md para o gap do Transporte)."
+---
+
 # 04 — Algorithms and Methods
 
 ## MCDA (Phase 3 — `src/processors/suitability_builder.py`, orchestration only; math in `src/utils/`)
@@ -47,13 +60,13 @@ Six independently toggleable sub-analyses (`settings.yaml` → `pipeline.sensiti
 
 References cited in-module: Saltelli et al. (2008, 2010), Malczewski (1999).
 
-**SA-2 metric (corrected 2026-08-17)**: originally reported `stable_fraction` — the share of pixels whose 90% CI band on the raw TOPSIS score was narrower than 0.10. Replaced with a threshold-crossing metric (`decisive_fraction`/`boundary_fraction`/`moderate_fraction`): among pixels apt under the base AHP weights, what fraction of the 1000 Dirichlet weight samples keep that pixel above the real scenario threshold (0.75 for the balanced scenario as of this writing). A prototype (`scratchpad/threshold_crossing_prototype.py`) found `stable_fraction` couldn't distinguish PRT from BRA on wind (4.4% vs. 4.3%), while the new metric revealed a real difference the old one masked (PRT wind: 72.1% of apt pixels sit in a 25-75% boundary zone, only 2.3% decisive; BRA wind: 53.1% decisive) — the framework's actual output is a threshold-based apt/not-apt decision, and the new metric measures robustness of that decision directly, not just the raw score's numerical stability. See `docs/BACKLOG.md`'s entry on the change for the full before/after and the `concentration`-sensitivity caveat (absolute percentages shift ~2.5x between `concentration=10` and `concentration=40`; the qualitative country comparison held across that range, but exact numbers are `concentration`-dependent, not a fixed ground truth).
+**SA-2 metric (corrected 2026-08-17)**: originally reported `stable_fraction` — the share of pixels whose 90% CI band on the raw TOPSIS score was narrower than 0.10. Replaced with a threshold-crossing metric (`decisive_fraction`/`boundary_fraction`/`moderate_fraction`): among pixels apt under the base AHP weights, what fraction of the 1000 Dirichlet weight samples keep that pixel above the real scenario threshold (0.75 for the balanced scenario as of this writing). A prototype (`scratchpad/threshold_crossing_prototype.py`) found `stable_fraction` couldn't distinguish PRT from BRA on wind (4.4% vs. 4.3%), while the new metric revealed a real difference the old one masked (PRT wind: 72.1% of apt pixels sit in a 25-75% boundary zone, only 2.3% decisive; BRA wind: 53.1% decisive) — the framework's actual output is a threshold-based apt/not-apt decision, and the new metric measures robustness of that decision directly, not just the raw score's numerical stability. See `archive/backlog-full-2026-08.md` (BLOCKER-016) for the full before/after and the `concentration`-sensitivity caveat — the caveat itself is tracked as `GAP-005` in `../TASKS.md` (absolute percentages shift up to ~16x between `concentration=10` and `concentration=40` depending on country/tech, not a fixed ~2.5x; qualitative country comparisons held across the range, exact numbers don't).
 
 ## Transport Decarbonization (Phase 9)
 
 EV/hydrogen penetration scenarios, transport energy-demand modeling, and charging-hub siting (threshold-based on suitability rasters, `settings.yaml`'s `pipeline.transport.hub_suitability_threshold`). Parameters in `configs/transport_parameters.json` (`global_defaults` + per-country overrides).
 
-> ⚠️ Point to validate: the exact hydrogen/EV demand model equations were not read in full during this pass (module is 2237 lines, the largest in the codebase) — treat this section as a locator, not a full method description, until someone reads `transport_decarbonization_calculator.py` in depth.
+> ⚠️ Point to validate (tracked as `DOC-007` in `../TASKS.md`): the exact hydrogen/EV demand model equations were not read in full during this pass (module is 2237 lines, the largest in the codebase) — treat this section as a locator, not a full method description, until someone reads `transport_decarbonization_calculator.py` in depth.
 
 ## Methodological references (from `README.md` §12)
 

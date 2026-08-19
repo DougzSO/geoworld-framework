@@ -1,3 +1,16 @@
+---
+id: analysis-write-points-inventory
+type: frozen
+status: frozen
+created: 2026-08-06
+updated: 2026-08-18
+updated_by: claude-code
+version: 1
+depends_on: [analysis-arch-misalignments, analysis-code-duplication]
+linked_by: [docs-tasks, archive-backlog-full]
+scope: "Auditoria original nº3 (todo write-point do pipeline), congelada no estado do código de 2026-08-06; NÃO reflete correções aplicadas depois — status atual vive em TASKS.md."
+---
+
 # Write-Points Inventory — Analysis
 
 Follow-up to `docs/arch-misalignments.md` and `docs/code-duplication.md`. Analysis only, no code changed. Every disk-write location across all nine phases (plus Phase 0 acquisition and the shared `ArtifactManager` layer) was located via `grep` and confirmed by direct reads — line numbers below are exact, not structural estimates. `docs/arch-misalignments.md` and `SUMMARY.md` were re-read in full before starting this pass.

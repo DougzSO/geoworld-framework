@@ -1,3 +1,16 @@
+---
+id: analysis-code-duplication
+type: frozen
+status: frozen
+created: 2026-08-06
+updated: 2026-08-18
+updated_by: claude-code
+version: 1
+depends_on: [analysis-arch-misalignments]
+linked_by: [docs-tasks, archive-backlog-full]
+scope: "Auditoria original nº2 (duplicação de código), congelada no estado do código de 2026-08-06; NÃO reflete correções aplicadas depois — status atual vive em TASKS.md."
+---
+
 # Code Duplication — Analysis
 
 Analysis only, follow-up to `docs/arch-misalignments.md`. No code changed in this pass. All line numbers below were verified by direct reads (not structural/grep-only estimates) except where marked. Grep commands are given so the next session can re-locate each finding without re-deriving it.

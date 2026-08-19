@@ -1,3 +1,16 @@
+---
+id: mem-05-environment
+type: reference
+status: active
+created: 2026-08-06
+updated: 2026-08-18
+updated_by: claude-code
+version: 1
+depends_on: []
+linked_by: [mem-readme, mem-06-risk-areas]
+scope: "Runtime, dependências, dados brutos e reprodutibilidade (dono do fato 'seed=42'); não cobre estado de flags de pipeline (ver 07-configuration.md)."
+---
+
 # 05 — External Dependencies and Execution Environment
 
 ## Runtime
@@ -5,7 +18,7 @@
 - Python **3.10+** per `README.md`; the local `.venv` observed during this documentation pass runs **Python 3.14.3** — both should work per the stated floor, but the gap hasn't been tested by this session.
 - No containerization (no `Dockerfile`), no CI config (no `.github/workflows/`), no cluster/HPC job scripts found. This appears to be a **local, manually-executed** research pipeline.
 
-> ⚠️ Point to validate: confirm there truly is no CI/cluster execution path elsewhere (e.g. outside this repo, or not yet committed) — a doctoral pipeline processing ~18 GB of raster data per run may benefit from one, but none exists in-repo as of this writing.
+> ⚠️ Point to validate (tracked as `DOC-003` in `../TASKS.md`): confirm there truly is no CI/cluster execution path elsewhere (e.g. outside this repo, or not yet committed) — a doctoral pipeline processing ~18 GB of raster data per run may benefit from one, but none exists in-repo as of this writing.
 
 ## Dependency management
 
@@ -29,7 +42,7 @@
 | `pydantic` | 2.0 | 2.13.4 | Data contracts |
 | `terracatalogueclient` | — | 0.1.19 | Optional ESA WorldCover auto-download |
 
-> ⚠️ Point to validate: `requirements.txt` was generated from a full `pip freeze` of the local `.venv`, which also includes packages whose direct use in `src/` wasn't confirmed during this pass (e.g. `boto3`/`botocore`/`s3transfer`, `pydeps`, `requests-auth`, `tqdm`, `colorama`, `humanfriendly`). Treat it as a reproducibility snapshot, not a curated "these and only these are imported" list — a stricter curation would need either static import analysis across all of `src/` or a clean-room install-and-run.
+> ⚠️ Point to validate (tracked as `DOC-004` in `../TASKS.md`): `requirements.txt` was generated from a full `pip freeze` of the local `.venv`, which also includes packages whose direct use in `src/` wasn't confirmed during this pass (e.g. `boto3`/`botocore`/`s3transfer`, `pydeps`, `requests-auth`, `tqdm`, `colorama`, `humanfriendly`). Treat it as a reproducibility snapshot, not a curated "these and only these are imported" list — a stricter curation would need either static import analysis across all of `src/` or a clean-room install-and-run.
 
 ## Raw data
 

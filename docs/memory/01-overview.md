@@ -1,3 +1,16 @@
+---
+id: mem-01-overview
+type: reference
+status: active
+created: 2026-08-06
+updated: 2026-08-18
+updated_by: claude-code
+version: 1
+depends_on: []
+linked_by: [mem-readme, mem-11-onboarding]
+scope: "O que é o GeoWorld Framework, contexto acadêmico e escopo; não descreve arquitetura de código nem decisões de design (ver 02-architecture.md e DECISIONS.md)."
+---
+
 # 01 — Overview
 
 ## What it is
@@ -11,7 +24,7 @@ GeoWorld Framework is an open-source Python pipeline for spatially explicit asse
 - Registered on Zenodo as citable software (DOI `10.5281/zenodo.20184266`, v2.0.0 per `README.md`; `CITATION.cff` currently lists `version: 1.0.0` — see ⚠️ note below).
 - MIT licensed per `CITATION.cff` and `zenodo.json`, though no `LICENSE` file exists in the repository.
 
-> ⚠️ Point to validate: `CITATION.cff` (`version: 1.0.0`, `date-released: 2024-01-15`) is out of sync with `README.md` (`Version 2.0`, DOI for `v2.0.0`). Unclear whether `CITATION.cff` was simply never bumped, or whether it intentionally still points at the first citable release.
+> ⚠️ Point to validate (tracked as `DOC-001` in `../TASKS.md`): `CITATION.cff` (`version: 1.0.0`, `date-released: 2024-01-15`) is out of sync with `README.md` (`Version 2.0`, DOI for `v2.0.0`). Unclear whether `CITATION.cff` was simply never bumped, or whether it intentionally still points at the first citable release.
 
 ## Scope
 

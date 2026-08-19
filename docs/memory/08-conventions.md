@@ -1,3 +1,16 @@
+---
+id: mem-08-conventions
+type: reference
+status: active
+created: 2026-08-17
+updated: 2026-08-18
+updated_by: claude-code
+version: 1
+depends_on: [mem-06-risk-areas]
+linked_by: [mem-readme, mem-11-onboarding]
+scope: "Convenções de código observadas (docstring, logging, matplotlib, nomenclatura); não é a fonte do estado da suite de testes (ver 06-risk-areas.md)."
+---
+
 # 08 — Conventions and Standards
 
 These are observed patterns, not imposed ones — follow them when writing new code in this repository so it stays consistent with the existing ~28k lines.
@@ -10,7 +23,7 @@ Every module in `src/` opens with a structured docstring: a title line, an under
 
 Several modules track fix/refactor history directly in their docstring using tags like `FIX (Grupo C):`, `BUG_02 (fix):`, `DUP_22`, `T1_06`, `T2_09` (e.g. `sensitivity_analyzer.py`, `lcoe_calculator.py`, `main.py`'s import comment `# T1_06`). These appear to be internal ticket/issue references from the author's own tracking, not a formal ticketing system integrated with this repo.
 
-> ⚠️ Point to validate: the meaning of the `T1_06`, `T2_09`, `BUG_02`, `DUP_22`-style tags (what system, if any, they reference) wasn't confirmed — treat them as historical breadcrumbs, not an active issue tracker to query.
+> ⚠️ Point to validate (tracked as `DOC-006` in `../TASKS.md`): the meaning of the `T1_06`, `T2_09`, `BUG_02`, `DUP_22`-style tags (what system, if any, they reference) wasn't confirmed — treat them as historical breadcrumbs, not an active issue tracker to query.
 
 ## Language
 
@@ -39,4 +52,4 @@ New data that crosses a phase boundary and gets persisted to disk should get a P
 
 ## Test suite
 
-**Corrected 2026-08-17** — this section previously stated no `tests/` directory existed. `tests/unit/` exists (`pytest`, 77 tests as of BLOCKER-011) — see `06-risk-areas.md` for what's covered and what's still open. New pure-math modules should get a `tests/unit/test_<module>.py` following the existing `test_ahp.py`/`test_topsis.py`/`test_owa.py`/`test_economics.py` pattern.
+Estado da cobertura de teste → dono deste fato: [`06-risk-areas.md`](06-risk-areas.md). Convenção para módulos novos: `tests/unit/test_<module>.py`, seguindo o padrão `test_ahp.py`/`test_topsis.py`/`test_owa.py`/`test_economics.py`.
