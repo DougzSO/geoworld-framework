@@ -3,9 +3,9 @@ id: mem-04-algorithms
 type: reference
 status: active
 created: 2026-08-17
-updated: 2026-08-18
+updated: 2026-08-19
 updated_by: claude-code
-version: 1
+version: 2
 depends_on: [mem-03-pipeline]
 linked_by: [mem-readme]
 scope: "Métodos matemáticos (AHP/TOPSIS/OWA/LCOE/GHG/SA) e onde vivem no código; não é uma leitura completa do código-fonte de cada método (ver DOC-007 em TASKS.md para o gap do Transporte)."
@@ -66,7 +66,7 @@ References cited in-module: Saltelli et al. (2008, 2010), Malczewski (1999).
 
 EV/hydrogen penetration scenarios, transport energy-demand modeling, and charging-hub siting (threshold-based on suitability rasters, `settings.yaml`'s `pipeline.transport.hub_suitability_threshold`). Parameters in `configs/transport_parameters.json` (`global_defaults` + per-country overrides).
 
-> ⚠️ Point to validate (tracked as `DOC-007` in `../TASKS.md`): the exact hydrogen/EV demand model equations were not read in full during this pass (module is 2237 lines, the largest in the codebase) — treat this section as a locator, not a full method description, until someone reads `transport_decarbonization_calculator.py` in depth.
+> ⚠️ Point to validate (tracked as `DOC-007` in `../TASKS.md`): the exact hydrogen/EV demand model equations were not read in full during this pass (module is 1758 lines post-REFACTOR-002, still the largest in `src/processors/`) — treat this section as a locator, not a full method description, until someone reads `transport_decarbonization_calculator.py` in depth.
 
 ## Methodological references (from `README.md` §12)
 

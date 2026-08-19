@@ -5,7 +5,7 @@ status: active
 created: 2026-08-18
 updated: 2026-08-19
 updated_by: claude-code
-version: 2
+version: 3
 depends_on: [archive-backlog-full, archive-reorg-plan]
 linked_by: [docs-readme, mem-11-onboarding, docs-claude-docs-rules]
 scope: "Único rastreador vivo de trabalho aberto do projeto (BLOCKER/REFACTOR/QI/INVAR/Campaign/GAP/DOC); não contém narrativa longa nem decisões arquiteturais — essas ficam em archive/ e DECISIONS.md."
@@ -36,7 +36,7 @@ Todo trabalho aberto do projeto vive **somente aqui**. Não criar rastreador par
 | REFACTOR-006 | Achado residual: Fase 8 é a única sem `output_model` Pydantic no `result.pkl` — investigado, não corrigido. | open | `archive/backlog-full-2026-08.md` §REFACTOR-006 |
 | QI-001 (gap) | `exclusion.py` e `normalization.py` seguem sem nenhum teste. | open | `archive/backlog-full-2026-08.md` §QI-001, `memory/06-risk-areas.md` |
 | QI-003 | Script de validação de config/schema no startup — não existe ainda. | open | `archive/backlog-full-2026-08.md` §QI-003 |
-| QI-004 | Testes para `raster_io.find_raster_by_base_name()` e acessores de `params_helpers.py`. | open | `archive/backlog-full-2026-08.md` §QI-004 |
+| QI-004 | Testes para acessores de `params_helpers.py` (`extract_params_dict`, `get_scenario_data`). A função `raster_io.find_raster_by_base_name()` referenciada na evidência original nunca foi implementada — era proposta de refactor em `analysis/code-duplication.md`, não código real; item reduzido a `params_helpers.py`. | open | `archive/backlog-full-2026-08.md` §QI-004 |
 | INVAR-003 | `grid_aligner.py:910,960,968-969` — fallback silencioso (P1), latente, baixa severidade. | open | `archive/backlog-full-2026-08.md` §Invariant Validation Project |
 | INVAR-004 | `criteria_builder.py` `ParamsLike`+`_param()`, ~12 call sites — absorve BLOCKER-020. | open | `archive/backlog-full-2026-08.md` §Invariant Validation Project, §BLOCKER-020 |
 | INVAR-005 | `suitability_builder.py:140,144,162,167-169,190-191` — fallback silencioso (P1), latente. | open | `archive/backlog-full-2026-08.md` §Invariant Validation Project |
